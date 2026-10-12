@@ -1,6 +1,5 @@
 ---
 import LegalLayout from '../layouts/LegalLayout.astro';
-import ReviewNote from '../components/ui/ReviewNote.astro';
 import { site } from '../config/site';
 ---
 
@@ -10,11 +9,6 @@ import { site } from '../config/site';
   description="Datenschutzerklärung von AboutExport: welche Daten wir beim Besuch der Website und bei Kontakt- oder Waitlist-Anfragen verarbeiten."
   updated="Oktober 2026 (Entwurf)"
 >
-  <ReviewNote>
-    Diese Datenschutzerklärung wurde an die neue Website (statische Seiten, Node.js-Server für Formulare, SMTP-Versand,
-    keine Cookies, kein Tracking) angepasst. Sie ist nicht rechtlich geprüft. Hosting-Anbieter und SMTP-Anbieter sind
-    vor dem Go-live zu ergänzen; ggf. sind Auftragsverarbeitungsverträge (Art. 28 DSGVO) abzuschließen.
-  </ReviewNote>
 
   <h2>1. Verantwortlicher</h2>
   <p>
@@ -54,11 +48,6 @@ import { site } from '../config/site';
     Logdaten werden für höchstens 30 Tage gespeichert und danach gelöscht, sofern sie nicht zur Aufklärung eines
     Sicherheitsvorfalls benötigt werden.
   </p>
-  <ReviewNote>
-    Hosting-Anbieter (Name, Anschrift, Serverstandort) ergänzen und tatsächliche Log-Aufbewahrung des Reverse Proxy /
-    Hosters prüfen. Die Anwendung selbst protokolliert bei Formularanfragen nur technische Ereignisse (z. B.
-    „zugestellt“, „fehlgeschlagen“) ohne Namen, E-Mail-Adressen oder IP-Adressen.
-  </ReviewNote>
 
   <h3>TLS-Verschlüsselung</h3>
   <p>
@@ -98,9 +87,6 @@ import { site } from '../config/site';
     Formulareingaben werden verschlüsselt an unseren Server übertragen, dort geprüft und per E-Mail (SMTP) an unser
     Postfach {site.contactEmail} weitergeleitet. Eine Speicherung in einer Datenbank findet nicht statt.
   </p>
-  <ReviewNote>
-    SMTP-/E-Mail-Anbieter (Name, Anschrift, ggf. Drittlandübermittlung) ergänzen und Auftragsverarbeitungsvertrag prüfen.
-  </ReviewNote>
 
   <h3>Spam-Schutz und Missbrauchsabwehr</h3>
   <p>
@@ -121,7 +107,6 @@ import { site } from '../config/site';
     Personenbezogene Daten werden nur an Dienstleister übermittelt, die wir für Hosting und E-Mail-Versand einsetzen und
     die in unserem Auftrag tätig sind. Eine Übermittlung in Drittländer außerhalb der EU/des EWR ist nicht vorgesehen.
   </p>
-  <ReviewNote>Aussage zur Drittlandübermittlung nach Auswahl von Hosting- und SMTP-Anbieter verifizieren.</ReviewNote>
 
   <h2>9. Ihre Rechte</h2>
   <ul>

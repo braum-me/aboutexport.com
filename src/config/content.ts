@@ -177,7 +177,7 @@ export const faqs: { q: string; a: string[] }[] = [
   {
     q: 'Kann ich AboutExport testen?',
     a: [
-      'Nach dem Launch ist ein kostenloser Testzeitraum vorgesehen. Die genauen Bedingungen veröffentlichen wir zum Launch; Waitlist-Mitglieder erfahren sie zuerst.',
+      'Ob und in welcher Form es einen Testzugang geben wird, steht noch nicht fest. Die Konditionen veröffentlichen wir vor dem Launch; Waitlist-Mitglieder erfahren sie zuerst.',
     ],
   },
   {

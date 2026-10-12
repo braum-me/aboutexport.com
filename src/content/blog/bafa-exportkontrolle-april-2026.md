@@ -1,12 +1,13 @@
 ---
 # Migriert von https://aboutexport.com/bafa-exportkontrolle-april-2026/ (WordPress-ID 2181)
-# Inhalt unverändert übernommen; nur interne Links auf relative Pfade normalisiert.
+# Inhalt aus WordPress übernommen (interne Links relativ). Regulatorischer Teil unverändert;
+# nur der abschließende Produktabsatz wurde korrigiert, siehe `corrections`.
 title: 'Keine Schonfrist mehr: Was die neuen BAFA-Regeln für Ihre Export Compliance bedeuten'
 seoTitle: 'BAFA April 2026: Neue Regeln für Export Compliance'
 description: 'Neue Sanktions-Compliance-Erklärung, keine Schonfrist mehr, verschärftes Strafrecht: Was die BAFA-Änderungen April 2026 für Sie bedeutet.'
 excerpt: 'Das BAFA hat zum April 2026 weitreichende Änderungen in Kraft gesetzt – von neuen Pflichten bei Allgemeinen Genehmigungen bis zur entfallenen Schonfrist bei EU-Sanktionen. Was jetzt konkret zu tun ist.'
 pubDate: 2026-04-04T19:22:53Z
-updatedDate: 2026-04-04T19:31:36Z
+updatedDate: 2026-10-12T20:55:25Z
 category: regulierung
 kind: regulatory
 author: AboutExport Team
@@ -19,14 +20,27 @@ image:
 legacy:
   wpId: 2181
   url: https://aboutexport.com/bafa-exportkontrolle-april-2026/
+  # Änderungsdatum in WordPress vor den Korrekturen
+  modifiedDate: 2026-04-04T19:31:36Z
+corrections:
+  - date: 2026-10-12T20:55:25Z
+    summary: 'Produktaussagen im Schlussabschnitt an den aktuellen Stand angepasst (Launch 2027, keine Echtzeit-Zusage). Die regulatorischen Inhalte sind unverändert.'
+    changes:
+      - from: 'Echtzeit-Monitoring als Antwort'
+        to: 'Automatisiertes Monitoring als Antwort'
+      - from: 'Unsere Plattform überwacht automatisch die relevanten Quellen – BAFA, EUR-Lex, BIS Entity List und weitere – und liefert Ihnen Export Control Alerts in Echtzeit, direkt ins Postfach. Keine manuelle Recherche, keine Verzögerungen, keine übersehenen Änderungen.'
+        to: 'Ab dem geplanten Launch 2027 prüft die Plattform die Quellen der gebuchten Regionen laufend automatisiert und stellt kritische Änderungen als Export Control Alert direkt ins Postfach zu – ohne manuelle Recherche.'
+      - from: 'AboutExport stellt sicher, dass Sie informiert sind – bevor es zum Problem wird.'
+        to: 'AboutExport soll Ihnen helfen, solche Änderungen frühzeitig zu erkennen.'
 review:
   status: pending
   notes:
     - 'Regulatorische Aussagen (Sanktions-Compliance-Erklärung, Allgemeine Genehmigungen Nr. 12–47, Verlängerung bis 31.03.2027, Indien im privilegierten Länderkreis, Wegfall der Schonfrist, SanktDG) wurden bei der Migration nicht erneut fachlich geprüft.'
     - 'Zeitgebundene Aussagen: Verlängerung der Allgemeinen Genehmigungen „bis zum 31. März 2027“ und „Die EU arbeitet bereits am 20. Sanktionspaket“ – Stand April 2026, voraussichtlich überholt.'
     - 'Quellenangabe: Linktexte und Ziele passen nicht zusammen („Sanktionsdurchsetzungsgesetz (SanktDG), EU-Richtlinie 2024/1226“ verlinkt auf Verordnung (EU) 833/2014 bei EUR-Lex).'
-    - 'Produktaussagen („Export Control Alerts in Echtzeit“, Überwachung von BAFA, EUR-Lex, BIS Entity List; „20 % Rabatt auf jeden Plan“) weichen von der aktuellen Positionierung ab (Launch 2027, Konditionen werden vor Launch mitgeteilt).'
     - 'Beitragsbild ist ein Stockfoto – Lizenz für die weitere Nutzung prüfen.'
+  resolved:
+    - 'Produktaussagen im Schlussabschnitt („Echtzeit“, „keine übersehenen Änderungen“, „stellt sicher“) neutralisiert (korrigiert am 2026-10-12). „20 % Rabatt“ entspricht dem bestätigten Early-Access-Rabatt.'
 ---
 
 Wer im internationalen Handel tätig ist und Allgemeine Genehmigungen des BAFA nutzt, muss jetzt handeln. Das Bundesamt für Wirtschaft und Ausfuhrkontrolle hat zum April 2026 eine Reihe von Änderungen in Kraft gesetzt, die den Compliance-Alltag spürbar verändern – und das in einem Umfeld, in dem die Konsequenzen von Versäumnissen so gravierend sind wie nie zuvor.
@@ -86,11 +100,11 @@ Konkret sollten Unternehmen jetzt:
 
 ---
 
-## Echtzeit-Monitoring als Antwort
+## Automatisiertes Monitoring als Antwort
 
-Genau an diesem Punkt setzt AboutExport an. Unsere Plattform überwacht automatisch die relevanten Quellen – BAFA, EUR-Lex, BIS Entity List und weitere – und liefert Ihnen Export Control Alerts in Echtzeit, direkt ins Postfach. Keine manuelle Recherche, keine Verzögerungen, keine übersehenen Änderungen.
+Genau an diesem Punkt setzt AboutExport an. Ab dem geplanten Launch 2027 prüft die Plattform die Quellen der gebuchten Regionen laufend automatisiert und stellt kritische Änderungen als Export Control Alert direkt ins Postfach zu – ohne manuelle Recherche.
 
-Die April-2026-Änderungen des BAFA sind ein gutes Beispiel dafür, wie schnell sich die regulatorische Lage verändert und welche konkreten Handlungspflichten daraus entstehen. AboutExport stellt sicher, dass Sie informiert sind – bevor es zum Problem wird.
+Die April-2026-Änderungen des BAFA sind ein gutes Beispiel dafür, wie schnell sich die regulatorische Lage verändert und welche konkreten Handlungspflichten daraus entstehen. AboutExport soll Ihnen helfen, solche Änderungen frühzeitig zu erkennen.
 
 Tragen Sie sich jetzt auf die [Waitlist](/#waitlist) ein und sichern Sie sich frühen Zugang sowie 20 % Rabatt auf jeden Plan.
 

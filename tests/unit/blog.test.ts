@@ -55,8 +55,15 @@ describe('Korrekturen', () => {
     }
   });
 
-  it('regulatorischer Beitrag ist nicht korrigiert worden', () => {
-    expect(frontmatter('bafa-exportkontrolle-april-2026')).not.toContain('corrections:');
+  it('regulatorischer Beitrag: nur der abschließende Produktabsatz ist korrigiert', () => {
+    const slug = 'bafa-exportkontrolle-april-2026';
+    const raw = readFileSync(join(CONTENT, `${slug}.md`), 'utf8');
+    const original = readFileSync(join(process.cwd(), 'tests/fixtures/blog', `${slug}.txt`), 'utf8');
+    const productSection = original.indexOf('Echtzeit-Monitoring als Antwort');
+    expect(productSection).toBeGreaterThan(0);
+    const froms = [...raw.matchAll(/- from: '((?:[^']|'')*)'/g)].map((m) => m[1]!.replace(/''/g, "'"));
+    expect(froms.length).toBeGreaterThan(0);
+    for (const from of froms) expect(original.indexOf(from)).toBeGreaterThanOrEqual(productSection);
   });
 });
 

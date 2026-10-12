@@ -122,6 +122,20 @@ test.describe('Blog-Artikel unter Original-URLs', () => {
     await expect(body).toContainText('info@aboutexport.com');
     await expect(body).not.toContainText('aboutexport.de');
     await expect(body).toContainText('der Launch ist für 2027 geplant');
+    // Nicht bestätigte Konditionen sind neutralisiert
+    await expect(body).not.toContainText('dauerhaft');
+    await expect(body).not.toContainText('ersten Anmeldungen');
+    await expect(body).not.toContainText('14 Tage');
+  });
+
+  test('Regulierungsmeldung: Produktabsatz ohne Echtzeit-Zusage, Korrektur ausgewiesen', async ({ page }) => {
+    await page.goto('/bafa-exportkontrolle-april-2026/');
+    await expect(page.locator('[data-pubdate]')).toHaveText('4. April 2026');
+    await expect(page.locator('[data-corrections]')).toContainText('regulatorischen Inhalte sind unverändert');
+    const body = page.locator('[data-article-body]');
+    await expect(body).not.toContainText('Alerts in Echtzeit');
+    await expect(body).not.toContainText('stellt sicher');
+    await expect(body).toContainText('Sanktions-Compliance-Erklärung');
   });
 });
 
