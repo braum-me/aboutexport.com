@@ -19,6 +19,17 @@ export function initRoi(): void {
   const highlight = form.querySelector<HTMLElement>('[data-roi-highlight]');
   const invalidNote = form.querySelector<HTMLElement>('[data-roi-invalid]');
   const results = form.querySelector<HTMLElement>('[data-roi-results]');
+  const barManual = form.querySelector<SVGRectElement>('[data-roi-bar="manual"]');
+  const barSubscription = form.querySelector<SVGRectElement>('[data-roi-bar="subscription"]');
+  const ranges = form.querySelectorAll<HTMLInputElement>('[data-roi-sync]');
+
+  /** Füllstand der Schieberegler (CSS-Variable, per CSSOM – CSP-konform) */
+  const paintRange = (range: HTMLInputElement) => {
+    const min = Number(range.min);
+    const max = Number(range.max);
+    const p = max > min ? ((Number(range.value) - min) / (max - min)) * 100 : 0;
+    range.style.setProperty('--fill', `${Math.min(100, Math.max(0, p))}%`);
+  };
 
   const fieldInputs: Partial<Record<RoiField, HTMLInputElement>> = {
     minutesPerDay: form.elements.namedItem('minutesPerDay') as HTMLInputElement,
@@ -71,19 +82,28 @@ export function initRoi(): void {
     highlight?.classList.toggle('bg-ink-900', r.isSaving);
     highlight?.classList.toggle('bg-slate-700', !r.isSaving);
     highlight?.setAttribute('data-state', r.isSaving ? 'saving' : 'cost');
+
+    // Vergleichsbalken relativ zum größeren Kostenblock
+    const max = Math.max(r.annualManualCost, r.annualSubscriptionCost, 1);
+    const width = (v: number) => `${Math.max(1.5, (v / max) * 100).toFixed(2)}%`;
+    barManual?.setAttribute('width', width(r.annualManualCost));
+    barSubscription?.setAttribute('width', width(r.annualSubscriptionCost));
   };
 
   // Schieberegler ↔ Zahlenfeld synchronisieren
-  form.querySelectorAll<HTMLInputElement>('[data-roi-sync]').forEach((range) => {
+  ranges.forEach((range) => {
     const target = fieldInputs[range.dataset.roiSync as RoiField];
     if (!target) return;
+    paintRange(range);
     range.addEventListener('input', () => {
       target.value = range.value;
+      paintRange(range);
       update();
     });
     target.addEventListener('input', () => {
       const v = num(target.value);
       if (Number.isFinite(v)) range.value = String(Math.min(Number(range.max), Math.max(Number(range.min), v)));
+      paintRange(range);
     });
   });
 

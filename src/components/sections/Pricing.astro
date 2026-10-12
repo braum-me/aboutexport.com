@@ -4,53 +4,79 @@ import { includedFeatures, pricing } from '../../config/pricing';
 import { quote } from '../../lib/pricing';
 import { formatCurrency } from '../../lib/format';
 import Button from '../ui/Button.astro';
-import SectionHeader from '../ui/SectionHeader.astro';
 
 const defaultRegions = ['eu', 'us'];
 const d = pricing.earlyAccessDiscount;
 const initial = quote({ regions: defaultRegions.length, interval: 'monthly', applyDiscount: true });
 const initialList = quote({ regions: defaultRegions.length, interval: 'monthly', applyDiscount: false });
-const annualSavingPct = Math.round(
-  (1 - pricing.annualPricePerRegion / (pricing.monthlyPricePerRegion * 12)) * 100,
-);
+const annualSavingPct = Math.round((1 - pricing.annualPricePerRegion / (pricing.monthlyPricePerRegion * 12)) * 100);
 const regionLabel = (ids: string[]) =>
   pricing.regions
     .filter((r) => ids.includes(r.id))
     .map((r) => r.label)
     .join(', ');
+const codes: Record<string, string> = { eu: 'EU', us: 'US', cn: 'CN' };
+const unitInitial = `${formatCurrency(initial.price / initial.regions)} / Monat`;
 ---
 
-<section id="preise" class="scroll-mt-16 bg-slate-50/70 py-20 sm:py-28" aria-labelledby="pricing-title">
-  <div class="container-page">
-    <SectionHeader id="pricing-title" eyebrow="Preise" title="Einfach. Transparent. Pro Region.">
-      Sie zahlen nur für die Jurisdiktionen, die Sie brauchen. Keine Pakete, keine versteckten Kosten.
-    </SectionHeader>
+<section
+  id="preise"
+  class="on-dark relative isolate scroll-mt-16 overflow-hidden bg-ink-950 py-24 text-slate-400 sm:py-32"
+  aria-labelledby="pricing-title"
+>
+  <div class="bg-grid-dark mask-radial absolute inset-0 -z-10 opacity-70" aria-hidden="true"></div>
+  <div
+    class="absolute top-1/3 left-1/2 -z-10 h-[40rem] w-[60rem] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgb(43_89_240/0.22),transparent)] blur-3xl"
+    aria-hidden="true"
+  >
+  </div>
 
-    <div class="mx-auto mt-6 flex max-w-xl items-start gap-2.5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-      <Info size={18} class="mt-px shrink-0" aria-hidden="true" />
-      <p>
-        AboutExport ist noch nicht verfügbar – der Launch ist für 2027 geplant. Mit der Waitlist reservieren Sie Early
-        Access; es entstehen jetzt keine Kosten.
-      </p>
+  <div class="container-page">
+    <div class="grid gap-8 lg:grid-cols-12 lg:items-end">
+      <div class="lg:col-span-7" data-reveal>
+        <p class="eyebrow"><span class="eyebrow-index">05 /</span> Preise</p>
+        <h2 id="pricing-title" class="display-lg mt-4 text-white">
+          Ein Preis.<br /><span class="text-slate-500">Volle Transparenz.</span>
+        </h2>
+      </div>
+      <div class="lg:col-span-5 lg:pb-2" data-reveal>
+        <p class="lead">
+          Sie zahlen pro Region – nur für die Jurisdiktionen, die Sie brauchen. Keine Pakete, keine versteckten Kosten.
+        </p>
+        <p class="mt-5 flex items-start gap-2.5 rounded-xl border border-amber-400/20 bg-amber-400/[0.06] px-4 py-3 text-sm text-amber-100/90">
+          <Info size={17} class="mt-px shrink-0 text-amber-300" aria-hidden="true" />
+          <span>
+            AboutExport ist noch nicht verfügbar – der Launch ist für 2027 geplant. Mit der Waitlist reservieren Sie Early
+            Access; es entstehen jetzt keine Kosten.
+          </span>
+        </p>
+      </div>
     </div>
 
-    <div class="card mx-auto mt-10 grid max-w-5xl overflow-hidden lg:grid-cols-[1.1fr_1fr]" data-pricing>
-      <div class="p-6 sm:p-8">
+    <div
+      class="mt-14 grid overflow-hidden rounded-3xl bg-white shadow-[0_0_0_1px_rgb(255_255_255/0.08),0_40px_120px_-30px_rgb(43_89_240/0.45)] sm:mt-16 lg:grid-cols-[1.15fr_1fr]"
+      data-pricing
+      data-reveal
+    >
+      <!-- Konfiguration -->
+      <div class="p-6 sm:p-10">
         <fieldset>
-          <legend class="text-sm font-semibold text-ink-900">Abrechnung</legend>
-          <div class="mt-3 grid grid-cols-2 gap-1 rounded-xl bg-slate-100 p-1">
+          <legend class="flex w-full items-center justify-between text-sm font-semibold text-ink-900">
+            <span><span class="mr-2 font-mono text-[11px] font-normal text-slate-500">01</span>Abrechnung</span>
+          </legend>
+          <div class="mt-3 grid grid-cols-2 gap-1 rounded-xl bg-slate-100 p-1 ring-1 ring-slate-200/70 ring-inset">
             <label class="relative cursor-pointer">
               <input type="radio" name="pricing-interval" value="monthly" class="peer sr-only" checked data-interval />
               <span
-                class="flex h-10 items-center justify-center rounded-lg text-sm font-medium text-slate-600 transition peer-checked:bg-white peer-checked:text-ink-900 peer-checked:shadow-card peer-focus-visible:outline-2 peer-focus-visible:outline-brand-600"
+                class="flex h-11 items-center justify-center rounded-lg text-sm font-medium text-slate-600 transition duration-200 peer-checked:bg-white peer-checked:text-ink-900 peer-checked:shadow-[0_1px_2px_rgb(15_23_42/0.08),0_0_0_1px_rgb(15_23_42/0.06)] peer-focus-visible:outline-2 peer-focus-visible:outline-brand-600 hover:text-ink-900"
                 >Monatlich</span
               >
             </label>
             <label class="relative cursor-pointer">
               <input type="radio" name="pricing-interval" value="annual" class="peer sr-only" data-interval />
               <span
-                class="flex h-10 items-center justify-center gap-1.5 rounded-lg text-sm font-medium text-slate-600 transition peer-checked:bg-white peer-checked:text-ink-900 peer-checked:shadow-card peer-focus-visible:outline-2 peer-focus-visible:outline-brand-600"
-                >Jährlich <span class="rounded-full bg-emerald-100 px-1.5 text-[11px] font-semibold text-emerald-800"
+                class="flex h-11 items-center justify-center gap-2 rounded-lg text-sm font-medium text-slate-600 transition duration-200 peer-checked:bg-white peer-checked:text-ink-900 peer-checked:shadow-[0_1px_2px_rgb(15_23_42/0.08),0_0_0_1px_rgb(15_23_42/0.06)] peer-focus-visible:outline-2 peer-focus-visible:outline-brand-600 hover:text-ink-900"
+                >Jährlich <span class="rounded-full bg-emerald-100 px-1.5 font-mono text-[11px] font-semibold text-emerald-800"
                   >−{annualSavingPct} %</span
                 ></span
               >
@@ -58,8 +84,10 @@ const regionLabel = (ids: string[]) =>
           </div>
         </fieldset>
 
-        <fieldset class="mt-8">
-          <legend class="text-sm font-semibold text-ink-900">Regionen</legend>
+        <fieldset class="mt-9">
+          <legend class="text-sm font-semibold text-ink-900">
+            <span class="mr-2 font-mono text-[11px] font-normal text-slate-500">02</span>Regionen
+          </legend>
           <p class="mt-1 text-sm text-slate-500" id="regions-hint">Wählen Sie mindestens eine Region.</p>
           <div class="mt-3 grid gap-2 sm:grid-cols-3">
             {
@@ -74,14 +102,12 @@ const regionLabel = (ids: string[]) =>
                     aria-describedby="regions-hint"
                     data-region
                   />
-                  <span class="flex h-full items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 transition peer-checked:border-brand-600 peer-checked:bg-brand-50/60 peer-checked:ring-1 peer-checked:ring-brand-600 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand-600 peer-disabled:cursor-not-allowed hover:border-slate-300 [&_.check]:opacity-0 peer-checked:[&_.check]:opacity-100 peer-checked:[&_.box]:border-brand-600 peer-checked:[&_.box]:bg-brand-600">
-                    <span class="box flex size-5 shrink-0 items-center justify-center rounded-md border border-slate-300 bg-white text-white">
-                      <Check size={14} stroke-width={3} class="check" aria-hidden="true" />
+                  <span class="flex h-full items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3.5 transition duration-200 peer-checked:border-brand-600 peer-checked:bg-brand-50/60 peer-checked:shadow-[0_0_0_1px_var(--color-brand-600)] peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand-600 peer-disabled:cursor-not-allowed hover:border-slate-300 sm:flex-col sm:items-start sm:gap-1 [&_.check]:scale-50 [&_.check]:opacity-0 peer-checked:[&_.check]:scale-100 peer-checked:[&_.check]:opacity-100 peer-checked:[&_.box]:border-brand-600 peer-checked:[&_.box]:bg-brand-600 peer-checked:[&_.code]:text-brand-700">
+                    <span class="box flex size-5 shrink-0 items-center justify-center rounded-md border border-slate-300 bg-white text-white transition sm:absolute sm:top-3.5 sm:right-3.5">
+                      <Check size={14} stroke-width={3} class="check transition duration-200" aria-hidden="true" />
                     </span>
-                    <span>
-                      <span class="block text-sm font-semibold text-ink-900">{r.label}</span>
-                      <span class="block text-xs text-slate-600">{r.name}</span>
-                    </span>
+                    <span class="code font-mono text-xl font-medium text-ink-900 transition-colors">{codes[r.id]}</span>
+                    <span class="min-w-0 text-xs text-slate-500 sm:-mt-1">{r.name}</span>
                   </span>
                 </label>
               ))
@@ -89,13 +115,15 @@ const regionLabel = (ids: string[]) =>
           </div>
         </fieldset>
 
-        <div class="mt-8">
+        <div class="mt-9 border-t border-slate-100 pt-7">
           <p class="text-sm font-semibold text-ink-900">In jeder Region enthalten</p>
-          <ul class="mt-3 grid gap-2 text-sm text-slate-700 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+          <ul class="mt-4 grid gap-x-6 gap-y-2.5 text-sm text-slate-600 sm:grid-cols-2">
             {
               includedFeatures.map((f) => (
-                <li class="flex items-start gap-2">
-                  <Check size={16} class="mt-0.5 shrink-0 text-brand-600" aria-hidden="true" />
+                <li class="flex items-start gap-2.5">
+                  <span class="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-700 ring-1 ring-brand-100">
+                    <Check size={11} stroke-width={3} aria-hidden="true" />
+                  </span>
                   {f}
                 </li>
               ))
@@ -104,68 +132,94 @@ const regionLabel = (ids: string[]) =>
         </div>
       </div>
 
-      <div class="flex flex-col border-t border-slate-200 bg-slate-50/80 p-6 sm:p-8 lg:border-t-0 lg:border-l" aria-live="polite">
-        <p class="text-sm font-medium text-slate-600">
-          <span data-out="regionCount">{initial.regions}</span>
-          <span data-out="regionWord">{initial.regions === 1 ? 'Region' : 'Regionen'}</span>
-          · <span data-out="regionNames">{regionLabel(defaultRegions)}</span>
-        </p>
-
-        <div class="mt-4">
-          {
-            d.enabled && (
-              <p class="text-sm text-slate-500">
-                <span class="sr-only">Regulärer Preis:</span>
-                <s data-out="listPrice">{formatCurrency(initialList.price)}</s>
-              </p>
-            )
-          }
-          <p class="flex items-baseline gap-2">
-            <span class="text-5xl font-semibold tracking-tight text-ink-900 tabular-nums" data-out="price"
-              >{formatCurrency(initial.price)}</span
-            >
-            <span class="text-base text-slate-500" data-out="per">/ Monat</span>
+      <!-- Live-Preis -->
+      <div
+        class="on-dark relative flex flex-col overflow-hidden bg-ink-900 p-6 text-slate-400 sm:p-10"
+        aria-live="polite"
+      >
+        <div
+          class="absolute -top-24 -right-24 h-72 w-72 rounded-full bg-[radial-gradient(closest-side,rgb(66_113_255/0.4),transparent)] blur-2xl"
+          aria-hidden="true"
+        >
+        </div>
+        <div class="relative">
+          <p class="flex items-center gap-2 font-mono text-[11px] tracking-[0.12em] text-slate-400 uppercase">
+            <span class="size-1.5 rounded-full bg-brand-400"></span>
+            <span data-out="regionCount">{initial.regions}</span>
+            <span data-out="regionWord">{initial.regions === 1 ? 'Region' : 'Regionen'}</span>
+            · <span class="text-white" data-out="regionNames">{regionLabel(defaultRegions)}</span>
           </p>
-          {
-            d.enabled && (
-              <p class="mt-2 inline-flex items-center gap-1.5 rounded-full bg-brand-100 px-2.5 py-0.5 text-xs font-semibold text-brand-800">
-                inkl. {d.percent} % {d.label}
-              </p>
-            )
-          }
+
+          <div class="mt-7">
+            {
+              d.enabled && (
+                <p class="font-mono text-sm text-slate-400">
+                  <span class="sr-only">Regulärer Preis:</span>
+                  <s data-out="listPrice">{formatCurrency(initialList.price)}</s>
+                </p>
+              )
+            }
+            <p class="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+              <span
+                class="inline-block text-[3.5rem] leading-none font-semibold tracking-[-0.045em] text-white tabular-nums sm:text-7xl"
+                data-out="price">{formatCurrency(initial.price)}</span
+              >
+              <span class="text-base text-slate-400" data-out="per">/ Monat</span>
+            </p>
+            {
+              d.enabled && (
+                <p class="mt-4 inline-flex items-center gap-1.5 rounded-full bg-brand-500/15 px-2.5 py-1 text-xs font-semibold text-brand-200 ring-1 ring-brand-400/30">
+                  inkl. {d.percent} % {d.label}
+                </p>
+              )
+            }
+          </div>
+
+          <dl class="mt-8 space-y-3 border-t border-white/10 pt-6 text-sm">
+            {
+              pricing.regions.map((r) => (
+                <div class="flex justify-between gap-4" data-region-row={r.id} hidden={!defaultRegions.includes(r.id)}>
+                  <dt class="flex items-center gap-2 text-slate-400">
+                    <span class="rounded bg-white/[0.06] px-1.5 font-mono text-[11px] text-slate-300 ring-1 ring-white/10">
+                      {codes[r.id]}
+                    </span>
+                    {r.name}
+                  </dt>
+                  <dd class="font-mono text-slate-200 tabular-nums" data-out-unit-row>
+                    {unitInitial}
+                  </dd>
+                </div>
+              ))
+            }
+            <div class="flex justify-between gap-4 border-t border-white/10 pt-3">
+              <dt>Preis pro Region</dt>
+              <dd class="font-mono text-white tabular-nums" data-out="unit">{unitInitial}</dd>
+            </div>
+            <div class="flex justify-between gap-4">
+              <dt>Effektiv pro Monat</dt>
+              <dd class="font-mono text-white tabular-nums" data-out="effectiveMonthly">
+                {formatCurrency(initial.effectiveMonthly)}
+              </dd>
+            </div>
+            <div class="flex justify-between gap-4">
+              <dt>Kosten pro Jahr</dt>
+              <dd class="font-mono text-white tabular-nums" data-out="annualCost">{formatCurrency(initial.annualCost)}</dd>
+            </div>
+            <div class="flex justify-between gap-4 rounded-lg bg-emerald-400/10 px-3 py-2 ring-1 ring-emerald-400/20" data-annual-saving hidden>
+              <dt class="text-emerald-300">Ersparnis ggü. monatlich</dt>
+              <dd class="font-mono font-semibold text-emerald-300 tabular-nums" data-out="annualSavings">
+                {formatCurrency(initial.annualSavingsVsMonthly)}
+              </dd>
+            </div>
+          </dl>
         </div>
 
-        <dl class="mt-6 space-y-2.5 border-t border-slate-200 pt-5 text-sm">
-          <div class="flex justify-between gap-4">
-            <dt class="text-slate-600">Preis pro Region</dt>
-            <dd class="font-medium text-ink-900 tabular-nums" data-out="unit">
-              {formatCurrency(initial.price / initial.regions)} / Monat
-            </dd>
-          </div>
-          <div class="flex justify-between gap-4">
-            <dt class="text-slate-600">Effektiv pro Monat</dt>
-            <dd class="font-medium text-ink-900 tabular-nums" data-out="effectiveMonthly">
-              {formatCurrency(initial.effectiveMonthly)}
-            </dd>
-          </div>
-          <div class="flex justify-between gap-4">
-            <dt class="text-slate-600">Kosten pro Jahr</dt>
-            <dd class="font-medium text-ink-900 tabular-nums" data-out="annualCost">{formatCurrency(initial.annualCost)}</dd>
-          </div>
-          <div class="flex justify-between gap-4" data-annual-saving hidden>
-            <dt class="text-emerald-700">Ersparnis ggü. monatlich</dt>
-            <dd class="font-semibold text-emerald-700 tabular-nums" data-out="annualSavings">
-              {formatCurrency(initial.annualSavingsVsMonthly)}
-            </dd>
-          </div>
-        </dl>
-
-        <div class="mt-auto pt-8">
+        <div class="relative mt-auto pt-10">
           <Button href="#waitlist" size="lg" class="w-full">
             Wartelistenplatz sichern
-            <ArrowRight size={18} aria-hidden="true" />
+            <ArrowRight size={18} class="transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
           </Button>
-          <p class="mt-3 text-center text-xs leading-relaxed text-slate-500">
+          <p class="mt-4 text-center text-xs leading-relaxed text-slate-400">
             {d.enabled && <>{d.note} </>}{pricing.taxNote}
           </p>
         </div>

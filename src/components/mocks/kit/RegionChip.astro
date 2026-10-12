@@ -1,0 +1,12 @@
+---
+import { regionMeta, type RegionCode } from '../sample';
+interface Props {
+  region: RegionCode;
+  class?: string;
+}
+const { region, class: className } = Astro.props;
+---
+
+<span class:list={['chip bg-brand-50 text-brand-800 ring-1 ring-inset ring-brand-600/15', className]}>
+  {regionMeta[region].label}
+</span>

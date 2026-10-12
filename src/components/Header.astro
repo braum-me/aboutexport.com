@@ -1,27 +1,27 @@
 ---
-import { Menu, X } from '@lucide/astro';
+import { ArrowRight, Menu, X } from '@lucide/astro';
 import Logo from './Logo.astro';
 import Button from './ui/Button.astro';
 import { nav } from '../config/site';
 ---
 
 <header
-  class="sticky top-0 z-50 border-b border-slate-200/70 bg-white/85 backdrop-blur-md supports-[backdrop-filter]:bg-white/75"
+  class="sticky top-0 z-50 border-b border-white/[0.07] bg-ink-900 supports-[backdrop-filter]:bg-ink-900/95 supports-[backdrop-filter]:backdrop-blur-xl"
   data-header
 >
   <div class="container-page flex h-16 items-center justify-between gap-6">
     <a href="/" class="-m-1 flex shrink-0 items-center rounded-md p-1" aria-label="AboutExport – zur Startseite">
-      <Logo class="h-6 sm:h-7" />
+      <Logo variant="white" class="h-6 sm:h-[26px]" />
     </a>
 
     <nav aria-label="Hauptnavigation" class="hidden md:block">
-      <ul class="flex items-center gap-1">
+      <ul class="flex items-center gap-0.5">
         {
           nav.map((item) => (
             <li>
               <a
                 href={item.href}
-                class="rounded-md px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-ink-900"
+                class="rounded-md px-3 py-2 text-[13.5px] font-medium text-slate-400 transition-colors duration-200 hover:text-white"
               >
                 {item.label}
               </a>
@@ -32,11 +32,20 @@ import { nav } from '../config/site';
     </nav>
 
     <div class="flex items-center gap-2">
-      <div class="hidden lg:block"><Button href="/#kontakt" variant="ghost" size="sm">Kontakt</Button></div>
-      <div class="hidden sm:block"><Button href="/#waitlist" size="sm">Early Access sichern</Button></div>
+      <a
+        href="/#kontakt"
+        class="hidden rounded-md px-3 py-2 text-[13.5px] font-medium text-slate-400 transition-colors hover:text-white lg:block"
+        >Kontakt</a
+      >
+      <div class="hidden sm:block">
+        <Button href="/#waitlist" size="sm">
+          Early Access sichern
+          <ArrowRight size={15} class="transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
+        </Button>
+      </div>
       <button
         type="button"
-        class="inline-flex size-10 items-center justify-center rounded-lg text-ink-900 hover:bg-slate-100 md:hidden"
+        class="inline-flex size-10 items-center justify-center rounded-lg text-white hover:bg-white/10 md:hidden"
         aria-expanded="false"
         aria-controls="mobile-nav"
         aria-label="Menü öffnen"
@@ -51,7 +60,7 @@ import { nav } from '../config/site';
   <nav
     id="mobile-nav"
     aria-label="Mobile Navigation"
-    class="border-t border-slate-200 bg-white md:hidden"
+    class="max-h-[calc(100dvh-4rem)] overflow-y-auto border-t border-white/[0.07] bg-ink-900 md:hidden"
     hidden
     data-mobile-nav
   >
@@ -61,10 +70,11 @@ import { nav } from '../config/site';
           <li>
             <a
               href={item.href}
-              class="block rounded-lg px-3 py-3 text-base font-medium text-ink-900 hover:bg-slate-50"
+              class="flex items-center justify-between rounded-lg px-3 py-3.5 text-[17px] font-medium text-white hover:bg-white/5"
               data-mobile-link
             >
               {item.label}
+              <ArrowRight size={16} class="text-slate-500" aria-hidden="true" />
             </a>
           </li>
         ))
@@ -72,12 +82,13 @@ import { nav } from '../config/site';
       <li>
         <a
           href="/#kontakt"
-          class="block rounded-lg px-3 py-3 text-base font-medium text-ink-900 hover:bg-slate-50"
-          data-mobile-link>Kontakt</a
+          class="flex items-center justify-between rounded-lg px-3 py-3.5 text-[17px] font-medium text-white hover:bg-white/5"
+          data-mobile-link
+          >Kontakt <ArrowRight size={16} class="text-slate-500" aria-hidden="true" /></a
         >
       </li>
-      <li class="px-3 pt-2 pb-2">
-        <Button href="/#waitlist" class="w-full" data-mobile-link>Early Access sichern</Button>
+      <li class="px-3 pt-3 pb-3">
+        <Button href="/#waitlist" size="lg" class="w-full" data-mobile-link>Early Access sichern</Button>
       </li>
     </ul>
   </nav>

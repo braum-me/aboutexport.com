@@ -2,6 +2,8 @@
 import { defineConfig } from 'astro/config';
 import node from '@astrojs/node';
 import tailwindcss from '@tailwindcss/vite';
+import { satteri } from '@astrojs/markdown-satteri';
+import { asciiHeadingIds, externalLinks } from './src/lib/markdown/plugins.mjs';
 
 export default defineConfig({
   site: 'https://aboutexport.com',
@@ -13,6 +15,11 @@ export default defineConfig({
   compressHTML: true,
   devToolbar: { enabled: false },
   image: { service: { entrypoint: 'astro/assets/services/noop' } },
+  // Blog (Content Collections): Shiki nutzt Inline-Styles (CSP-inkompatibel) und wird nicht gebraucht.
+  markdown: {
+    syntaxHighlight: false,
+    processor: satteri({ hastPlugins: [asciiHeadingIds(), externalLinks()] }),
+  },
   security: {
     checkOrigin: true,
     // Host-Header, denen Astro für Request-URL/Origin-Check vertraut

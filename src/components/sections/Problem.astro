@@ -1,28 +1,163 @@
 ---
+import { Check } from '@lucide/astro';
 import { problems } from '../../config/content';
 import FeatureIcon from '../ui/FeatureIcon.astro';
-import SectionHeader from '../ui/SectionHeader.astro';
+import RegionChip from '../mocks/kit/RegionChip.astro';
+import SeverityChip from '../mocks/kit/SeverityChip.astro';
+
+// Typische manuelle Prüfaufgaben – illustrativ, aus den genannten Quellen abgeleitet
+const tabs = [
+  { source: 'Amtsblatt der EU', lang: 'DE · EN', task: 'Neue Veröffentlichungen sichten', pos: 'left-[3%] top-[6%] -rotate-3 sm:left-[4%] sm:top-[10%]' },
+  { source: 'BIS', lang: 'EN', task: 'Entity List abgleichen', pos: 'right-[3%] top-[36%] rotate-2 sm:right-[6%] sm:top-[4%]' },
+  { source: 'MOFCOM', lang: '中文', task: 'Bekanntmachung übersetzen', pos: 'left-[8%] top-[66%] rotate-1 sm:left-[16%] sm:top-[44%]' },
+  { source: 'Europäische Kommission', lang: 'EN', task: 'Leitlinien prüfen', pos: 'right-[3%] top-[40%] -rotate-2 hidden sm:block' },
+  { source: 'U.S. Dept. of Commerce', lang: 'EN', task: 'EAR-Änderungen lesen', pos: 'left-[6%] top-[74%] -rotate-1 hidden sm:block' },
+];
+const streams = ['Amtsblatt', 'Kommission', 'BIS', 'Commerce', 'MOFCOM'];
 ---
 
-<section class="py-20 sm:py-28" aria-labelledby="problem-title">
+<section class="relative bg-white py-24 sm:py-32" aria-labelledby="problem-title">
   <div class="container-page">
-    <SectionHeader id="problem-title" eyebrow="Die Herausforderung" title="Export Compliance ist komplex genug.">
-      Vorschriften ändern sich laufend – in mehreren Jurisdiktionen, Sprachen und Formaten. Das Monitoring bleibt oft
-      Handarbeit.
-    </SectionHeader>
+    <div class="grid gap-8 lg:grid-cols-12 lg:items-end">
+      <div class="lg:col-span-8" data-reveal>
+        <p class="eyebrow"><span class="eyebrow-index">02 /</span> Die Herausforderung</p>
+        <h2 id="problem-title" class="display-lg mt-4 lg:text-[4.25rem]">
+          Regulatorische Änderungen<br class="hidden sm:block" /> warten nicht.
+        </h2>
+      </div>
+      <p class="lead lg:col-span-4 lg:pb-3" data-reveal>
+        Vorschriften ändern sich laufend – in mehreren Jurisdiktionen, Sprachen und Formaten. Das Monitoring bleibt oft
+        Handarbeit.
+      </p>
+    </div>
 
-    <ul class="mt-14 grid gap-px overflow-hidden rounded-2xl border border-slate-200 bg-slate-200 sm:grid-cols-2 lg:grid-cols-5">
-      {
-        problems.map((p, i) => (
-          <li class:list={['bg-white p-6', i === problems.length - 1 && 'sm:col-span-2 lg:col-span-1']}>
-            <span class="flex size-9 items-center justify-center rounded-lg bg-slate-100 text-ink-900">
-              <FeatureIcon name={p.icon} size={18} />
-            </span>
-            <h3 class="mt-4 text-[15px] font-semibold">{p.title}</h3>
-            <p class="mt-2 text-sm leading-relaxed text-slate-600">{p.text}</p>
-          </li>
-        ))
-      }
-    </ul>
+    <div
+      class="mt-14 grid overflow-hidden rounded-3xl border border-slate-200 shadow-[0_1px_0_rgb(15_23_42/0.04),0_30px_60px_-30px_rgb(15_23_42/0.18)] sm:mt-20 lg:grid-cols-2"
+      data-reveal
+    >
+      <!-- Heute: manuell -->
+      <div class="relative bg-slate-50">
+        <div class="bg-dots mask-fade-b absolute inset-x-0 top-0 h-80" aria-hidden="true"></div>
+        <div class="relative px-6 pt-6 sm:px-10 sm:pt-9">
+          <p class="flex items-center gap-2 font-mono text-[11px] tracking-[0.14em] text-slate-500 uppercase">
+            <span class="size-1.5 rounded-full bg-slate-400"></span>Heute · Manueller Workflow
+          </p>
+        </div>
+        <div class="relative h-64 sm:h-72" aria-hidden="true">
+          {
+            tabs.map((t) => (
+              <div
+                class:list={[
+                  'absolute w-[12.5rem] rounded-lg sm:w-[13.5rem] border border-slate-200 bg-white px-3 py-2.5 shadow-[0_8px_20px_-10px_rgb(15_23_42/0.25)]',
+                  t.pos,
+                ]}
+              >
+                <div class="flex items-center justify-between gap-2">
+                  <span class="truncate text-[12px] font-semibold text-ink-900">{t.source}</span>
+                  <span class="chip shrink-0 bg-slate-100 text-slate-500">{t.lang}</span>
+                </div>
+                <p class="mt-1 flex items-center gap-1.5 text-[11.5px] text-slate-500">
+                  <span class="size-3 shrink-0 rounded-[3px] border border-slate-300" />
+                  {t.task}
+                </p>
+              </div>
+            ))
+          }
+        </div>
+        <ol class="relative border-t border-slate-200">
+          {
+            problems.map((p, i) => (
+              <li class="flex min-h-[6.5rem] gap-4 border-b border-slate-200 px-6 py-5 last:border-b-0 sm:px-10">
+                <span class="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-white text-slate-500 ring-1 ring-slate-200">
+                  <FeatureIcon name={p.icon} size={16} />
+                </span>
+                <div>
+                  <h3 class="flex items-baseline gap-2 text-[15px] font-semibold">
+                    <span class="font-mono text-[11px] font-normal text-slate-500">0{i + 1}</span>
+                    {p.title}
+                  </h3>
+                  <p class="mt-1 text-sm leading-relaxed text-slate-500">{p.text}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+
+      <!-- Mit AboutExport: zentral -->
+      <div class="on-dark relative bg-ink-900 text-slate-400">
+        <div class="bg-grid-dark mask-fade-b absolute inset-x-0 top-0 h-80" aria-hidden="true"></div>
+        <div class="relative px-6 pt-6 sm:px-10 sm:pt-9">
+          <p class="flex items-center gap-2 font-mono text-[11px] tracking-[0.14em] text-brand-300 uppercase">
+            <span class="size-1.5 rounded-full bg-brand-500 ring-2 ring-brand-500/30"></span>Mit AboutExport · Zentral
+          </p>
+        </div>
+        <div class="relative flex h-64 flex-col items-center px-6 pt-5 sm:h-72 sm:px-10" aria-hidden="true">
+          <div class="grid w-full grid-cols-5 gap-1.5">
+            {
+              streams.map((s) => (
+                <span class="truncate rounded-md border border-white/10 bg-white/[0.04] px-1 py-1 text-center font-mono text-[9.5px] text-slate-400 sm:text-[10px]">
+                  {s}
+                </span>
+              ))
+            }
+          </div>
+          <svg viewBox="0 0 100 40" preserveAspectRatio="none" class="h-12 w-full sm:h-14">
+            <defs>
+              <linearGradient id="conv" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0" stop-color="#6b90ff" stop-opacity="0.15"></stop>
+                <stop offset="1" stop-color="#6b90ff" stop-opacity="0.9"></stop>
+              </linearGradient>
+            </defs>
+            {
+              [10, 30, 50, 70, 90].map((x) => (
+                <path
+                  d={`M${x} 0 C${x} 22 50 18 50 40`}
+                  fill="none"
+                  stroke="url(#conv)"
+                  stroke-width="1.2"
+                  vector-effect="non-scaling-stroke"
+                />
+              ))
+            }
+          </svg>
+          <div class="w-full max-w-sm rounded-xl bg-white p-3 text-[11px] shadow-glow">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+              <span class="font-semibold text-ink-900">Ihr Überblick · heute</span>
+              <span class="chip bg-amber-50 text-amber-800 ring-1 ring-inset ring-amber-600/20">Beispiel</span>
+            </div>
+            <ul class="mt-1 divide-y divide-slate-100">
+              <li class="flex items-center gap-2 py-1.5">
+                <SeverityChip severity="critical" /><RegionChip region="EU" />
+                <span class="truncate text-ink-900">Anhang I der Dual-Use-Verordnung</span>
+              </li>
+              <li class="flex items-center gap-2 py-1.5">
+                <SeverityChip severity="critical" /><RegionChip region="US" />
+                <span class="truncate text-ink-900">Neue Einträge auf der Entity List</span>
+              </li>
+              <li class="flex items-center gap-2 py-1.5">
+                <SeverityChip severity="notice" /><RegionChip region="CN" />
+                <span class="truncate text-ink-900">Bekanntmachung zur Kontrollliste</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <ul class="relative border-t border-white/[0.08]">
+          {
+            problems.map((p) => (
+              <li class="flex min-h-[6.5rem] items-center gap-4 border-b border-white/[0.08] px-6 py-5 last:border-b-0 sm:px-10">
+                <span class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-brand-600/15 text-brand-300 ring-1 ring-brand-400/25">
+                  <Check size={16} stroke-width={2.25} aria-hidden="true" />
+                </span>
+                <p class="text-[15px] font-medium text-white">
+                  {p.answer}
+                  <span class="sr-only"> – statt: {p.title}</span>
+                </p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
   </div>
 </section>

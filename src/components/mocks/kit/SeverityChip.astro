@@ -1,0 +1,13 @@
+---
+import { severityMeta, type Severity } from '../sample';
+interface Props {
+  severity: Severity;
+  class?: string;
+}
+const { severity, class: className } = Astro.props;
+const s = severityMeta[severity];
+---
+
+<span class:list={['chip', s.chip, className]}>
+  <span class:list={['size-1.5 rounded-full', s.dot]}></span>{s.label}
+</span>

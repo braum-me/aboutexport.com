@@ -1,31 +1,36 @@
 ---
-import { ChevronDown } from '@lucide/astro';
+import { Plus } from '@lucide/astro';
 import { faqs } from '../../config/content';
-import SectionHeader from '../ui/SectionHeader.astro';
 ---
 
-<section id="faq" class="scroll-mt-16 border-t border-slate-200 bg-slate-50/70 py-20 sm:py-28" aria-labelledby="faq-title">
-  <div class="container-page grid gap-12 lg:grid-cols-[1fr_1.6fr]">
-    <SectionHeader id="faq-title" eyebrow="FAQ" title="Antworten auf Ihre Fragen." align="left">
-      Alles, was Sie vor der Anmeldung wissen möchten. Ihre Frage fehlt? <a
-        href="#kontakt"
-        class="font-medium text-brand-700 underline decoration-brand-300 underline-offset-2">Schreiben Sie uns.</a
-      >
-    </SectionHeader>
+<section id="faq" class="scroll-mt-16 border-t border-slate-200 bg-white py-24 sm:py-32" aria-labelledby="faq-title">
+  <div class="container-page grid gap-12 lg:grid-cols-12">
+    <div class="lg:col-span-4">
+      <div class="lg:sticky lg:top-28" data-reveal>
+        <p class="eyebrow"><span class="eyebrow-index">08 /</span> FAQ</p>
+        <h2 id="faq-title" class="display-md mt-4">Antworten auf Ihre Fragen.</h2>
+        <p class="lead mt-5">
+          Alles, was Sie vor der Anmeldung wissen möchten. Ihre Frage fehlt? <a
+            href="#kontakt"
+            class="font-medium text-brand-700 underline decoration-brand-300 underline-offset-4 hover:decoration-brand-700"
+            >Schreiben Sie uns.</a
+          >
+        </p>
+      </div>
+    </div>
 
-    <div class="divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white">
+    <div class="border-t border-slate-200 lg:col-span-8">
       {
-        faqs.map((f) => (
-          <details class="group px-5 sm:px-6" name="faq">
-            <summary class="flex cursor-pointer list-none items-center justify-between gap-4 py-5 text-left text-[15px] font-medium text-ink-900 [&::-webkit-details-marker]:hidden">
-              {f.q}
-              <ChevronDown
-                size={18}
-                class="shrink-0 text-slate-500 transition-transform group-open:rotate-180"
-                aria-hidden="true"
-              />
+        faqs.map((f, i) => (
+          <details class="group border-b border-slate-200" name="faq">
+            <summary class="flex cursor-pointer list-none items-start gap-5 py-6 text-left text-[17px] font-medium text-ink-900 transition-colors hover:text-brand-700 [&::-webkit-details-marker]:hidden">
+              <span class="mt-1 w-6 shrink-0 font-mono text-[11px] text-slate-500">{String(i + 1).padStart(2, '0')}</span>
+              <span class="flex-1">{f.q}</span>
+              <span class="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full ring-1 ring-slate-200 transition duration-300 group-open:rotate-45 group-open:bg-ink-900 group-open:text-white group-open:ring-ink-900">
+                <Plus size={14} aria-hidden="true" />
+              </span>
             </summary>
-            <div class="space-y-3 pb-5 text-sm leading-relaxed text-slate-600">
+            <div class="space-y-3 pr-11 pb-7 pl-11 text-[15px] leading-relaxed text-slate-600">
               {f.a.map((p) => (
                 <p>{p}</p>
               ))}

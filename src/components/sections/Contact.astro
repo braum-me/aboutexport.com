@@ -8,24 +8,44 @@ import { site } from '../../config/site';
 const d = pricing.earlyAccessDiscount;
 ---
 
-<section id="kontakt" class="relative isolate scroll-mt-16 overflow-hidden py-20 sm:py-28" aria-labelledby="contact-title">
-  <div class="bg-grid absolute inset-0 -z-10 [mask-image:radial-gradient(ellipse_60%_60%_at_50%_100%,#000_30%,transparent_100%)]"></div>
+<section
+  id="kontakt"
+  class="on-dark relative isolate scroll-mt-16 overflow-hidden bg-ink-900 py-24 text-slate-400 sm:py-32"
+  aria-labelledby="contact-title"
+>
+  <div class="bg-grid-dark mask-radial absolute inset-0 -z-10" aria-hidden="true"></div>
+  <div
+    class="absolute -top-40 left-1/2 -z-10 h-[40rem] w-[64rem] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgb(43_89_240/0.3),transparent)] blur-3xl"
+    aria-hidden="true"
+  >
+  </div>
+  <div class="bg-noise pointer-events-none absolute inset-0 -z-10 opacity-[0.035] mix-blend-overlay" aria-hidden="true"></div>
+
   <div class="container-page">
-    <div class="mx-auto max-w-2xl text-center">
-      <p class="eyebrow">{site.launch}</p>
-      <h2 id="contact-title" class="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-        Bereit für smartes Export-Compliance-Monitoring?
-      </h2>
-      <p class="mt-4 text-base text-slate-600 sm:text-lg">
-        Tragen Sie sich in die Waitlist ein oder schreiben Sie uns direkt.
+    <div class="grid gap-8 lg:grid-cols-12 lg:items-end">
+      <div class="lg:col-span-7" data-reveal>
+        <p class="eyebrow"><span class="eyebrow-index">09 /</span> {site.launch}</p>
+        <h2 id="contact-title" class="display-lg mt-4 text-white">
+          Seien Sie vorbereitet,<br /><span class="text-slate-500">bevor es ernst wird.</span>
+        </h2>
+      </div>
+      <p class="lead lg:col-span-5 lg:pb-2" data-reveal>
+        Tragen Sie sich in die Waitlist ein oder schreiben Sie uns direkt. Länderwünsche und Feature Requests fließen in die
+        Priorisierung ein.
       </p>
     </div>
 
-    <div class="mx-auto mt-12 grid max-w-5xl gap-6 lg:grid-cols-[1.1fr_1fr]">
+    <div class="mt-14 grid items-start gap-5 sm:mt-16 lg:grid-cols-[1.15fr_1fr]">
       <!-- Waitlist -->
-      <div id="waitlist" class="card scroll-mt-24 p-6 ring-1 ring-brand-600/10 sm:p-8">
-        <h3 class="text-xl font-semibold">Early Access sichern</h3>
-        <p class="mt-2 text-sm text-slate-600">
+      <div
+        id="waitlist"
+        class="relative scroll-mt-24 rounded-3xl bg-white p-6 shadow-[0_0_0_1px_rgb(255_255_255/0.1),0_40px_100px_-30px_rgb(43_89_240/0.55)] sm:p-10"
+      >
+        <span class="inline-flex items-center gap-2 rounded-full bg-brand-50 px-2.5 py-1 font-mono text-[10.5px] font-medium tracking-wider text-brand-800 uppercase ring-1 ring-brand-100"
+          ><span class="size-1.5 rounded-full bg-brand-600"></span>Waitlist offen</span
+        >
+        <h3 class="mt-5 text-2xl font-semibold tracking-tight">Early Access sichern</h3>
+        <p class="mt-2 text-[15px] text-slate-600">
           Wir informieren Sie, sobald AboutExport startet.{
             d.enabled && <> Waitlist-Mitgliedern ist ein {d.percent} % {d.label} vorgesehen.</>
           }
@@ -96,9 +116,9 @@ const d = pricing.earlyAccessDiscount;
       </div>
 
       <!-- Kontakt -->
-      <div class="card p-6 sm:p-8">
-        <h3 class="text-xl font-semibold">Kontakt</h3>
-        <p class="mt-2 text-sm text-slate-600">
+      <div class="rounded-3xl bg-white/[0.97] p-6 shadow-[0_0_0_1px_rgb(255_255_255/0.1)] sm:p-10">
+        <h3 class="text-2xl font-semibold tracking-tight">Kontakt</h3>
+        <p class="mt-2 text-[15px] text-slate-600">
           Fragen zu Funktionen, Regionen oder Preisen? Oder per E-Mail:
           <a href={`mailto:${site.contactEmail}`} class="inline-flex items-center gap-1 font-medium text-brand-700 hover:underline"
             ><Mail size={14} aria-hidden="true" />{site.contactEmail}</a

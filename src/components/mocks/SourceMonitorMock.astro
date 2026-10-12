@@ -1,0 +1,105 @@
+---
+// Konzept: Quellen-Monitoring je Jurisdiktion. Beispieldaten, keine Kennzahlen.
+import { Activity, RefreshCw } from '@lucide/astro';
+import MarkIcon from './kit/MarkIcon.astro';
+
+const rows = [
+  { source: 'Amtsblatt der Europäischen Union', region: 'EU', checked: '07:45', fresh: 2 },
+  { source: 'Europäische Kommission', region: 'EU', checked: '07:40', fresh: 1 },
+  { source: 'Bureau of Industry and Security', region: 'USA', checked: '07:38', fresh: 1 },
+  { source: 'U.S. Department of Commerce', region: 'USA', checked: '07:31', fresh: 0 },
+  { source: 'Ministry of Commerce (MOFCOM)', region: 'CN', checked: '07:22', fresh: 1 },
+];
+const days = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+const stacks = [
+  ['h-[30%]', 'h-[20%]', 'h-[10%]'],
+  ['h-[45%]', 'h-[15%]', 'h-[15%]'],
+  ['h-[25%]', 'h-[30%]', 'h-[10%]'],
+  ['h-[50%]', 'h-[20%]', 'h-[20%]'],
+  ['h-[35%]', 'h-[25%]', 'h-[15%]'],
+  ['h-[10%]', 'h-[5%]', 'h-[5%]'],
+  ['h-[8%]', 'h-[5%]', 'h-[10%]'],
+];
+---
+
+<div class="@container flex size-full flex-col bg-white text-[11px] text-slate-600 select-none">
+  <div class="flex items-center gap-2.5 border-b border-slate-200/80 px-4 py-3">
+    <MarkIcon class="size-5" />
+    <span class="font-semibold text-ink-900">Quellen</span>
+    <span class="hidden gap-1 @md:flex">
+      <span class="chip bg-ink-900 text-white">Alle</span>
+      <span class="chip text-slate-500 ring-1 ring-slate-200">EU</span>
+      <span class="chip text-slate-500 ring-1 ring-slate-200">USA</span>
+      <span class="chip text-slate-500 ring-1 ring-slate-200">CN</span>
+    </span>
+    <span class="ml-auto flex items-center gap-1.5 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-700 ring-1 ring-emerald-600/15">
+      <Activity size={11} stroke-width={2} /> Monitoring aktiv
+    </span>
+  </div>
+
+  <div class="flex-1 overflow-hidden px-4 pt-3">
+    <div class="grid grid-cols-[1fr_auto_auto] gap-x-3 border-b border-slate-100 pb-2 font-mono text-[9.5px] tracking-wider text-slate-500 uppercase @md:grid-cols-[1fr_44px_72px_64px_40px]">
+      <span>Quelle</span>
+      <span class="hidden @md:block">Region</span>
+      <span>Status</span>
+      <span class="hidden @md:block">Geprüft</span>
+      <span class="text-right">Neu</span>
+    </div>
+    <ul class="divide-y divide-slate-100">
+      {
+        rows.map((r) => (
+          <li class="grid grid-cols-[1fr_auto_auto] items-center gap-x-3 py-2.5 @md:grid-cols-[1fr_44px_72px_64px_40px]">
+            <span class="min-w-0">
+              <span class="block truncate font-medium text-ink-900">{r.source}</span>
+              <span class="block font-mono text-[9.5px] text-slate-500 @md:hidden">{r.region} · {r.checked}</span>
+            </span>
+            <span class="chip hidden w-fit bg-brand-50 text-brand-800 ring-1 ring-inset ring-brand-600/15 @md:inline-flex">
+              {r.region}
+            </span>
+            <span class="flex items-center gap-1.5 text-emerald-700">
+              <span class="size-1.5 rounded-full bg-emerald-500" />
+              Aktiv
+            </span>
+            <span class="hidden items-center gap-1 font-mono text-[10px] text-slate-500 tabular-nums @md:flex">
+              <RefreshCw size={9} /> {r.checked}
+            </span>
+            <span class="text-right">
+              {r.fresh > 0 ? (
+                <span class="inline-flex min-w-5 justify-center rounded-md bg-brand-600 px-1 font-mono text-[10px] leading-5 font-semibold text-white">
+                  {r.fresh}
+                </span>
+              ) : (
+                <span class="font-mono text-slate-300">–</span>
+              )}
+            </span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  <div class="m-4 mt-2 rounded-lg border border-slate-200/90 p-3">
+    <div class="flex items-center justify-between">
+      <p class="font-semibold text-ink-900">Erkannte Änderungen · 7 Tage</p>
+      <span class="flex gap-2.5 font-mono text-[9.5px] text-slate-500">
+        <span class="flex items-center gap-1"><span class="size-1.5 rounded-full bg-brand-600"></span>EU</span>
+        <span class="flex items-center gap-1"><span class="size-1.5 rounded-full bg-brand-300"></span>USA</span>
+        <span class="flex items-center gap-1"><span class="size-1.5 rounded-full bg-slate-300"></span>CN</span>
+      </span>
+    </div>
+    <div class="mt-3 grid h-16 grid-cols-7 items-end gap-2">
+      {
+        stacks.map((s) => (
+          <div class="flex h-full flex-col justify-end gap-px">
+            <span class:list={['w-full rounded-t-[2px] bg-slate-300', s[2]]} />
+            <span class:list={['w-full bg-brand-300', s[1]]} />
+            <span class:list={['w-full rounded-b-[2px] bg-brand-600', s[0]]} />
+          </div>
+        ))
+      }
+    </div>
+    <div class="mt-1.5 grid grid-cols-7 gap-2 text-center font-mono text-[9px] text-slate-500">
+      {days.map((d) => <span>{d}</span>)}
+    </div>
+  </div>
+</div>

@@ -4,6 +4,7 @@
  * - Mit `src` (Pfad unter /public) wird das Bild gezeigt – sofern die Datei beim Build existiert.
  * - Ohne Bild wird der Slot (Konzept-Mockup) bzw. ein neutraler Platzhalter gerendert.
  * Das feste Seitenverhältnis verhindert Layout Shifts, auch wenn Bilder fehlen.
+ * Echte Screenshots lassen sich so austauschen, ohne das Layout anzufassen (siehe README).
  */
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
@@ -16,10 +17,17 @@ interface Props {
   height?: number;
   /** Tailwind-Klasse für das Seitenverhältnis, z. B. "aspect-[16/10]" */
   aspect?: string;
-  /** Browser-Chrome (Fensterleiste) anzeigen */
+  /** Fensterleiste anzeigen */
   chrome?: boolean;
+  /** Titel in der Fensterleiste */
+  windowTitle?: string;
+  /** Hintergrund, auf dem der Rahmen steht – steuert Kontrast von Rahmen & Hinweis */
+  tone?: 'light' | 'dark';
+  /** Ausrichtung des Konzept-Hinweises */
+  captionAlign?: 'left' | 'center' | 'right';
   priority?: boolean;
   class?: string;
+  frameClass?: string;
 }
 
 const {
@@ -29,23 +37,42 @@ const {
   height = 1000,
   aspect = 'aspect-[16/10]',
   chrome = true,
+  windowTitle = 'AboutExport',
+  tone = 'light',
+  captionAlign = 'center',
   priority = false,
   class: className,
+  frameClass,
 } = Astro.props;
 
 const hasImage = !!src && src.startsWith('/') && existsSync(join(process.cwd(), 'public', src));
 const isPlaceholder = !hasImage;
+const dark = tone === 'dark';
 ---
 
 <figure class:list={['relative', className]} data-screenshot={isPlaceholder ? 'placeholder' : 'image'}>
-  <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-elevated ring-1 ring-slate-900/[0.03]">
+  <div
+    class:list={[
+      'overflow-hidden rounded-xl bg-white',
+      dark
+        ? 'shadow-glow ring-1 ring-white/10'
+        : 'shadow-float ring-1 ring-slate-900/[0.04]',
+      frameClass,
+    ]}
+  >
     {
       chrome && (
-        <div class="flex h-9 items-center gap-1.5 border-b border-slate-200 bg-slate-50 px-3.5" aria-hidden="true">
-          <span class="size-2.5 rounded-full bg-slate-300" />
-          <span class="size-2.5 rounded-full bg-slate-300" />
-          <span class="size-2.5 rounded-full bg-slate-300" />
-          <span class="ml-3 h-4 w-40 max-w-[40%] rounded bg-slate-200/80" />
+        <div class="flex h-9 items-center gap-3 border-b border-slate-200/80 bg-slate-50/90 px-3.5" aria-hidden="true">
+          <span class="flex gap-1.5">
+            <span class="size-2.5 rounded-full bg-slate-300/90" />
+            <span class="size-2.5 rounded-full bg-slate-300/90" />
+            <span class="size-2.5 rounded-full bg-slate-300/90" />
+          </span>
+          <span class="mx-auto flex h-5 items-center gap-1.5 rounded-md bg-white px-3 font-mono text-[10px] text-slate-500 ring-1 ring-slate-200">
+            <span class="size-1.5 rounded-full bg-emerald-500" />
+            {windowTitle}
+          </span>
+          <span class="w-[42px]" />
         </div>
       )
     }
@@ -83,7 +110,15 @@ const isPlaceholder = !hasImage;
   </div>
   {
     isPlaceholder && (
-      <figcaption class="mt-3 flex items-center justify-center gap-1.5 text-xs text-slate-500">
+      <figcaption
+        class:list={[
+          'mt-3 flex items-center gap-1.5 font-mono text-[10.5px] tracking-wide',
+          dark ? 'text-slate-400' : 'text-slate-500',
+          captionAlign === 'left' && 'justify-start',
+          captionAlign === 'center' && 'justify-center',
+          captionAlign === 'right' && 'justify-end',
+        ]}
+      >
         <span class="size-1.5 rounded-full bg-amber-400" aria-hidden="true" />
         Konzeptdarstellung – kein Screenshot des finalen Produkts
       </figcaption>

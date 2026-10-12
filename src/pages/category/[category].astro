@@ -1,0 +1,11 @@
+---
+import BlogIndex from '../../components/blog/BlogIndex.astro';
+import { categories, type CategoryId } from '../../config/blog';
+
+export function getStaticPaths() {
+  return Object.values(categories).map((c) => ({ params: { category: c.slug } }));
+}
+const category = Astro.params.category as CategoryId;
+---
+
+<BlogIndex category={category} />

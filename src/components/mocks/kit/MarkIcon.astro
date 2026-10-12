@@ -1,0 +1,13 @@
+---
+// Vereinfachte Bildmarke für Mockups (rein dekorativ)
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+---
+
+<svg viewBox="0 0 24 24" class:list={['shrink-0', className]} aria-hidden="true">
+  <rect width="24" height="24" rx="6" fill="#1e40af"></rect>
+  <circle cx="12" cy="12" r="6.5" fill="none" stroke="#fff" stroke-width="1.6"></circle>
+  <circle cx="13.6" cy="12" r="3.2" fill="#fff"></circle>
+</svg>

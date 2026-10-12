@@ -1,0 +1,217 @@
+---
+/**
+ * Blog-Beiträge unter ihren bisherigen WordPress-URLs (/<slug>/).
+ * Statische Seiten (impressum, datenschutz …) haben Vorrang vor dieser dynamischen Route.
+ */
+import { render } from 'astro:content';
+import { ArrowLeft, ArrowUpRight } from '@lucide/astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ArticleCta from '../components/blog/ArticleCta.astro';
+import PostCard from '../components/blog/PostCard.astro';
+import Button from '../components/ui/Button.astro';
+import { categories } from '../config/blog';
+import { site } from '../config/site';
+import { pricing } from '../config/pricing';
+import { formatDate, getPosts, postPath, readingTime, type Post } from '../lib/blog';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+interface Props {
+  post: Post;
+}
+const { post } = Astro.props;
+const { data } = post;
+const { Content, headings } = await render(post);
+const toc = headings.filter((h) => h.depth === 2);
+const cat = categories[data.category];
+const path = postPath(post);
+const minutes = readingTime(post.body);
+const d = pricing.earlyAccessDiscount;
+
+const all = await getPosts();
+const related = [
+  ...all.filter((p) => p.id !== post.id && p.data.category === data.category),
+  ...all.filter((p) => p.id !== post.id && p.data.category !== data.category),
+].slice(0, 2);
+
+const url = new URL(path, site.url).toString();
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: data.title,
+    description: data.description,
+    image: new URL(data.image, site.url).toString(),
+    datePublished: data.pubDate.toISOString(),
+    dateModified: (data.updatedDate ?? data.pubDate).toISOString(),
+    author: { '@type': 'Organization', name: site.name, url: site.url },
+    publisher: {
+      '@type': 'Organization',
+      name: site.name,
+      logo: { '@type': 'ImageObject', url: `${site.url}/images/branding/aboutexport-icon.png` },
+    },
+    mainEntityOfPage: url,
+    inLanguage: 'de-DE',
+    articleSection: cat.label,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Journal', item: `${site.url}/blog/` },
+      { '@type': 'ListItem', position: 2, name: cat.label, item: `${site.url}/category/${cat.slug}/` },
+      { '@type': 'ListItem', position: 3, name: data.title, item: url },
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title={data.seoTitle ?? data.title}
+  description={data.description}
+  path={path}
+  ogType="article"
+  ogImage={data.image}
+  ogImageAlt={data.imageAlt ?? data.title}
+  publishedTime={data.pubDate.toISOString()}
+  modifiedTime={data.updatedDate?.toISOString()}
+  jsonLd={jsonLd}
+>
+  <article>
+    <header class="relative overflow-hidden border-b border-slate-200 bg-slate-50">
+      <div class="bg-grid mask-fade-b absolute inset-0 opacity-70" aria-hidden="true"></div>
+      <div class="container-page relative pt-12 pb-14 sm:pt-20 sm:pb-20">
+        <nav aria-label="Brotkrumen" class="font-mono text-[11px] tracking-[0.12em] text-slate-500 uppercase">
+          <ol class="flex flex-wrap items-center gap-2">
+            <li><a href="/blog/" class="transition-colors hover:text-ink-900">Journal</a></li>
+            <li aria-hidden="true" class="text-slate-300">/</li>
+            <li><a href={`/category/${cat.slug}/`} class="text-brand-700 transition-colors hover:text-ink-900">{cat.label}</a></li>
+          </ol>
+        </nav>
+        <h1 class="display-md mt-6 max-w-4xl lg:text-[3.25rem]">{data.title}</h1>
+        <p class="lead mt-6 max-w-3xl">{data.excerpt}</p>
+        <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-[11px] text-slate-500">
+          <span class="flex items-center gap-2">
+            <span class="size-1.5 rounded-full bg-brand-600" aria-hidden="true"></span>{data.author}
+          </span>
+          <time datetime={data.pubDate.toISOString()}>{formatDate(data.pubDate)}</time>
+          <span>{minutes} Min. Lesezeit</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="bg-white">
+      <div class="container-page">
+        <figure class="relative -mt-px pt-10 sm:pt-14">
+          <img
+            src={data.image}
+            alt={data.imageAlt ?? ''}
+            width="1200"
+            height="675"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+            class="aspect-[16/8] w-full rounded-2xl bg-ink-900 object-cover shadow-float"
+          />
+        </figure>
+
+        <div class="grid gap-12 py-14 sm:py-20 lg:grid-cols-12">
+          <div class="min-w-0 lg:col-span-8 xl:col-span-7 xl:col-start-2">
+            <div class="prose-article">
+              <Content />
+            </div>
+
+            {
+              data.category === 'news' && (
+                <p class="mt-14 rounded-xl border border-slate-200 bg-slate-50 px-5 py-4 text-sm leading-relaxed text-slate-600">
+                  <strong class="font-semibold text-ink-900">Hinweis:</strong> Dieser Beitrag gibt den Stand vom{' '}
+                  {formatDate(data.pubDate)} wieder. Maßgeblich für Preise und Konditionen sind die Angaben im Bereich{' '}
+                  <a href="/#preise" class="font-medium text-brand-700 underline underline-offset-2">
+                    Preise
+                  </a>
+                  .
+                </p>
+              )
+            }
+
+            <div class="mt-14 flex flex-wrap items-center justify-between gap-4 border-t border-slate-200 pt-8">
+              <a
+                href="/blog/"
+                class="group inline-flex items-center gap-2 text-sm font-medium text-ink-900 transition-colors hover:text-brand-700"
+              >
+                <ArrowLeft size={16} class="transition-transform group-hover:-translate-x-0.5" aria-hidden="true" />
+                Alle Beiträge
+              </a>
+              <a
+                href={`/category/${cat.slug}/`}
+                class="rounded-full border border-slate-200 px-3 py-1 font-mono text-[11px] text-slate-600 transition hover:border-slate-300 hover:text-ink-900"
+                >{cat.label}</a
+              >
+            </div>
+          </div>
+
+          <aside class="hidden lg:col-span-4 lg:block xl:col-span-3">
+            <div class="sticky top-28 space-y-6">
+              {
+                toc.length > 1 && (
+                  <nav aria-label="Inhalt dieses Beitrags">
+                    <p class="font-mono text-[11px] tracking-[0.14em] text-slate-500 uppercase">Inhalt</p>
+                    <ol class="mt-4 space-y-1 border-l border-slate-200">
+                      {toc.map((h) => (
+                        <li>
+                          <a
+                            href={`#${h.slug}`}
+                            class="-ml-px block border-l border-transparent py-1.5 pl-4 text-sm leading-snug text-slate-500 transition-colors hover:border-brand-600 hover:text-ink-900"
+                          >
+                            {h.text}
+                          </a>
+                        </li>
+                      ))}
+                    </ol>
+                  </nav>
+                )
+              }
+              <div class="on-dark rounded-2xl bg-ink-900 p-6 text-slate-400">
+                <p class="eyebrow">{site.launch}</p>
+                <p class="mt-3 text-lg leading-snug font-semibold tracking-tight text-white">
+                  Exportkontrolle automatisch im Blick.
+                </p>
+                <p class="mt-2 text-sm leading-relaxed">
+                  Alerts, Newsfeed und KI-Zusammenfassungen für EU, USA und China.{
+                    d.enabled && <> {d.percent} % {d.label} für die Waitlist.</>
+                  }
+                </p>
+                <Button href="/#waitlist" class="mt-5 w-full">
+                  Early Access sichern <ArrowUpRight size={16} aria-hidden="true" />
+                </Button>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  {
+    related.length > 0 && (
+      <section class="border-t border-slate-200 bg-slate-50 py-20 sm:py-24" aria-labelledby="related-title">
+        <div class="container-page">
+          <p class="eyebrow">Weiterlesen</p>
+          <h2 id="related-title" class="display-md mt-4">Mehr aus dem Journal</h2>
+          <div class="mt-10 grid gap-4 sm:grid-cols-2">
+            {related.map((p) => (
+              <div class="flex">
+                <PostCard post={p} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <ArticleCta class={related.length > 0 ? 'bg-slate-50' : 'bg-white'} />
+</BaseLayout>

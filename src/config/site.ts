@@ -21,6 +21,7 @@ export const nav = [
   { href: '/#preise', label: 'Preise' },
   { href: '/#roi', label: 'ROI-Rechner' },
   { href: '/#faq', label: 'FAQ' },
+  { href: '/blog/', label: 'Blog' },
 ] as const;
 
 export const legalNav = [

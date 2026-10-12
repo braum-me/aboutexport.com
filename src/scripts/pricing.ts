@@ -10,6 +10,10 @@ export function initPricing(): void {
   const regionInputs = root.querySelectorAll<HTMLInputElement>('[data-region]');
   const out = (key: string) => root.querySelector<HTMLElement>(`[data-out="${key}"]`);
   const savingRow = root.querySelector<HTMLElement>('[data-annual-saving]');
+  const regionRows = root.querySelectorAll<HTMLElement>('[data-region-row]');
+  const unitRows = root.querySelectorAll<HTMLElement>('[data-out-unit-row]');
+  const priceEl = out('price');
+  let lastPrice = priceEl?.textContent ?? '';
 
   const update = () => {
     const interval = (Array.from(intervals).find((i) => i.checked)?.value ?? 'monthly') as BillingInterval;
@@ -41,6 +45,22 @@ export function initPricing(): void {
     set('annualCost', formatCurrency(q.annualCost));
     set('annualSavings', formatCurrency(q.annualSavingsVsMonthly));
     if (savingRow) savingRow.hidden = interval !== 'annual';
+
+    // Aufschlüsselung je Region im Preisbereich
+    regionRows.forEach((row) => {
+      row.hidden = !ids.includes(row.dataset.regionRow ?? '');
+    });
+    unitRows.forEach((el) => {
+      el.textContent = `${formatCurrency(q.price / q.regions)} ${per}`;
+    });
+
+    // Dezentes Feedback bei Preisänderung (per CSS bei reduzierter Bewegung deaktiviert)
+    if (priceEl && priceEl.textContent !== lastPrice) {
+      lastPrice = priceEl.textContent ?? '';
+      priceEl.classList.remove('animate-bump');
+      void priceEl.offsetWidth;
+      priceEl.classList.add('animate-bump');
+    }
   };
 
   root.addEventListener('change', update);
