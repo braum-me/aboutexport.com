@@ -171,13 +171,12 @@ COOP/CORP sowie `frame-ancestors`. Die Content-Security-Policy mit Hashes für S
 
 ## Rechtliche Prüfung (vor Go-live)
 
-Impressum und Datenschutzerklärung enthalten sichtbare **Prüfhinweise** (`<ReviewNote>`), die vor dem Go-live
-bearbeitet und entfernt werden müssen. Die Texte sind **nicht rechtlich geprüft**. Offene Punkte:
+Impressum und Datenschutzerklärung sind **nicht rechtlich geprüft**. Interne Prüfhinweise werden nicht öffentlich
+angezeigt; alle offenen Punkte stehen als **Release-Blocker** in [`docs/release-blockers.md`](docs/release-blockers.md).
 
-- Impressum: vollständiger Name des Inhabers fehlt (§ 5 DDG); Veröffentlichung der persönlichen Steuer-ID prüfen
-  (stattdessen ggf. USt-IdNr.); Erklärung zur Verbraucherstreitbeilegung prüfen
+- Die persönliche Steuer-ID wurde aus dem Impressum entfernt (sie ist keine Pflichtangabe). Sie ist aber noch in
+  der Git-Historie enthalten – Bereinigung siehe `docs/release-blockers.md`.
 - OS-Plattform-Hinweis entfernt (Plattform seit Juli 2025 eingestellt)
-- Datenschutz: Hosting- und SMTP-Anbieter ergänzen, AV-Verträge, Log-Aufbewahrung, Drittlandübermittlung verifizieren
 - Entfernt (auf der neuen Website nicht mehr im Einsatz): Real Cookie Banner, WP Compress, UpdraftPlus,
   Google reCAPTCHA, Brevo, Umami, Ally, Google Fonts, Font Awesome, CDN
 - Waitlist-Rechtsgrundlage (Art. 6 Abs. 1 lit. b DSGVO) und Speicherdauer bestätigen

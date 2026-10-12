@@ -6,7 +6,7 @@ seoTitle: 'AboutExport Waitlist ist offen – 20 % Rabatt für frühe Anmeldunge
 description: 'Export Control Alerts automatisch überwacht, KI-zusammengefasst, direkt ins Postfach. Jetzt auf die Waitlist eintragen und Vorteil sichern.'
 excerpt: 'AboutExport öffnet die Waitlist: Frühen Zugang sichern, 20 % Rabatt auf jeden Plan erhalten und die Produktentwicklung von Anfang an aktiv mitgestalten.'
 pubDate: 2026-04-04T17:02:33Z
-updatedDate: 2026-10-12T20:01:09Z
+updatedDate: 2026-10-12T20:55:25Z
 category: news
 kind: product
 author: AboutExport Team
@@ -31,16 +31,25 @@ corrections:
         to: 'Jede Region kostet 49 € pro Monat und kann'
       - from: '<info@aboutexport.de>'
         to: '<info@aboutexport.com>'
+  - date: 2026-10-12T20:55:25Z
+    summary: 'Nicht bestätigte Konditionen neutralisiert: Laufzeit des Early-Access-Rabatts, Begrenzung auf die ersten Anmeldungen und ein 14-tägiger kostenloser Testzugang stehen noch nicht fest.'
+    changes:
+      - from: ' – dauerhaft, nicht nur im ersten Monat. Dieser Vorteil gilt für alle zum Launch verfügbaren Abonnements, unabhängig von Region oder Laufzeit.'
+        to: '. Die verbindlichen Konditionen, etwa zur Laufzeit des Rabatts, teilen wir vor dem Launch mit.'
+      - from: 'Jeder neue Nutzer erhält zudem 14 Tage kostenlosen Zugang – ohne Kreditkarte, ohne Verpflichtung.'
+        to: 'Ob und in welcher Form es einen Testzugang geben wird, teilen wir vor dem Launch mit.'
+      - from: 'und der 20 % Frühbucher-Rabatt gilt für die ersten Anmeldungen.'
+        to: 'für Mitglieder ist ein Early-Access-Rabatt von 20 % vorgesehen; die verbindlichen Konditionen teilen wir vor dem Launch mit.'
 review:
-  status: pending
-  notes:
-    - 'Rabatt „dauerhaft … für alle zum Launch verfügbaren Abonnements“ bzw. „gilt für die ersten Anmeldungen“ – aktuelle Website: Konditionen werden vor dem Launch verbindlich mitgeteilt. Nicht korrigiert, da Konditionen noch nicht final.'
-    - '„14 Tage kostenlosen Zugang – ohne Kreditkarte“ – aktuelle Website nennt nur einen vorgesehenen Testzeitraum ohne feste Dauer. Nicht korrigiert, da Testzeitraum noch nicht final.'
-    - '„in den kommenden Monaten“ (Einleitung) bezieht sich auf den Stand April 2026; durch Archiv-Hinweis abgedeckt.'
+  status: done
+  notes: []
   resolved:
     - 'Preis „pro Monat und Nutzer“ → „pro Monat“ je Region (korrigiert am 2026-10-12).'
     - 'Kontaktadresse info@aboutexport.de → info@aboutexport.com (korrigiert am 2026-10-12).'
     - '„Finale Entwicklungsphase“ → Launch 2027 ergänzt (korrigiert am 2026-10-12).'
+    - 'Rabatt „dauerhaft … unabhängig von Region oder Laufzeit“ und „gilt für die ersten Anmeldungen“ neutralisiert – nicht bestätigt (korrigiert am 2026-10-12).'
+    - '„14 Tage kostenlosen Zugang – ohne Kreditkarte“ neutralisiert – nicht bestätigt (korrigiert am 2026-10-12).'
+    - '„in den kommenden Monaten“ (Einleitung) bezieht sich auf den Stand April 2026; durch Archiv-Hinweis abgedeckt.'
 ---
 
 Heute ist es soweit: Die Waitlist für AboutExport ist offiziell geöffnet. Wer sich jetzt einträgt, sichert sich bevorzugten Early Access zur Plattform – und 20 % Rabatt auf jeden verfügbaren Plan.
@@ -63,7 +72,7 @@ Die Waitlist ist deshalb keine Warteschlange. Sie ist eine Einladung zur Zusamme
 
 Alle Personen die sich jetzt auf die Waitlist eintragen, erhalten beim Launch bevorzugten Early Access zur Plattform. Das bedeutet: Sie sind unter den Ersten die AboutExport in ihrer Arbeitsumgebung testen können – bevor wir den allgemeinen Zugang öffnen.
 
-Zusätzlich sichern sich alle Waitlist-Mitglieder **20 % Rabatt auf jeden verfügbaren Plan** – dauerhaft, nicht nur im ersten Monat. Dieser Vorteil gilt für alle zum Launch verfügbaren Abonnements, unabhängig von Region oder Laufzeit.
+Zusätzlich sichern sich alle Waitlist-Mitglieder **20 % Rabatt auf jeden verfügbaren Plan**. Die verbindlichen Konditionen, etwa zur Laufzeit des Rabatts, teilen wir vor dem Launch mit.
 
 Und: Wer früh dabei ist, hat direkten Einfluss auf die Produktentwicklung. Feedback von Early-Access-Nutzern hat bei uns höchste Priorität – über unser [öffentliches Feature-Request-Portal](https://roadmap.aboutexport.com/) können Sie Wünsche einreichen, Ideen bewerten und den Fortschritt auf unserer [Roadmap](https://roadmap.aboutexport.com/t/roadmap) verfolgen.
 
@@ -77,7 +86,7 @@ Die Plattform überwacht automatisch die relevanten Quellen in diesen Regionen �
 
 Zum Start verfügbar sind E-Mail-Benachrichtigungen mit individueller Konfiguration nach Dringlichkeit und Thema. Native Integrationen für Microsoft Teams und Slack sind für die ersten Monate nach Launch geplant und bereits auf unserer Roadmap priorisiert.
 
-Jeder neue Nutzer erhält zudem **14 Tage kostenlosen Zugang** – ohne Kreditkarte, ohne Verpflichtung.
+Ob und in welcher Form es einen Testzugang geben wird, teilen wir vor dem Launch mit.
 
 ---
 
@@ -93,7 +102,7 @@ Den aktuellen Entwicklungsstand, geplante Features und bereits umgesetzte Update
 
 ## Jetzt eintragen
 
-Die Waitlist ist offen – und der 20 % Frühbucher-Rabatt gilt für die ersten Anmeldungen. Wenn Sie oder Ihr Team regelmäßig mit Export Compliance zu tun haben und endlich ein smarteres Monitoring-Werkzeug wollen, ist jetzt der richtige Zeitpunkt.
+Die Waitlist ist offen – für Mitglieder ist ein Early-Access-Rabatt von 20 % vorgesehen; die verbindlichen Konditionen teilen wir vor dem Launch mit. Wenn Sie oder Ihr Team regelmäßig mit Export Compliance zu tun haben und endlich ein smarteres Monitoring-Werkzeug wollen, ist jetzt der richtige Zeitpunkt.
 
 Tragen Sie sich auf der [Startseite](/#waitlist) ein – es dauert weniger als eine Minute.
 
