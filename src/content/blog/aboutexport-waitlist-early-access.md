@@ -1,12 +1,12 @@
 ---
 # Migriert von https://aboutexport.com/aboutexport-waitlist-early-access/ (WordPress-ID 2165)
-# Inhalt unverändert übernommen; nur interne Links auf relative Pfade normalisiert.
+# Inhalt aus WordPress übernommen (interne Links relativ). Nachträgliche Korrekturen: siehe `corrections`.
 title: 'AboutExport öffnet die Waitlist – sichern Sie sich jetzt Ihren frühen Zugang'
 seoTitle: 'AboutExport Waitlist ist offen – 20 % Rabatt für frühe Anmeldungen'
 description: 'Export Control Alerts automatisch überwacht, KI-zusammengefasst, direkt ins Postfach. Jetzt auf die Waitlist eintragen und Vorteil sichern.'
 excerpt: 'AboutExport öffnet die Waitlist: Frühen Zugang sichern, 20 % Rabatt auf jeden Plan erhalten und die Produktentwicklung von Anfang an aktiv mitgestalten.'
 pubDate: 2026-04-04T17:02:33Z
-updatedDate: 2026-04-04T17:06:38Z
+updatedDate: 2026-10-12T20:01:09Z
 category: news
 kind: product
 author: AboutExport Team
@@ -19,14 +19,28 @@ image:
 legacy:
   wpId: 2165
   url: https://aboutexport.com/aboutexport-waitlist-early-access/
+  # Änderungsdatum in WordPress vor den Korrekturen
+  modifiedDate: 2026-04-04T17:06:38Z
+corrections:
+  - date: 2026-10-12T20:01:09Z
+    summary: 'Produktangaben aktualisiert: Preis gilt pro Region (49 € pro Monat), nicht pro Nutzer; Kontaktadresse auf info@aboutexport.com korrigiert; Launch ist für 2027 geplant.'
+    changes:
+      - from: 'AboutExport befindet sich in der finalen Entwicklungsphase einer ersten Validierungsversion.'
+        to: 'AboutExport befindet sich in der Entwicklung einer ersten Validierungsversion; der Launch ist für 2027 geplant.'
+      - from: 'Jede Region kostet 49 € pro Monat und Nutzer und kann'
+        to: 'Jede Region kostet 49 € pro Monat und kann'
+      - from: '<info@aboutexport.de>'
+        to: '<info@aboutexport.com>'
 review:
   status: pending
   notes:
-    - 'Preis „49 € pro Monat und Nutzer“ widerspricht dem bestätigten Modell „49 € pro Region und Monat“.'
-    - 'Rabatt „dauerhaft … für alle zum Launch verfügbaren Abonnements“ bzw. „gilt für die ersten Anmeldungen“ – aktuelle Website: Konditionen werden vor dem Launch verbindlich mitgeteilt.'
-    - '„14 Tage kostenlosen Zugang – ohne Kreditkarte“ – aktuelle Website nennt nur einen vorgesehenen Testzeitraum ohne feste Dauer.'
-    - '„Finale Entwicklungsphase“ / „in den kommenden Monaten“ – Launch ist inzwischen für 2027 geplant.'
-    - 'Kontaktadresse info@aboutexport.de weicht von info@aboutexport.com (Impressum) ab – prüfen, ob die .de-Adresse zugestellt wird.'
+    - 'Rabatt „dauerhaft … für alle zum Launch verfügbaren Abonnements“ bzw. „gilt für die ersten Anmeldungen“ – aktuelle Website: Konditionen werden vor dem Launch verbindlich mitgeteilt. Nicht korrigiert, da Konditionen noch nicht final.'
+    - '„14 Tage kostenlosen Zugang – ohne Kreditkarte“ – aktuelle Website nennt nur einen vorgesehenen Testzeitraum ohne feste Dauer. Nicht korrigiert, da Testzeitraum noch nicht final.'
+    - '„in den kommenden Monaten“ (Einleitung) bezieht sich auf den Stand April 2026; durch Archiv-Hinweis abgedeckt.'
+  resolved:
+    - 'Preis „pro Monat und Nutzer“ → „pro Monat“ je Region (korrigiert am 2026-10-12).'
+    - 'Kontaktadresse info@aboutexport.de → info@aboutexport.com (korrigiert am 2026-10-12).'
+    - '„Finale Entwicklungsphase“ → Launch 2027 ergänzt (korrigiert am 2026-10-12).'
 ---
 
 Heute ist es soweit: Die Waitlist für AboutExport ist offiziell geöffnet. Wer sich jetzt einträgt, sichert sich bevorzugten Early Access zur Plattform – und 20 % Rabatt auf jeden verfügbaren Plan.
@@ -37,7 +51,7 @@ Ein kurzer Moment, um zu erklären was das bedeutet, was Sie in den kommenden Mo
 
 ## Warum eine Waitlist – und keine direkte Registrierung?
 
-AboutExport befindet sich in der finalen Entwicklungsphase einer ersten Validierungsversion. Wir hätten warten können, bis alles perfekt ist. Wir haben uns bewusst dagegen entschieden.
+AboutExport befindet sich in der Entwicklung einer ersten Validierungsversion; der Launch ist für 2027 geplant. Wir hätten warten können, bis alles perfekt ist. Wir haben uns bewusst dagegen entschieden.
 
 Der Grund ist einfach: Die besten Produkte entstehen nicht im stillen Kämmerlein, sondern im Dialog mit den Menschen die sie täglich nutzen. Export Control Officers, Compliance-Verantwortliche und Außenhandelsabteilungen wissen besser als jeder Entwickler, was in ihrem Arbeitsalltag wirklich zählt – welche Quellen kritisch sind, welche Alertformate funktionieren, welche Informationen fehlen.
 
@@ -57,7 +71,7 @@ Und: Wer früh dabei ist, hat direkten Einfluss auf die Produktentwicklung. Feed
 
 ## Was Sie beim Launch erwartet
 
-Zum Launch stehen drei Regionen zur Verfügung: **EU, USA und China**. Jede Region kostet 49 € pro Monat und Nutzer und kann einzeln oder kombiniert gebucht werden. Weitere Märkte – darunter UK, Indien und Japan – folgen in den Monaten nach Launch.
+Zum Launch stehen drei Regionen zur Verfügung: **EU, USA und China**. Jede Region kostet 49 € pro Monat und kann einzeln oder kombiniert gebucht werden. Weitere Märkte – darunter UK, Indien und Japan – folgen in den Monaten nach Launch.
 
 Die Plattform überwacht automatisch die relevanten Quellen in diesen Regionen – darunter EUR-Lex, das Bundesamt für Wirtschaft und Ausfuhrkontrolle, die BIS Entity List sowie weitere nationale und internationale Regulierungsbehörden. Änderungen werden per KI zusammengefasst, priorisiert und direkt per E-Mail-Alert zugestellt.
 
@@ -83,6 +97,6 @@ Die Waitlist ist offen – und der 20 % Frühbucher-Rabatt gilt für die ersten 
 
 Tragen Sie sich auf der [Startseite](/#waitlist) ein – es dauert weniger als eine Minute.
 
-Bei Fragen oder konkreten Use Cases die Sie besprechen möchten, erreichen Sie uns jederzeit unter <info@aboutexport.de>.
+Bei Fragen oder konkreten Use Cases die Sie besprechen möchten, erreichen Sie uns jederzeit unter <info@aboutexport.com>.
 
 **– Das AboutExport Team**

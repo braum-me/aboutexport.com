@@ -5,6 +5,22 @@ import inventory from '../fixtures/blog/wordpress-inventory.json' with { type: '
 
 const fixtureText = (slug: string) =>
   readFileSync(join(process.cwd(), 'tests/fixtures/blog', `${slug}.txt`), 'utf8').trim();
+const source = (slug: string) => readFileSync(join(process.cwd(), 'src/content/blog', `${slug}.md`), 'utf8');
+
+/** Aktuelles Änderungsdatum und dokumentierte Korrekturen aus dem Frontmatter */
+function meta(slug: string) {
+  const raw = source(slug);
+  const updated = raw.match(/^updatedDate: (\S+)$/m)![1]!;
+  const changes = [...raw.matchAll(/- from: '((?:[^']|'')*)'\n\s+to: '((?:[^']|'')*)'/g)].map((m) =>
+    [m[1]!, m[2]!].map((x) => x.replace(/''/g, "'").replace(/^<|>$/g, '')),
+  ) as [string, string][];
+  return { updated: new Date(updated).toISOString(), changes };
+}
+
+/** Original-Klartext mit angewendeten, dokumentierten Korrekturen */
+function expectedText(slug: string): string {
+  return meta(slug).changes.reduce((t, [from, to]) => t.replace(from, to), fixtureText(slug));
+}
 const norm = (s: string) => s.replace(/\s+/g, ' ').trim();
 
 test.describe('Blog-Artikel unter Original-URLs', () => {
@@ -30,10 +46,8 @@ test.describe('Blog-Artikel unter Original-URLs', () => {
         'content',
         new Date(post.datePublishedUtc).toISOString(),
       );
-      await expect(page.locator('meta[property="article:modified_time"]')).toHaveAttribute(
-        'content',
-        new Date(post.dateModifiedUtc).toISOString(),
-      );
+      const { updated, changes } = meta(post.slug);
+      await expect(page.locator('meta[property="article:modified_time"]')).toHaveAttribute('content', updated);
       const ogImage = await page.locator('meta[property="og:image"]').getAttribute('content');
       expect(ogImage).toMatch(/^https:\/\/aboutexport\.com\/images\/blog\/.+-og\.jpg$/);
 
@@ -45,16 +59,20 @@ test.describe('Blog-Artikel unter Original-URLs', () => {
       expect(article).toBeTruthy();
       expect(article.headline).toBe(post.title);
       expect(article.datePublished).toBe(new Date(post.datePublishedUtc).toISOString());
-      expect(article.dateModified).toBe(new Date(post.dateModifiedUtc).toISOString());
+      expect(article.dateModified).toBe(updated);
       expect(article.mainEntityOfPage['@id']).toBe(post.url);
       expect(ld.some((x) => x['@type'] === 'BreadcrumbList')).toBe(true);
 
       // Originaldatum sichtbar
       await expect(page.locator('[data-pubdate]')).toHaveAttribute('datetime', new Date(post.datePublishedUtc).toISOString());
 
-      // Inhalt entspricht dem WordPress-Original (Klartext, Whitespace normalisiert)
+      // Inhalt = WordPress-Original + ausschließlich dokumentierte Korrekturen
       const body = await page.locator('[data-article-body]').innerText();
-      expect(norm(body)).toBe(norm(fixtureText(post.slug)));
+      expect(norm(body)).toBe(norm(expectedText(post.slug)));
+
+      // Korrekturen transparent ausgewiesen, interne Prüfhinweise nicht öffentlich
+      await expect(page.locator('[data-corrections]')).toHaveCount(changes.length > 0 ? 1 : 0);
+      await expect(page.locator('[data-review-note], [data-review-notes]')).toHaveCount(0);
 
       // Kontext-Hinweis: historisch vs. Produktnews
       const expected = post.category === 'regulierung' ? 'historical' : 'archive';
@@ -84,12 +102,26 @@ test.describe('Blog-Artikel unter Original-URLs', () => {
     });
   }
 
-  test('Regulierungsmeldung ist als historisch gekennzeichnet und markiert Prüfbedarf', async ({ page }) => {
+  test('Regulierungsmeldung ist als historisch gekennzeichnet', async ({ page }) => {
     await page.goto('/bafa-exportkontrolle-april-2026/');
     const notice = page.locator('[data-context-notice="historical"]');
     await expect(notice).toContainText('Historische Regulierungsmeldung');
     await expect(notice).toContainText('4. April 2026');
-    await expect(page.locator('[data-review-notes] li')).not.toHaveCount(0);
+  });
+
+  test('Korrigierter Produktbeitrag: Originaldatum + transparente Aktualisierung', async ({ page }) => {
+    await page.goto('/aboutexport-waitlist-early-access/');
+    await expect(page.locator('[data-pubdate]')).toHaveText('4. April 2026');
+    const corr = page.locator('[data-corrections]');
+    await expect(corr).toContainText('Nachträglich aktualisiert');
+    await expect(corr).toContainText('pro Region');
+    await expect(corr).toContainText('Ursprünglich veröffentlicht am 4. April 2026');
+    const body = page.locator('[data-article-body]');
+    await expect(body).toContainText('Jede Region kostet 49 € pro Monat und kann');
+    await expect(body).not.toContainText('pro Monat und Nutzer');
+    await expect(body).toContainText('info@aboutexport.com');
+    await expect(body).not.toContainText('aboutexport.de');
+    await expect(body).toContainText('der Launch ist für 2027 geplant');
   });
 });
 
@@ -153,7 +185,7 @@ test.describe('Redirects, Sitemap und Feed', () => {
   test('Sitemap enthält Blog, Kategorien und Beiträge mit Original-Änderungsdatum', async ({ request }) => {
     const xml = await (await request.get('/sitemap.xml')).text();
     for (const p of inventory) {
-      expect(xml).toContain(`<url><loc>${p.url}</loc><lastmod>${new Date(p.dateModifiedUtc).toISOString()}</lastmod></url>`);
+      expect(xml).toContain(`<url><loc>${p.url}</loc><lastmod>${meta(p.slug).updated}</lastmod></url>`);
     }
     for (const path of ['/blog/', '/category/news/', '/category/regulierung/']) {
       expect(xml).toContain(`<loc>https://aboutexport.com${path}</loc>`);

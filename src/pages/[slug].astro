@@ -6,7 +6,6 @@ import { render } from 'astro:content';
 import { ArrowRight, CalendarClock, CalendarDays, Clock, Info } from '@lucide/astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/blog/PostCard.astro';
-import ReviewNote from '../components/ui/ReviewNote.astro';
 import Button from '../components/ui/Button.astro';
 import { blogCategories } from '../config/blog';
 import { site } from '../config/site';
@@ -29,7 +28,6 @@ const category = blogCategories[data.category];
 const url = new URL(postUrl(post), site.url).toString();
 const minutes = readingTime(post.body ?? '');
 const modified = data.updatedDate && data.updatedDate.getTime() !== data.pubDate.getTime() ? data.updatedDate : undefined;
-const showReview = data.review.status === 'pending' && process.env.HIDE_EDITORIAL_NOTES !== 'true';
 
 // Verwandte Beiträge: gleiche Kategorie zuerst, dann übrige (neueste zuerst)
 const related = all
@@ -163,15 +161,21 @@ const jsonLd = [
       }
 
       {
-        showReview && (
-          <ReviewNote>
-            Redaktionelle Prüfung ausstehend. Folgende Aussagen sind möglicherweise veraltet oder ungeprüft:
-            <ul class="mt-2 list-disc space-y-1 pl-5" data-review-notes>
-              {data.review.notes.map((n) => (
-                <li>{n}</li>
+        data.corrections.length > 0 && (
+          <aside class="mt-4 rounded-xl border border-brand-100 bg-brand-50/50 p-4 text-sm text-slate-700" data-corrections>
+            <p class="font-semibold text-ink-900">Nachträglich aktualisiert</p>
+            <ul class="mt-2 space-y-1.5">
+              {data.corrections.map((c) => (
+                <li>
+                  <time datetime={c.date.toISOString()} class="font-medium text-ink-900">
+                    {formatDate(c.date)}
+                  </time>
+                  : {c.summary}
+                </li>
               ))}
             </ul>
-          </ReviewNote>
+            <p class="mt-2 text-slate-600">Ursprünglich veröffentlicht am {formatDate(data.pubDate)}. Der übrige Text ist unverändert.</p>
+          </aside>
         )
       }
 
