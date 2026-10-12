@@ -283,6 +283,12 @@
   .prose-article em {
     @apply text-slate-500;
   }
+  .prose-article ol {
+    @apply list-decimal space-y-2 pl-6;
+  }
+  .prose-article blockquote {
+    @apply border-l-2 border-brand-600 pl-4 text-slate-600;
+  }
 
   /* Scroll-Reveal: nur Elemente unterhalb des Viewports werden versteckt (kein Flackern) */
   .reveal-pending {
@@ -321,3 +327,4 @@
     navigation: none;
   }
 }
+

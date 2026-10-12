@@ -1,11 +1,19 @@
 ---
+import BaseLayout from '../../layouts/BaseLayout.astro';
 import BlogIndex from '../../components/blog/BlogIndex.astro';
-import { categories, type CategoryId } from '../../config/blog';
+import { blogCategories, type BlogCategory } from '../../config/blog';
+import { getPosts } from '../../lib/blog';
 
-export function getStaticPaths() {
-  return Object.values(categories).map((c) => ({ params: { category: c.slug } }));
+// Ursprüngliche WordPress-Kategorie-URLs (/category/<slug>/) bleiben erhalten.
+export async function getStaticPaths() {
+  return Object.keys(blogCategories).map((category) => ({ params: { category } }));
 }
-const category = Astro.params.category as CategoryId;
+
+const category = Astro.params.category as BlogCategory;
+const meta = blogCategories[category];
+const posts = (await getPosts()).filter((p) => p.data.category === category);
 ---
 
-<BlogIndex category={category} />
+<BaseLayout title={`${meta.title} – Blog`} description={meta.description} path={`/category/${category}/`}>
+  <BlogIndex posts={posts} title={meta.title} description={meta.description} active={category} />
+</BaseLayout>

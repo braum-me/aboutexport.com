@@ -3,7 +3,7 @@ import { defineConfig } from 'astro/config';
 import node from '@astrojs/node';
 import tailwindcss from '@tailwindcss/vite';
 import { satteri } from '@astrojs/markdown-satteri';
-import { asciiHeadingIds, externalLinks } from './src/lib/markdown/plugins.mjs';
+import { externalLinksPlugin } from './src/lib/external-links-plugin.mjs';
 
 export default defineConfig({
   site: 'https://aboutexport.com',
@@ -13,13 +13,22 @@ export default defineConfig({
   adapter: node({ mode: 'standalone', bodySizeLimit: 32 * 1024 }),
   build: { format: 'directory', inlineStylesheets: 'never' },
   compressHTML: true,
+  markdown: {
+    processor: satteri({
+      hastPlugins: [externalLinksPlugin],
+      // Historische Texte zeichengenau erhalten (keine automatische Typografie)
+      features: { smartPunctuation: false },
+    }),
+  },
+  // Permanente Weiterleitungen alter WordPress-URLs (301 für GET, 308 sonst)
+  redirects: {
+    '/category/export-compliance': '/blog/',
+    '/category/maerkte-regionen': '/blog/',
+    '/author/aboutadmin': '/blog/',
+    '/Datenschutz': '/datenschutz/',
+  },
   devToolbar: { enabled: false },
   image: { service: { entrypoint: 'astro/assets/services/noop' } },
-  // Blog (Content Collections): Shiki nutzt Inline-Styles (CSP-inkompatibel) und wird nicht gebraucht.
-  markdown: {
-    syntaxHighlight: false,
-    processor: satteri({ hastPlugins: [asciiHeadingIds(), externalLinks()] }),
-  },
   security: {
     checkOrigin: true,
     // Host-Header, denen Astro für Request-URL/Origin-Check vertraut

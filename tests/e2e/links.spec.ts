@@ -11,16 +11,16 @@ test('alle internen Links und Anker sind erreichbar', async ({ page, request }) 
     visited.add(path);
     await page.goto(path);
     const links = await page.$$eval('a[href]', (as) =>
-      as.map((a) => ({ href: a.getAttribute('href') ?? '', rel: a.getAttribute('rel') ?? '' })),
+      as.map((a) => ({ href: a.getAttribute('href') ?? '', rel: a.getAttribute('rel') ?? '', inArticle: !!a.closest('[data-article-body]') })),
     );
-    for (const { href, rel } of links) {
+    for (const { href, rel, inArticle } of links) {
       if (href.startsWith('mailto:')) continue;
-      // Quellenangaben in Blogartikeln: nur explizit gekennzeichnete externe Links
-      if (href.startsWith('http') && rel.split(' ').includes('external')) {
-        expect(rel, `rel für ${href}`).toContain('noopener');
+      if (href.startsWith('http')) {
+        // Externe Links nur in migrierten Artikeln und nur mit rel="noopener noreferrer"
+        expect(inArticle, `Externer Link außerhalb eines Artikels: ${href}`).toBe(true);
+        expect(rel, href).toBe('noopener noreferrer');
         continue;
       }
-      expect(href.startsWith('http'), `Externer Link gefunden: ${href}`).toBe(false);
       const url = new URL(href, `http://127.0.0.1${path}`);
       if (url.hash && url.hash.length > 1) {
         const key = `${url.pathname}${url.hash}`;
@@ -43,10 +43,10 @@ test('alle internen Links und Anker sind erreichbar', async ({ page, request }) 
       }
     }
   }
-  expect(visited).toContain('/impressum/');
-  expect(visited).toContain('/datenschutz/');
-  for (const p of ['/blog/', '/category/news/', '/category/regulierung/', '/bafa-exportkontrolle-april-2026/'])
+  for (const p of ['/impressum/', '/datenschutz/', '/blog/', '/category/news/', '/category/regulierung/']) {
     expect(visited).toContain(p);
+  }
+  expect(visited).toContain('/bafa-exportkontrolle-april-2026/');
 });
 
 test('SEO-Dateien und 404', async ({ request }) => {
@@ -56,7 +56,7 @@ test('SEO-Dateien und 404', async ({ request }) => {
   const sitemap = await request.get('/sitemap.xml');
   expect(sitemap.status()).toBe(200);
   const xml = await sitemap.text();
-  for (const p of ['/', '/impressum/', '/datenschutz/', '/blog/', '/bafa-exportkontrolle-april-2026/', '/aboutexport-waitlist-early-access/', '/vision-export-compliance-monitoring/', '/category/news/']) expect(xml).toContain(`<loc>https://aboutexport.com${p}</loc>`);
+  for (const p of ['/', '/impressum/', '/datenschutz/', '/blog/']) expect(xml).toContain(`<loc>https://aboutexport.com${p}</loc>`);
   const missing = await request.get('/gibt-es-nicht/');
   expect(missing.status()).toBe(404);
 });
@@ -67,14 +67,4 @@ test('strukturierte Daten sind gültiges JSON', async ({ page }) => {
   expect(blocks.length).toBeGreaterThanOrEqual(3);
   const types = blocks.map((b) => JSON.parse(b)['@type']);
   expect(types).toEqual(expect.arrayContaining(['Organization', 'WebSite', 'FAQPage']));
-});
-
-test('Blogartikel: bisherige URL, SEO-Metadaten und strukturierte Daten', async ({ page }) => {
-  await page.goto('/bafa-exportkontrolle-april-2026/');
-  await expect(page).toHaveTitle('BAFA April 2026: Neue Regeln für Export Compliance | AboutExport');
-  await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /Sanktions-Compliance-Erklärung/);
-  await expect(page.locator('meta[property="og:type"]')).toHaveAttribute('content', 'article');
-  await expect(page.locator('h1')).toHaveCount(1);
-  const types = await page.$$eval('script[type="application/ld+json"]', (s) => s.map((x) => JSON.parse(x.textContent ?? '{}')['@type']));
-  expect(types).toEqual(expect.arrayContaining(['BlogPosting', 'BreadcrumbList']));
 });

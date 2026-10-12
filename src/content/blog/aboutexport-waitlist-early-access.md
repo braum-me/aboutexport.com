@@ -1,13 +1,32 @@
 ---
-title: "AboutExport öffnet die Waitlist – sichern Sie sich jetzt Ihren frühen Zugang"
-seoTitle: "AboutExport Waitlist ist offen – 20 % Rabatt für frühe Anmeldungen"
-description: "Export Control Alerts automatisch überwacht, KI-zusammengefasst, direkt ins Postfach. Jetzt auf die Waitlist eintragen und Vorteil sichern."
-excerpt: "AboutExport öffnet die Waitlist: Frühen Zugang sichern, 20 % Rabatt auf jeden Plan erhalten und die Produktentwicklung von Anfang an aktiv mitgestalten."
-pubDate: "2026-04-04T19:02:33"
-updatedDate: "2026-04-04T19:06:38"
-category: "news"
-author: "Das AboutExport Team"
-image: "/images/blog/aboutexport-waitlist-early-access.webp"
+# Migriert von https://aboutexport.com/aboutexport-waitlist-early-access/ (WordPress-ID 2165)
+# Inhalt unverändert übernommen; nur interne Links auf relative Pfade normalisiert.
+title: 'AboutExport öffnet die Waitlist – sichern Sie sich jetzt Ihren frühen Zugang'
+seoTitle: 'AboutExport Waitlist ist offen – 20 % Rabatt für frühe Anmeldungen'
+description: 'Export Control Alerts automatisch überwacht, KI-zusammengefasst, direkt ins Postfach. Jetzt auf die Waitlist eintragen und Vorteil sichern.'
+excerpt: 'AboutExport öffnet die Waitlist: Frühen Zugang sichern, 20 % Rabatt auf jeden Plan erhalten und die Produktentwicklung von Anfang an aktiv mitgestalten.'
+pubDate: 2026-04-04T17:02:33Z
+updatedDate: 2026-04-04T17:06:38Z
+category: news
+kind: product
+author: AboutExport Team
+image:
+  src: /images/blog/aboutexport-waitlist-early-access.webp
+  og: /images/blog/aboutexport-waitlist-early-access-og.jpg
+  alt: AboutExport-Logo auf dunkelblauem Hintergrund
+  width: 1600
+  height: 900
+legacy:
+  wpId: 2165
+  url: https://aboutexport.com/aboutexport-waitlist-early-access/
+review:
+  status: pending
+  notes:
+    - 'Preis „49 € pro Monat und Nutzer“ widerspricht dem bestätigten Modell „49 € pro Region und Monat“.'
+    - 'Rabatt „dauerhaft … für alle zum Launch verfügbaren Abonnements“ bzw. „gilt für die ersten Anmeldungen“ – aktuelle Website: Konditionen werden vor dem Launch verbindlich mitgeteilt.'
+    - '„14 Tage kostenlosen Zugang – ohne Kreditkarte“ – aktuelle Website nennt nur einen vorgesehenen Testzeitraum ohne feste Dauer.'
+    - '„Finale Entwicklungsphase“ / „in den kommenden Monaten“ – Launch ist inzwischen für 2027 geplant.'
+    - 'Kontaktadresse info@aboutexport.de weicht von info@aboutexport.com (Impressum) ab – prüfen, ob die .de-Adresse zugestellt wird.'
 ---
 
 Heute ist es soweit: Die Waitlist für AboutExport ist offiziell geöffnet. Wer sich jetzt einträgt, sichert sich bevorzugten Early Access zur Plattform – und 20 % Rabatt auf jeden verfügbaren Plan.
@@ -64,6 +83,6 @@ Die Waitlist ist offen – und der 20 % Frühbucher-Rabatt gilt für die ersten 
 
 Tragen Sie sich auf der [Startseite](/#waitlist) ein – es dauert weniger als eine Minute.
 
-Bei Fragen oder konkreten Use Cases die Sie besprechen möchten, erreichen Sie uns jederzeit unter [info@aboutexport.de](mailto:info@aboutexport.de).
+Bei Fragen oder konkreten Use Cases die Sie besprechen möchten, erreichen Sie uns jederzeit unter <info@aboutexport.de>.
 
 **– Das AboutExport Team**

@@ -32,6 +32,19 @@ const server = http.createServer((req, res) => {
   res.removeHeader('X-Powered-By');
   // Gehashte Build-Assets langfristig cachen
   if (req.url?.startsWith('/_astro/')) res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+  // Wie bisher unter WordPress: Seiten-URLs ohne Slash permanent auf die Slash-Variante umleiten.
+  const [pathname, query] = (req.url ?? '/').split('?', 2);
+  if (
+    (req.method === 'GET' || req.method === 'HEAD') &&
+    pathname.length > 1 &&
+    !pathname.endsWith('/') &&
+    !pathname.includes('.') &&
+    !/^\/(api|_astro|healthz|feed)(\/|$)/.test(pathname)
+  ) {
+    res.writeHead(301, { location: `${pathname}/${query ? `?${query}` : ''}` });
+    res.end();
+    return;
+  }
   if (req.url === '/healthz') {
     res.writeHead(200, { 'content-type': 'text/plain' });
     res.end('ok');

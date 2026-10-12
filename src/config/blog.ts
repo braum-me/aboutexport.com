@@ -1,11 +1,20 @@
-/** Blog-Kategorien – Slugs entsprechen den bisherigen WordPress-URLs (/category/<slug>/). */
-export const categories = {
-  news: { slug: 'news', label: 'Produktnews', description: 'Neuigkeiten zu AboutExport, Waitlist und Launch.' },
+export const blogCategories = {
+  news: {
+    label: 'Produktnews',
+    title: 'Produktnews',
+    description: 'Neuigkeiten rund um AboutExport: Entwicklungsstand, Waitlist und Roadmap.',
+  },
   regulierung: {
-    slug: 'regulierung',
     label: 'Regulierung & Recht',
-    description: 'Einordnungen zu Exportkontrolle, Sanktionen und regulatorischen Änderungen.',
+    title: 'Regulierung & Recht',
+    description: 'Einordnungen zu regulatorischen Änderungen in der Exportkontrolle – mit Stand des jeweiligen Veröffentlichungsdatums.',
   },
 } as const;
 
-export type CategoryId = keyof typeof categories;
+export type BlogCategory = keyof typeof blogCategories;
+
+export const blogMeta = {
+  title: 'Blog',
+  description:
+    'Produktnews von AboutExport und Einordnungen zu Änderungen in der Exportkontrolle – mit Originaldatum und klarem Stand der Information.',
+} as const;

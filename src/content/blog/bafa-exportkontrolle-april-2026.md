@@ -1,13 +1,32 @@
 ---
-title: "Keine Schonfrist mehr: Was die neuen BAFA-Regeln für Ihre Export Compliance bedeuten"
-seoTitle: "BAFA April 2026: Neue Regeln für Export Compliance"
-description: "Neue Sanktions-Compliance-Erklärung, keine Schonfrist mehr, verschärftes Strafrecht: Was die BAFA-Änderungen April 2026 für Sie bedeutet."
-excerpt: "Das BAFA hat zum April 2026 weitreichende Änderungen in Kraft gesetzt – von neuen Pflichten bei Allgemeinen Genehmigungen bis zur entfallenen Schonfrist bei EU-Sanktionen. Was jetzt konkret zu tun ist."
-pubDate: "2026-04-04T21:22:53"
-updatedDate: "2026-04-04T21:31:36"
-category: "regulierung"
-author: "Das AboutExport Team"
-image: "/images/blog/bafa-exportkontrolle-april-2026.webp"
+# Migriert von https://aboutexport.com/bafa-exportkontrolle-april-2026/ (WordPress-ID 2181)
+# Inhalt unverändert übernommen; nur interne Links auf relative Pfade normalisiert.
+title: 'Keine Schonfrist mehr: Was die neuen BAFA-Regeln für Ihre Export Compliance bedeuten'
+seoTitle: 'BAFA April 2026: Neue Regeln für Export Compliance'
+description: 'Neue Sanktions-Compliance-Erklärung, keine Schonfrist mehr, verschärftes Strafrecht: Was die BAFA-Änderungen April 2026 für Sie bedeutet.'
+excerpt: 'Das BAFA hat zum April 2026 weitreichende Änderungen in Kraft gesetzt – von neuen Pflichten bei Allgemeinen Genehmigungen bis zur entfallenen Schonfrist bei EU-Sanktionen. Was jetzt konkret zu tun ist.'
+pubDate: 2026-04-04T19:22:53Z
+updatedDate: 2026-04-04T19:31:36Z
+category: regulierung
+kind: regulatory
+author: AboutExport Team
+image:
+  src: /images/blog/bafa-exportkontrolle-april-2026.webp
+  og: /images/blog/bafa-exportkontrolle-april-2026-og.jpg
+  alt: Luftaufnahme eines Containerschiffs und eines Containerterminals bei Nacht
+  width: 1600
+  height: 1066
+legacy:
+  wpId: 2181
+  url: https://aboutexport.com/bafa-exportkontrolle-april-2026/
+review:
+  status: pending
+  notes:
+    - 'Regulatorische Aussagen (Sanktions-Compliance-Erklärung, Allgemeine Genehmigungen Nr. 12–47, Verlängerung bis 31.03.2027, Indien im privilegierten Länderkreis, Wegfall der Schonfrist, SanktDG) wurden bei der Migration nicht erneut fachlich geprüft.'
+    - 'Zeitgebundene Aussagen: Verlängerung der Allgemeinen Genehmigungen „bis zum 31. März 2027“ und „Die EU arbeitet bereits am 20. Sanktionspaket“ – Stand April 2026, voraussichtlich überholt.'
+    - 'Quellenangabe: Linktexte und Ziele passen nicht zusammen („Sanktionsdurchsetzungsgesetz (SanktDG), EU-Richtlinie 2024/1226“ verlinkt auf Verordnung (EU) 833/2014 bei EUR-Lex).'
+    - 'Produktaussagen („Export Control Alerts in Echtzeit“, Überwachung von BAFA, EUR-Lex, BIS Entity List; „20 % Rabatt auf jeden Plan“) weichen von der aktuellen Positionierung ab (Launch 2027, Konditionen werden vor Launch mitgeteilt).'
+    - 'Beitragsbild ist ein Stockfoto – Lizenz für die weitere Nutzung prüfen.'
 ---
 
 Wer im internationalen Handel tätig ist und Allgemeine Genehmigungen des BAFA nutzt, muss jetzt handeln. Das Bundesamt für Wirtschaft und Ausfuhrkontrolle hat zum April 2026 eine Reihe von Änderungen in Kraft gesetzt, die den Compliance-Alltag spürbar verändern – und das in einem Umfeld, in dem die Konsequenzen von Versäumnissen so gravierend sind wie nie zuvor.

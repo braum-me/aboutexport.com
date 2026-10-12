@@ -35,17 +35,30 @@ src/
   config/        pricing.ts (Single Source of Truth für Preise & Rabatt), roi.ts, content.ts, site.ts
   lib/           pricing.ts, roi.ts, format.ts, validation.ts, mail.ts, submit.ts, rateLimit.ts, api.ts
   scripts/       Client-Skripte (Preisrechner, ROI-Rechner, Formulare)
-  components/    ui/ (Button, Screenshot, StatusBadge …), sections/ (Hero, Pricing, RoiCalculator, Journal …),
+  components/    ui/ (Button, Screenshot, StatusBadge …), sections/ (Hero, Pricing, RoiCalculator, BlogTeaser …),
                  mocks/ (Konzept-Interfaces, gemeinsame Beispieldaten in mocks/sample.ts), blog/
-  content/blog/  Blog-Beiträge als Markdown (Dateiname = Slug = URL)
-  pages/         index, [slug] (Blog-Artikel), blog/, category/[category]/, impressum, datenschutz, 404, anfrage-*, api/*, sitemap.xml
+  pages/         index, [slug] (Blog-Artikel), blog/, category/, feed, impressum, datenschutz, 404, anfrage-*, api/*, sitemap.xml
+src/content/blog/  Blog-Beiträge (Markdown)
 public/images/
+  blog/          Beitragsbilder
   product/       Produkt-Screenshots (z. B. dashboard.webp)
   features/      Feature-Screenshots (alerts.webp, newsfeed.webp, ai-summary.webp, translation.webp)
   branding/      Logo, Icon, OG-Image
 server.mjs       Produktions-Server (Security-Header, /healthz, Forwarded-Header-Handling)
 tests/unit, tests/e2e
 ```
+
+## Blog
+
+- Beiträge liegen als Markdown in `src/content/blog/` (Astro Content Collection, Schema in `src/content.config.ts`).
+- URLs: Artikel unter `/<slug>/` (alte WordPress-Permalinks), Übersicht `/blog/`, Kategorien `/category/<slug>/`,
+  RSS unter `/feed/`. Weiterleitungen alter URLs: `redirects` in `astro.config.mjs` (echte 301).
+- `pubDate`/`updatedDate` sind feste Werte – nie automatisch setzen. Neue Beiträge: Datei anlegen, Bild unter
+  `public/images/blog/<slug>.webp` + `<slug>-og.jpg` (1200×630).
+- `kind: regulatory` zeigt den Hinweis „Historische Regulierungsmeldung“, `kind: product` den Archiv-Hinweis.
+- `review.status: pending` blendet einen Prüfhinweis mit `review.notes` ein. Für die Produktion entweder auf `done`
+  setzen oder mit `HIDE_EDITORIAL_NOTES=true npm run build` bauen.
+- Migrationsbericht: [`docs/blog-migration.md`](docs/blog-migration.md)
 
 ## Screenshots austauschen
 
@@ -75,11 +88,7 @@ Bildverarbeitungs-Dependency.
 
 ## Blog
 
-Beiträge liegen in `src/content/blog/*.md` (von der bisherigen WordPress-Seite migriert, URLs unverändert: `/<slug>/`,
-`/blog/`, `/category/news/`, `/category/regulierung/`). Frontmatter: `title`, `seoTitle`, `description`, `excerpt`,
-`pubDate`, `updatedDate`, `category`, `image`. Markdown wird mit Sätteri gerendert; zwei eigene Plugins
-(`src/lib/markdown/plugins.mjs`) setzen ASCII-Heading-IDs (Inhaltsverzeichnis) und `rel="external noopener noreferrer"`
-für externe Quellenlinks.
+Siehe `docs/blog-migration.md` (Migration, URLs, Redirects, Tests). Das Blog nutzt dasselbe Design-System wie die Startseite.
 
 ## Preise & Rabatt
 

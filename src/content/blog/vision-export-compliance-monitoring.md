@@ -1,13 +1,30 @@
 ---
-title: "Warum wir AboutExport gebaut haben – und was wir gemeinsam daraus machen"
-seoTitle: "Warum wir AboutExport gebaut haben"
-description: "Hinter AboutExport steckt ein Problem aus dem Export Compliance Alltag. Hier ist unsere Story – und wie du die Plattform mitgestalten kannst."
-excerpt: "Export Compliance Monitoring kostet Unternehmen täglich wertvolle Stunden – manuell, verteilt über dutzende Quellen, ohne smartes Werkzeug. Wir haben AboutExport gebaut um das zu ändern."
-pubDate: "2026-04-04T12:12:22"
-updatedDate: "2026-04-04T21:58:29"
-category: "news"
-author: "Das AboutExport Team"
-image: "/images/blog/vision-export-compliance-monitoring.webp"
+# Migriert von https://aboutexport.com/vision-export-compliance-monitoring/ (WordPress-ID 2033)
+# Inhalt unverändert übernommen; nur interne Links auf relative Pfade normalisiert.
+title: 'Warum wir AboutExport gebaut haben – und was wir gemeinsam daraus machen'
+seoTitle: 'Warum wir AboutExport gebaut haben | AboutExport'
+description: 'Hinter AboutExport steckt ein Problem aus dem Export Compliance Alltag. Hier ist unsere Story – und wie du die Plattform mitgestalten kannst.'
+excerpt: 'Export Compliance Monitoring kostet Unternehmen täglich wertvolle Stunden – manuell, verteilt über dutzende Quellen, ohne smartes Werkzeug. Wir haben AboutExport gebaut um das zu ändern.'
+pubDate: 2026-04-04T10:12:22Z
+updatedDate: 2026-04-04T19:58:29Z
+category: news
+kind: product
+author: AboutExport Team
+image:
+  src: /images/blog/vision-export-compliance-monitoring.webp
+  og: /images/blog/vision-export-compliance-monitoring-og.jpg
+  alt: AboutExport-Logo auf blauem Verlaufshintergrund
+  width: 1280
+  height: 720
+legacy:
+  wpId: 2033
+  url: https://aboutexport.com/vision-export-compliance-monitoring/
+review:
+  status: pending
+  notes:
+    - '„Finale Entwicklungsphase einer ersten Validierungsversion“ – Launch ist inzwischen für 2027 geplant.'
+    - 'Genannte Quellen (UN-Sanktionslisten, BAFA, MOFCOM u. a.) mit dem tatsächlichen Quellenumfang zum Launch abgleichen.'
+    - 'Meta-Beschreibung duzt („du“), der Artikel siezt – Tonalität ggf. vereinheitlichen.'
 ---
 
 Export Compliance Monitoring ist eine der komplexesten Daueraufgaben im internationalen Geschäft – und gleichzeitig eine der am stärksten unterschätzten. Wer Güter, Technologien oder Dienstleistungen in internationale Märkte bringt, bewegt sich in einem regulatorischen Umfeld das sich ständig verändert: neue Sanktionspakete, aktualisierte Exportkontrolllisten, geopolitische Entwicklungen die über Nacht neue Compliance-Anforderungen schaffen.
