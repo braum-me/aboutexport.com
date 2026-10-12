@@ -1,0 +1,221 @@
+---
+/**
+ * Blog-Artikel unter den ursprünglichen WordPress-Permalinks: /<slug>/
+ */
+import { render } from 'astro:content';
+import { ArrowRight, CalendarClock, CalendarDays, Clock, Info } from '@lucide/astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/blog/PostCard.astro';
+import ReviewNote from '../components/ui/ReviewNote.astro';
+import Button from '../components/ui/Button.astro';
+import { blogCategories } from '../config/blog';
+import { site } from '../config/site';
+import { formatDate, getPosts, postUrl, readingTime, type Post } from '../lib/blog';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post, all: posts } }));
+}
+
+interface Props {
+  post: Post;
+  all: Post[];
+}
+
+const { post, all } = Astro.props;
+const { data } = post;
+const { Content } = await render(post);
+const category = blogCategories[data.category];
+const url = new URL(postUrl(post), site.url).toString();
+const minutes = readingTime(post.body ?? '');
+const modified = data.updatedDate && data.updatedDate.getTime() !== data.pubDate.getTime() ? data.updatedDate : undefined;
+const showReview = data.review.status === 'pending' && process.env.HIDE_EDITORIAL_NOTES !== 'true';
+
+// Verwandte Beiträge: gleiche Kategorie zuerst, dann übrige (neueste zuerst)
+const related = all
+  .filter((p) => p.id !== post.id)
+  .sort((a, b) => Number(b.data.category === data.category) - Number(a.data.category === data.category))
+  .slice(0, 2);
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: data.title,
+    description: data.description,
+    image: [new URL(data.image.og, site.url).toString(), new URL(data.image.src, site.url).toString()],
+    datePublished: data.pubDate.toISOString(),
+    dateModified: (data.updatedDate ?? data.pubDate).toISOString(),
+    inLanguage: 'de-DE',
+    articleSection: category.label,
+    author: { '@type': 'Organization', name: data.author, url: site.url },
+    publisher: {
+      '@type': 'Organization',
+      name: site.name,
+      url: site.url,
+      logo: { '@type': 'ImageObject', url: `${site.url}/images/branding/aboutexport-icon.png` },
+    },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+    url,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Startseite', item: `${site.url}/` },
+      { '@type': 'ListItem', position: 2, name: 'Blog', item: `${site.url}/blog/` },
+      { '@type': 'ListItem', position: 3, name: category.label, item: `${site.url}/category/${data.category}/` },
+      { '@type': 'ListItem', position: 4, name: data.title, item: url },
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title={data.title}
+  rawTitle={data.seoTitle}
+  description={data.description}
+  path={postUrl(post)}
+  jsonLd={jsonLd}
+  ogImage={data.image.og}
+  ogImageAlt={data.image.alt}
+  article={{ published: data.pubDate, modified: data.updatedDate, section: category.label }}
+>
+  <article data-article={post.id}>
+    <header class="relative isolate overflow-hidden border-b border-slate-200">
+      <div class="bg-grid absolute inset-0 -z-10 [mask-image:radial-gradient(ellipse_70%_80%_at_50%_0%,#000_30%,transparent_100%)]"></div>
+      <div class="container-page max-w-3xl pt-14 pb-10 sm:pt-20">
+        <nav aria-label="Brotkrumen" class="text-sm text-slate-500">
+          <ol class="flex flex-wrap items-center gap-1.5">
+            <li><a href="/" class="hover:text-ink-900">Startseite</a></li>
+            <li aria-hidden="true">/</li>
+            <li><a href="/blog/" class="hover:text-ink-900">Blog</a></li>
+            <li aria-hidden="true">/</li>
+            <li><a href={`/category/${data.category}/`} class="hover:text-ink-900">{category.label}</a></li>
+          </ol>
+        </nav>
+
+        <h1 class="mt-6 text-3xl leading-tight font-semibold tracking-tight sm:text-5xl sm:leading-[1.1]">{data.title}</h1>
+        <p class="mt-5 text-lg leading-relaxed text-slate-600">{data.excerpt}</p>
+
+        <dl class="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-slate-600">
+          <div class="flex items-center gap-1.5">
+            <dt class="sr-only">Veröffentlicht</dt>
+            <CalendarDays size={16} aria-hidden="true" />
+            <dd><time datetime={data.pubDate.toISOString()} data-pubdate>{formatDate(data.pubDate)}</time></dd>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <dt class="sr-only">Lesezeit</dt>
+            <Clock size={16} aria-hidden="true" />
+            <dd>{minutes} Min. Lesezeit</dd>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <dt class="sr-only">Autor</dt>
+            <dd>{data.author}</dd>
+          </div>
+        </dl>
+      </div>
+    </header>
+
+    <div class="container-page max-w-3xl">
+      <figure class="-mt-px pt-10">
+        <div class="relative aspect-[16/9] overflow-hidden rounded-2xl bg-slate-100 shadow-elevated">
+          <img
+            src={data.image.src}
+            alt={data.image.alt}
+            width={data.image.width}
+            height={data.image.height}
+            class="absolute inset-0 size-full object-cover"
+            fetchpriority="high"
+            decoding="async"
+          />
+        </div>
+      </figure>
+
+      {
+        data.kind === 'regulatory' ? (
+          <aside class="mt-10 flex gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950" data-context-notice="historical">
+            <CalendarClock size={18} class="mt-0.5 shrink-0" aria-hidden="true" />
+            <div>
+              <p class="font-semibold">Historische Regulierungsmeldung · Stand {formatDate(data.pubDate)}</p>
+              <p class="mt-1 leading-relaxed">
+                Dieser Beitrag beschreibt die Rechtslage zum Zeitpunkt der Veröffentlichung. Regelungen, Fristen und Listen können
+                sich seitdem geändert haben. Der Beitrag ist keine Rechtsberatung – maßgeblich sind die aktuellen Veröffentlichungen
+                der zuständigen Behörden.
+              </p>
+            </div>
+          </aside>
+        ) : (
+          <aside class="mt-10 flex gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700" data-context-notice="archive">
+            <Info size={18} class="mt-0.5 shrink-0" aria-hidden="true" />
+            <div>
+              <p class="font-semibold text-ink-900">Archivbeitrag · Planungsstand {formatDate(data.pubDate)}</p>
+              <p class="mt-1 leading-relaxed">
+                Angaben zu Zeitplan, Preisen und Konditionen können überholt sein. Aktuell gilt: {site.launch}. Den aktuellen
+                Stand finden Sie in den <a href="/#preise" class="font-medium text-brand-700 underline underline-offset-2">Preisen</a> und den <a
+                  href="/#faq"
+                  class="font-medium text-brand-700 underline underline-offset-2">FAQ</a
+                >.
+              </p>
+            </div>
+          </aside>
+        )
+      }
+
+      {
+        showReview && (
+          <ReviewNote>
+            Redaktionelle Prüfung ausstehend. Folgende Aussagen sind möglicherweise veraltet oder ungeprüft:
+            <ul class="mt-2 list-disc space-y-1 pl-5" data-review-notes>
+              {data.review.notes.map((n) => (
+                <li>{n}</li>
+              ))}
+            </ul>
+          </ReviewNote>
+        )
+      }
+
+      <div class="prose-article mt-10" data-article-body>
+        <Content />
+      </div>
+
+      {
+        modified && (
+          <p class="mt-10 text-sm text-slate-500">
+            Zuletzt aktualisiert am <time datetime={modified.toISOString()}>{formatDate(modified)}</time>
+          </p>
+        )
+      }
+
+      <aside class="mt-12 overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 p-6 sm:p-8" data-article-cta>
+        <p class="eyebrow">{site.launch}</p>
+        <p class="mt-2 text-xl font-semibold tracking-tight text-ink-900">Export-Control-Änderungen nicht mehr manuell suchen.</p>
+        <p class="mt-2 text-sm leading-relaxed text-slate-600">
+          AboutExport überwacht Exportkontrollvorschriften für EU, USA und China und fasst relevante Änderungen auf Deutsch
+          zusammen. Tragen Sie sich in die Waitlist ein, um zum Start informiert zu werden.
+        </p>
+        <Button href="/#waitlist" size="sm" class="mt-5">
+          Early Access sichern <ArrowRight size={16} aria-hidden="true" />
+        </Button>
+      </aside>
+    </div>
+
+    {
+      related.length > 0 && (
+        <section class="mt-20 border-t border-slate-200 bg-slate-50/70 py-16" aria-labelledby="related-title">
+          <div class="container-page">
+            <div class="flex items-end justify-between gap-4">
+              <h2 id="related-title" class="text-2xl font-semibold tracking-tight">Weitere Beiträge</h2>
+              <a href="/blog/" class="text-sm font-medium text-brand-700 hover:underline">Alle Beiträge</a>
+            </div>
+            <div class="mt-8 grid gap-6 md:grid-cols-2">
+              {related.map((p) => (
+                <PostCard post={p} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )
+    }
+  </article>
+</BaseLayout>

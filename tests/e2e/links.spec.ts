@@ -10,10 +10,17 @@ test('alle internen Links und Anker sind erreichbar', async ({ page, request }) 
     if (visited.has(path)) continue;
     visited.add(path);
     await page.goto(path);
-    const hrefs = await page.$$eval('a[href]', (as) => as.map((a) => a.getAttribute('href') ?? ''));
-    for (const href of hrefs) {
+    const links = await page.$$eval('a[href]', (as) =>
+      as.map((a) => ({ href: a.getAttribute('href') ?? '', rel: a.getAttribute('rel') ?? '', inArticle: !!a.closest('[data-article-body]') })),
+    );
+    for (const { href, rel, inArticle } of links) {
       if (href.startsWith('mailto:')) continue;
-      expect(href.startsWith('http'), `Externer Link gefunden: ${href}`).toBe(false);
+      if (href.startsWith('http')) {
+        // Externe Links nur in migrierten Artikeln und nur mit rel="noopener noreferrer"
+        expect(inArticle, `Externer Link außerhalb eines Artikels: ${href}`).toBe(true);
+        expect(rel, href).toBe('noopener noreferrer');
+        continue;
+      }
       const url = new URL(href, `http://127.0.0.1${path}`);
       if (url.hash && url.hash.length > 1) {
         const key = `${url.pathname}${url.hash}`;
@@ -36,8 +43,10 @@ test('alle internen Links und Anker sind erreichbar', async ({ page, request }) 
       }
     }
   }
-  expect(visited).toContain('/impressum/');
-  expect(visited).toContain('/datenschutz/');
+  for (const p of ['/impressum/', '/datenschutz/', '/blog/', '/category/news/', '/category/regulierung/']) {
+    expect(visited).toContain(p);
+  }
+  expect(visited).toContain('/bafa-exportkontrolle-april-2026/');
 });
 
 test('SEO-Dateien und 404', async ({ request }) => {
@@ -47,7 +56,7 @@ test('SEO-Dateien und 404', async ({ request }) => {
   const sitemap = await request.get('/sitemap.xml');
   expect(sitemap.status()).toBe(200);
   const xml = await sitemap.text();
-  for (const p of ['/', '/impressum/', '/datenschutz/']) expect(xml).toContain(`<loc>https://aboutexport.com${p}</loc>`);
+  for (const p of ['/', '/impressum/', '/datenschutz/', '/blog/']) expect(xml).toContain(`<loc>https://aboutexport.com${p}</loc>`);
   const missing = await request.get('/gibt-es-nicht/');
   expect(missing.status()).toBe(404);
 });

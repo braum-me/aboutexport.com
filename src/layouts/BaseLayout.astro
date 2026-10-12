@@ -7,17 +7,35 @@ import { site } from '../config/site';
 
 interface Props {
   title?: string;
+  /** Vollständiger <title> ohne automatisches Suffix (z. B. migrierte SEO-Titel) */
+  rawTitle?: string;
   description?: string;
   /** Pfad mit Trailing Slash, z. B. "/impressum/" */
   path?: string;
   noindex?: boolean;
   jsonLd?: Record<string, unknown>[];
+  /** Pfad zu einem Bild unter /public für Open Graph */
+  ogImage?: string;
+  ogImageAlt?: string;
+  ogImageSize?: { width: number; height: number };
+  article?: { published: Date; modified?: Date; section?: string };
 }
 
-const { title, description = site.description, path = Astro.url.pathname, noindex = false, jsonLd = [] } = Astro.props;
-const fullTitle = title ? `${title} | ${site.name}` : site.title;
+const {
+  title,
+  rawTitle,
+  description = site.description,
+  path = Astro.url.pathname,
+  noindex = false,
+  jsonLd = [],
+  ogImage: ogImagePath = site.ogImage,
+  ogImageAlt = 'AboutExport – Export Compliance. Immer einen Schritt voraus.',
+  ogImageSize = { width: 1200, height: 630 },
+  article,
+} = Astro.props;
+const fullTitle = rawTitle ?? (title ? `${title} | ${site.name}` : site.title);
 const canonical = new URL(path, site.url).toString();
-const ogImage = new URL(site.ogImage, site.url).toString();
+const ogImage = new URL(ogImagePath, site.url).toString();
 ---
 
 <!doctype html>
@@ -36,18 +54,28 @@ const ogImage = new URL(site.ogImage, site.url).toString();
     <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
+    <link rel="alternate" type="application/rss+xml" title="AboutExport Blog" href="/feed/" />
     <link rel="preload" href={interLatin} as="font" type="font/woff2" crossorigin />
 
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={article ? 'article' : 'website'} />
     <meta property="og:locale" content={site.locale} />
     <meta property="og:site_name" content={site.name} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="AboutExport – Export Compliance. Immer einen Schritt voraus." />
+    <meta property="og:image:width" content={String(ogImageSize.width)} />
+    <meta property="og:image:height" content={String(ogImageSize.height)} />
+    <meta property="og:image:alt" content={ogImageAlt} />
+    {
+      article && (
+        <>
+          <meta property="article:published_time" content={article.published.toISOString()} />
+          {article.modified && <meta property="article:modified_time" content={article.modified.toISOString()} />}
+          {article.section && <meta property="article:section" content={article.section} />}
+        </>
+      )
+    }
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />

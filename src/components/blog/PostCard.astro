@@ -1,0 +1,51 @@
+---
+import { ArrowRight } from '@lucide/astro';
+import { blogCategories } from '../../config/blog';
+import { formatDate, postUrl, type Post } from '../../lib/blog';
+
+interface Props {
+  post: Post;
+  /** Großformat für den neuesten Beitrag */
+  featured?: boolean;
+  headingLevel?: 'h2' | 'h3';
+}
+const { post, featured = false, headingLevel = 'h3' } = Astro.props;
+const { data } = post;
+const Heading = headingLevel;
+const cat = blogCategories[data.category];
+---
+
+<article
+  class:list={[
+    'group relative flex flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-card transition hover:border-slate-300 hover:shadow-elevated',
+    featured && 'lg:grid lg:grid-cols-[1.2fr_1fr]',
+  ]}
+  data-post-card
+>
+  <div class:list={['relative overflow-hidden bg-slate-100', featured ? 'aspect-[16/9] lg:aspect-auto lg:h-full' : 'aspect-[16/9]']}>
+    <img
+      src={data.image.src}
+      alt=""
+      width={data.image.width}
+      height={data.image.height}
+      loading="lazy"
+      decoding="async"
+      class="absolute inset-0 size-full object-cover transition duration-500 group-hover:scale-[1.02]"
+    />
+  </div>
+  <div class:list={['flex flex-1 flex-col p-6', featured && 'lg:p-8']}>
+    <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500">
+      <span class:list={['rounded-full px-2 py-0.5 font-medium', data.kind === 'regulatory' ? 'bg-amber-50 text-amber-800' : 'bg-brand-50 text-brand-700']}>
+        {cat.label}
+      </span>
+      <time datetime={data.pubDate.toISOString()}>{formatDate(data.pubDate)}</time>
+    </div>
+    <Heading class:list={['mt-3 font-semibold tracking-tight text-ink-900', featured ? 'text-2xl sm:text-3xl' : 'text-lg']}>
+      <a href={postUrl(post)} class="after:absolute after:inset-0 focus-visible:outline-none">{data.title}</a>
+    </Heading>
+    <p class:list={['mt-3 leading-relaxed text-slate-600', featured ? 'text-base' : 'line-clamp-3 text-sm']}>{data.excerpt}</p>
+    <span class="mt-auto inline-flex items-center gap-1.5 pt-5 text-sm font-medium text-brand-700">
+      Weiterlesen <ArrowRight size={16} class="transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+    </span>
+  </div>
+</article>

@@ -87,3 +87,18 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+@layer components {
+  /* Typografie für Blog-Artikel (Markdown) */
+  .prose-article { @apply text-[17px] leading-[1.75] text-slate-700; }
+  .prose-article > * + * { @apply mt-5; }
+  .prose-article h2 { @apply mt-12 text-2xl leading-snug font-semibold tracking-tight text-ink-900; }
+  .prose-article h3 { @apply mt-8 text-lg font-semibold text-ink-900; }
+  .prose-article a { @apply font-medium text-brand-700 underline decoration-brand-300 underline-offset-2 hover:decoration-brand-700; }
+  .prose-article strong { @apply font-semibold text-ink-900; }
+  .prose-article ul { @apply list-disc space-y-2 pl-6 marker:text-brand-600; }
+  .prose-article ol { @apply list-decimal space-y-2 pl-6; }
+  .prose-article hr { @apply my-12 border-slate-200; }
+  .prose-article em { @apply text-slate-600; }
+  .prose-article blockquote { @apply border-l-2 border-brand-600 pl-4 text-slate-600; }
+}

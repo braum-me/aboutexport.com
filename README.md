@@ -37,13 +37,27 @@ src/
   scripts/       Client-Skripte (Preisrechner, ROI-Rechner, Formulare)
   components/    ui/ (Button, Screenshot, StatusBadge …), sections/ (Hero, Pricing, RoiCalculator …), mocks/
   pages/         index, impressum, datenschutz, 404, anfrage-*, api/*, sitemap.xml
+src/content/blog/  Blog-Beiträge (Markdown)
 public/images/
+  blog/          Beitragsbilder
   product/       Produkt-Screenshots (z. B. dashboard.webp)
   features/      Feature-Screenshots (alerts.webp, newsfeed.webp, ai-summary.webp, translation.webp)
   branding/      Logo, Icon, OG-Image
 server.mjs       Produktions-Server (Security-Header, /healthz, Forwarded-Header-Handling)
 tests/unit, tests/e2e
 ```
+
+## Blog
+
+- Beiträge liegen als Markdown in `src/content/blog/` (Astro Content Collection, Schema in `src/content.config.ts`).
+- URLs: Artikel unter `/<slug>/` (alte WordPress-Permalinks), Übersicht `/blog/`, Kategorien `/category/<slug>/`,
+  RSS unter `/feed/`. Weiterleitungen alter URLs: `redirects` in `astro.config.mjs` (echte 301).
+- `pubDate`/`updatedDate` sind feste Werte – nie automatisch setzen. Neue Beiträge: Datei anlegen, Bild unter
+  `public/images/blog/<slug>.webp` + `<slug>-og.jpg` (1200×630).
+- `kind: regulatory` zeigt den Hinweis „Historische Regulierungsmeldung“, `kind: product` den Archiv-Hinweis.
+- `review.status: pending` blendet einen Prüfhinweis mit `review.notes` ein. Für die Produktion entweder auf `done`
+  setzen oder mit `HIDE_EDITORIAL_NOTES=true npm run build` bauen.
+- Migrationsbericht: [`docs/blog-migration.md`](docs/blog-migration.md)
 
 ## Screenshots austauschen
 

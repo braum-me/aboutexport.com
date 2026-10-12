@@ -1,0 +1,84 @@
+---
+import PostCard from './PostCard.astro';
+import { blogCategories, type BlogCategory } from '../../config/blog';
+import type { Post } from '../../lib/blog';
+
+interface Props {
+  posts: Post[];
+  title: string;
+  description: string;
+  active?: BlogCategory;
+}
+const { posts, title, description, active } = Astro.props;
+const [first, ...rest] = posts;
+const filters = [
+  { href: '/blog/', label: 'Alle Beiträge', key: undefined },
+  ...Object.entries(blogCategories).map(([key, c]) => ({ href: `/category/${key}/`, label: c.label, key })),
+];
+---
+
+<section class="relative isolate overflow-hidden border-b border-slate-200">
+  <div class="bg-grid absolute inset-0 -z-10 [mask-image:radial-gradient(ellipse_70%_80%_at_50%_0%,#000_30%,transparent_100%)]"></div>
+  <div class="container-page pt-16 pb-12 sm:pt-20">
+    <nav aria-label="Brotkrumen" class="text-sm text-slate-500">
+      <ol class="flex flex-wrap items-center gap-1.5">
+        <li><a href="/" class="hover:text-ink-900">Startseite</a></li>
+        <li aria-hidden="true">/</li>
+        {
+          active ? (
+            <>
+              <li><a href="/blog/" class="hover:text-ink-900">Blog</a></li>
+              <li aria-hidden="true">/</li>
+              <li aria-current="page" class="text-ink-900">{blogCategories[active].label}</li>
+            </>
+          ) : (
+            <li aria-current="page" class="text-ink-900">Blog</li>
+          )
+        }
+      </ol>
+    </nav>
+    <h1 class="mt-6 text-4xl font-semibold tracking-tight sm:text-5xl">{title}</h1>
+    <p class="mt-4 max-w-2xl text-lg leading-relaxed text-slate-600">{description}</p>
+    <nav aria-label="Kategorien" class="mt-8">
+      <ul class="flex flex-wrap gap-2">
+        {
+          filters.map((f) => (
+            <li>
+              <a
+                href={f.href}
+                aria-current={f.key === active ? 'page' : undefined}
+                class:list={[
+                  'inline-flex h-9 items-center rounded-full border px-4 text-sm font-medium transition',
+                  f.key === active
+                    ? 'border-ink-900 bg-ink-900 text-white'
+                    : 'border-slate-300 bg-white text-slate-700 hover:border-slate-400 hover:text-ink-900',
+                ]}
+              >
+                {f.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</section>
+
+<section class="container-page py-14 sm:py-20" aria-label="Beiträge">
+  {
+    first ? (
+      <div class="space-y-6">
+        <PostCard post={first} featured headingLevel="h2" />
+        {rest.length > 0 && (
+          <div class="grid gap-6 md:grid-cols-2">
+            {rest.map((p) => (
+              <PostCard post={p} headingLevel="h2" />
+            ))}
+          </div>
+        )}
+      </div>
+    ) : (
+      <p class="text-slate-600">In dieser Kategorie gibt es noch keine Beiträge.</p>
+    )
+  }
+</section>
