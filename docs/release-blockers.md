@@ -36,14 +36,13 @@ Die internen Prüfhinweise wurden von der Website entfernt (`ReviewNote` gelösc
 Die persönliche Steuer-ID stand in `src/pages/impressum.astro` und ist im aktuellen Stand entfernt. Sie ist aber in
 der **Historie** enthalten (öffentliches Repository):
 
-| Commit | Branch(es) |
-|---|---|
-| `0a3cbb5` Website-Redesign 2027 (Einführung) | `main`, alle |
-| `adf94e3` Blog wiederhergestellt | `main`, alle |
-| `2f4793f` Blog: Produktangaben korrigiert | PR #1 |
-| `8fb5a9f` Premium Visual Redesign | PR #2 |
-| `22d1808` Merge main | PR #2 |
-| `88b2d2b` Merge PR #1 in Redesign-Branch | PR #2 |
+- **`src/pages/impressum.astro`:** in allen Commits seit `0a3cbb5` (Einführung, liegt auf `main`) bis
+  einschließlich `2f4793f` (PR #1) bzw. `88b2d2b` (PR #2).
+- **`docs/release-blockers.md`:** versehentlich im Bereinigungsbeispiel dieser Datei in `9c21240`, `cedbb19`,
+  `7215821` (PR #1) sowie `a1d72b9`, `4bcfa22` (PR #2); im aktuellen Stand entfernt.
+
+Prüfen (lokal, ID nicht in Dateien speichern): `git log --all --oneline -S "<Steuer-ID>"`.
+`git filter-repo --replace-text` (unten) erfasst beide Fundstellen.
 
 Zusätzlich hält GitHub die PR-Refs (`refs/pull/1/head`, `refs/pull/2/head`) – die kann man selbst nicht umschreiben.
 
@@ -56,9 +55,12 @@ Zusätzlich hält GitHub die PR-Refs (`refs/pull/1/head`, `refs/pull/2/head`) �
    # frischer Mirror-Clone, nie im Arbeits-Clone
    git clone --mirror https://github.com/braum-me/aboutexport.com.git ae-mirror.git
    cd ae-mirror.git
-   printf '%s\n' '[entfernt]==>[entfernt]' > ../replacements.txt
+   # Steuer-ID nur lokal eintragen – niemals in eine Datei im Repository schreiben
+   read -r -p 'Steuer-ID (wie im alten Impressum): ' TAXID
+   printf '%s==>[entfernt]\n' "$TAXID" > ../replacements.txt
    git filter-repo --replace-text ../replacements.txt
-   git grep -n '019 807' $(git rev-list --all) || echo "sauber"
+   git grep -n -F "$TAXID" $(git rev-list --all) || echo "sauber"
+   rm ../replacements.txt
    git push --force --mirror origin   # Force-Push – nur mit Freigabe
    ```
 3. **GitHub Support** kontaktieren („Remove sensitive data“), damit gecachte Ansichten und die PR-Refs gelöscht
