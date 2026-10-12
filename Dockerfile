@@ -6,9 +6,6 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --ignore-scripts
 COPY . .
-# true = redaktionelle Prüfhinweise in Blog-Artikeln ausblenden
-ARG HIDE_EDITORIAL_NOTES=false
-ENV HIDE_EDITORIAL_NOTES=$HIDE_EDITORIAL_NOTES
 RUN npm run build
 
 # ---- Runtime --------------------------------------------------------------

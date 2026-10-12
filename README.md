@@ -56,8 +56,11 @@ tests/unit, tests/e2e
 - `pubDate`/`updatedDate` sind feste Werte – nie automatisch setzen. Neue Beiträge: Datei anlegen, Bild unter
   `public/images/blog/<slug>.webp` + `<slug>-og.jpg` (1200×630).
 - `kind: regulatory` zeigt den Hinweis „Historische Regulierungsmeldung“, `kind: product` den Archiv-Hinweis.
-- `review.status: pending` blendet einen Prüfhinweis mit `review.notes` ein. Für die Produktion entweder auf `done`
-  setzen oder mit `HIDE_EDITORIAL_NOTES=true npm run build` bauen.
+- `review` enthält interne redaktionelle Prüfhinweise (offen/erledigt). Sie bleiben im Repository und werden
+  **nicht** auf der Website angezeigt.
+- Nachträgliche inhaltliche Änderungen: Text ändern, `updatedDate` setzen und einen Eintrag unter `corrections`
+  (Datum, Zusammenfassung, `from`/`to`) anlegen. Die Zusammenfassung wird im Artikel als „Nachträglich aktualisiert“
+  angezeigt; `pubDate` bleibt unverändert. Regulatorische Aussagen nur nach Quellenprüfung ändern.
 - Migrationsbericht: [`docs/blog-migration.md`](docs/blog-migration.md)
 
 ## Screenshots austauschen
