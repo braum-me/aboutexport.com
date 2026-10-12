@@ -1,0 +1,117 @@
+---
+import { Check } from '@lucide/astro';
+import { features, roadmap } from '../../config/content';
+import FeatureIcon from '../ui/FeatureIcon.astro';
+import SectionHeader from '../ui/SectionHeader.astro';
+import StatusBadge from '../ui/StatusBadge.astro';
+import Screenshot from '../ui/Screenshot.astro';
+import AlertMock from '../mocks/AlertMock.astro';
+import NewsfeedMock from '../mocks/NewsfeedMock.astro';
+import SummaryMock from '../mocks/SummaryMock.astro';
+import TranslationMock from '../mocks/TranslationMock.astro';
+
+const details = [
+  {
+    eyebrow: 'Critical Regulatory Alerts',
+    title: 'Kritische Änderungen erreichen Sie sofort.',
+    text: 'Wird eine relevante Vorschrift geändert, erhalten Sie einen Alert per E-Mail und im Dashboard – mit Einordnung der Dringlichkeit und Link zur Originalquelle.',
+    points: ['Benachrichtigung per E-Mail', 'Konfigurierbar nach Dringlichkeit und Thema', 'Direkter Link zur Originalquelle'],
+    image: '/images/features/alerts.webp',
+    alt: 'AboutExport Alert-Benachrichtigung',
+    mock: AlertMock,
+  },
+  {
+    eyebrow: 'Täglicher Newsfeed',
+    title: 'Jeden Morgen das Wichtigste.',
+    text: 'Statt dutzende Quellen einzeln zu prüfen, erhalten Sie die relevanten Export-Compliance-News kuratiert, gefiltert und nach Relevanz sortiert.',
+    points: ['Gefiltert nach Ihren Regionen', 'Nach Relevanz sortiert', 'Ein Überblick statt dutzender Einzelquellen'],
+    image: '/images/features/newsfeed.webp',
+    alt: 'AboutExport täglicher Compliance-Newsfeed',
+    mock: NewsfeedMock,
+  },
+  {
+    eyebrow: 'KI-Zusammenfassungen',
+    title: 'Regulatorische Texte in Kernaussagen.',
+    text: 'Die KI fasst lange Bekanntmachungen zusammen und zeigt mögliche Auswirkungen. Die Zusammenfassung ersetzt keine rechtliche Prüfung – die Originalquelle bleibt immer verlinkt.',
+    points: ['Kernaussagen auf einen Blick', 'Einordnung möglicher Auswirkungen', 'Originalquelle stets verfügbar'],
+    image: '/images/features/ai-summary.webp',
+    alt: 'AboutExport KI-Zusammenfassung eines regulatorischen Updates',
+    mock: SummaryMock,
+  },
+  {
+    eyebrow: 'Deutsche Übersetzungen',
+    title: 'Chinesisch, Englisch – verstanden auf Deutsch.',
+    text: 'Alle Updates und News werden automatisch ins Deutsche übersetzt. Sie verstehen sofort, was eine Änderung für Ihre Märkte bedeutet.',
+    points: ['Automatische Übersetzung', 'Original und Übersetzung nebeneinander', 'Keine externen Übersetzungstools nötig'],
+    image: '/images/features/translation.webp',
+    alt: 'AboutExport Gegenüberstellung von Original und deutscher Übersetzung',
+    mock: TranslationMock,
+  },
+];
+---
+
+<section id="features" class="scroll-mt-16 bg-white py-20 sm:py-28" aria-labelledby="features-title">
+  <div class="container-page">
+    <SectionHeader id="features-title" eyebrow="Features" title="Alles, was Ihr Export-Compliance-Monitoring braucht.">
+      Ein Werkzeug für Überwachung, Benachrichtigung und Einordnung – fokussiert auf die Jurisdiktionen, die für Sie
+      zählen.
+    </SectionHeader>
+
+    <ul class="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        features.map((f) => (
+          <li class="card group relative flex flex-col p-6 transition hover:border-slate-300 hover:shadow-elevated">
+            <div class="flex items-start justify-between gap-3">
+              <span class="flex size-10 items-center justify-center rounded-lg bg-brand-50 text-brand-700 ring-1 ring-brand-100">
+                <FeatureIcon name={f.icon} />
+              </span>
+              <StatusBadge status={f.status} />
+            </div>
+            <h3 class="mt-5 text-base font-semibold">{f.title}</h3>
+            <p class="mt-2 text-sm leading-relaxed text-slate-600">{f.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="mt-24 space-y-24 sm:mt-32 sm:space-y-32">
+      {
+        details.map((d, i) => (
+          <article class="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+            <div class:list={[i % 2 === 1 && 'lg:order-2']}>
+              <p class="eyebrow">{d.eyebrow}</p>
+              <h3 class="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">{d.title}</h3>
+              <p class="mt-4 leading-relaxed text-slate-600">{d.text}</p>
+              <ul class="mt-6 space-y-2.5">
+                {d.points.map((pt) => (
+                  <li class="flex items-start gap-2.5 text-sm text-ink-900">
+                    <Check size={18} class="mt-px shrink-0 text-brand-600" aria-hidden="true" />
+                    {pt}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <Screenshot src={d.image} alt={d.alt} aspect="aspect-[4/3]" chrome={false}>
+              <d.mock />
+            </Screenshot>
+          </article>
+        ))
+      }
+    </div>
+
+    <div class="mt-24 rounded-2xl border border-dashed border-slate-300 p-6 sm:p-8">
+      <h3 class="text-base font-semibold">Roadmap nach dem Launch</h3>
+      <p class="mt-1 text-sm text-slate-600">Geplante Erweiterungen – Umfang und Zeitpunkt können sich ändern.</p>
+      <ul class="mt-5 grid gap-3 sm:grid-cols-3">
+        {
+          roadmap.map((r) => (
+            <li class="flex flex-col items-start gap-2 rounded-xl bg-slate-50 p-4">
+              <StatusBadge status={r.status} />
+              <span class="text-sm font-medium text-ink-900">{r.title}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>

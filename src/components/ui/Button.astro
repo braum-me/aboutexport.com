@@ -1,0 +1,44 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+type Variant = 'primary' | 'secondary' | 'ghost' | 'inverted';
+type Size = 'sm' | 'md' | 'lg';
+
+type Props = {
+  href?: string;
+  variant?: Variant;
+  size?: Size;
+  class?: string;
+  type?: 'button' | 'submit';
+} & Omit<HTMLAttributes<'a'> & HTMLAttributes<'button'>, 'type'>;
+
+const { href, variant = 'primary', size = 'md', class: className, type = 'button', ...rest } = Astro.props;
+
+const base =
+  'group inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg font-medium transition duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60';
+const variants: Record<Variant, string> = {
+  primary:
+    'bg-brand-700 text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.12),0_1px_2px_rgb(15_23_42/0.2)] hover:bg-brand-800 focus-visible:outline-brand-700',
+  secondary: 'border border-slate-300 bg-white text-ink-900 shadow-card hover:border-slate-400 hover:bg-slate-50',
+  ghost: 'text-ink-900 hover:bg-slate-100',
+  inverted: 'bg-white text-ink-900 hover:bg-brand-50 focus-visible:outline-white',
+};
+const sizes: Record<Size, string> = {
+  sm: 'h-9 px-3.5 text-sm',
+  md: 'h-11 px-5 text-[15px]',
+  lg: 'h-12 px-6 text-base',
+};
+const classes = [base, variants[variant], sizes[size], className].filter(Boolean).join(' ');
+---
+
+{
+  href ? (
+    <a href={href} class={classes} {...rest}>
+      <slot />
+    </a>
+  ) : (
+    <button type={type} class={classes} {...rest}>
+      <slot />
+    </button>
+  )
+}

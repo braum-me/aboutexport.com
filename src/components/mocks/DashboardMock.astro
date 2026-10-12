@@ -1,0 +1,120 @@
+---
+// Konzept-Mockup des Dashboards. Rein dekorativ, Beispieldaten.
+const alerts = [
+  { level: 'Kritisch', cls: 'bg-red-50 text-red-700 ring-red-600/15', region: 'EU', title: 'Änderung der Dual-Use-Güterliste', time: '07:42' },
+  { level: 'Kritisch', cls: 'bg-red-50 text-red-700 ring-red-600/15', region: 'USA', title: 'Neue Einträge auf der Entity List', time: '06:15' },
+  { level: 'Hinweis', cls: 'bg-amber-50 text-amber-800 ring-amber-600/15', region: 'China', title: 'Anpassung der Exportkontrollliste', time: 'Gestern' },
+  { level: 'Info', cls: 'bg-slate-100 text-slate-600 ring-slate-500/15', region: 'EU', title: 'Leitlinie zu Sanktionen veröffentlicht', time: 'Gestern' },
+];
+const bars = [
+  ['h-[30%]', 'h-[18%]', 'h-[22%]'],
+  ['h-[20%]', 'h-[12%]', 'h-[30%]'],
+  ['h-[26%]', 'h-[22%]', 'h-[18%]'],
+  ['h-[16%]', 'h-[10%]', 'h-[34%]'],
+  ['h-[34%]', 'h-[20%]', 'h-[26%]'],
+  ['h-[22%]', 'h-[16%]', 'h-[20%]'],
+  ['h-[28%]', 'h-[26%]', 'h-[30%]'],
+];
+---
+
+<div class="@container flex size-full bg-white text-[11px] text-slate-600 select-none">
+  <aside class="hidden w-44 shrink-0 flex-col gap-1 border-r border-slate-200 bg-slate-50/70 p-3 @2xl:flex">
+    <div class="mb-3 flex items-center gap-2 px-1.5">
+      <span class="size-5 rounded-md bg-brand-700"></span>
+      <span class="h-2.5 w-20 rounded bg-slate-300"></span>
+    </div>
+    <span class="rounded-md bg-white px-2 py-1.5 font-medium text-ink-900 shadow-card ring-1 ring-slate-200">Übersicht</span>
+    <span class="px-2 py-1.5">Alerts</span>
+    <span class="px-2 py-1.5">Newsfeed</span>
+    <span class="px-2 py-1.5">Einstellungen</span>
+    <p class="mt-4 px-2 text-[10px] font-semibold tracking-wider text-slate-500 uppercase">Regionen</p>
+    {
+      ['EU', 'USA', 'China'].map((r) => (
+        <span class="flex items-center justify-between px-2 py-1">
+          {r}
+          <span class="flex h-3.5 w-6 items-center justify-end rounded-full bg-brand-600 px-0.5">
+            <span class="size-2.5 rounded-full bg-white" />
+          </span>
+        </span>
+      ))
+    }
+  </aside>
+
+  <div class="flex min-w-0 flex-1 flex-col gap-3 p-3 @lg:p-4">
+    <div class="flex items-center justify-between">
+      <div>
+        <p class="text-sm font-semibold text-ink-900 @lg:text-base">Guten Morgen</p>
+        <p class="text-[10px] text-slate-500">Export Control Übersicht</p>
+      </div>
+      <span class="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-medium text-amber-800 ring-1 ring-amber-600/20">Beispieldaten</span>
+    </div>
+
+    <div class="grid grid-cols-3 gap-2">
+      {
+        [
+          ['Kritische Alerts', '2', 'text-red-600'],
+          ['Updates heute', '14', 'text-ink-900'],
+          ['Regionen aktiv', '3', 'text-ink-900'],
+        ].map(([label, value, cls]) => (
+          <div class="rounded-lg border border-slate-200 p-2 @lg:p-3">
+            <p class="truncate text-[10px] text-slate-500">{label}</p>
+            <p class:list={['mt-0.5 text-base font-semibold @lg:text-xl', cls]}>{value}</p>
+          </div>
+        ))
+      }
+    </div>
+
+    <div class="grid min-h-0 flex-1 gap-3 @2xl:grid-cols-[1.35fr_1fr]">
+      <div class="min-w-0 rounded-lg border border-slate-200">
+        <div class="flex items-center justify-between border-b border-slate-100 px-3 py-2">
+          <p class="font-semibold text-ink-900">Neueste Alerts</p>
+          <span class="text-[10px] text-brand-700">Alle anzeigen</span>
+        </div>
+        <ul class="divide-y divide-slate-100">
+          {
+            alerts.map((a) => (
+              <li class="flex items-center gap-2 px-3 py-2">
+                <span class:list={['shrink-0 rounded px-1.5 py-0.5 text-[9px] font-semibold ring-1 ring-inset', a.cls]}>{a.level}</span>
+                <span class="shrink-0 rounded bg-brand-50 px-1.5 py-0.5 text-[9px] font-semibold text-brand-700">{a.region}</span>
+                <span class="truncate text-ink-900">{a.title}</span>
+                <span class="ml-auto shrink-0 text-[10px] text-slate-500">{a.time}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="hidden flex-col gap-3 @2xl:flex">
+        <div class="flex-1 rounded-lg border border-slate-200 p-3">
+          <p class="font-semibold text-ink-900">Aktivität nach Region</p>
+          <div class="mt-2 flex h-20 items-end gap-2">
+            {
+              bars.map((b) => (
+                <div class="flex h-full flex-1 flex-col justify-end gap-px">
+                  <span class:list={['w-full rounded-t-sm bg-brand-600', b[0]]} />
+                  <span class:list={['w-full bg-sky-400', b[1]]} />
+                  <span class:list={['w-full rounded-b-sm bg-slate-300', b[2]]} />
+                </div>
+              ))
+            }
+          </div>
+          <div class="mt-2 flex gap-3 text-[9px] text-slate-500">
+            <span class="flex items-center gap-1"><span class="size-1.5 rounded-full bg-brand-600"></span>EU</span>
+            <span class="flex items-center gap-1"><span class="size-1.5 rounded-full bg-sky-400"></span>USA</span>
+            <span class="flex items-center gap-1"><span class="size-1.5 rounded-full bg-slate-300"></span>China</span>
+          </div>
+        </div>
+        <div class="rounded-lg border border-brand-100 bg-brand-50/50 p-3">
+          <p class="flex items-center gap-1.5 font-semibold text-brand-800">
+            <span class="size-1.5 rounded-full bg-brand-600"></span>KI-Zusammenfassung
+          </p>
+          <div class="mt-2 space-y-1.5">
+            <span class="block h-1.5 w-full rounded bg-brand-200/70"></span>
+            <span class="block h-1.5 w-11/12 rounded bg-brand-200/70"></span>
+            <span class="block h-1.5 w-3/4 rounded bg-brand-200/70"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

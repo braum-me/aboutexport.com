@@ -1,0 +1,64 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/sections/Hero.astro';
+import Sources from '../components/sections/Sources.astro';
+import Problem from '../components/sections/Problem.astro';
+import Features from '../components/sections/Features.astro';
+import HowItWorks from '../components/sections/HowItWorks.astro';
+import Pricing from '../components/sections/Pricing.astro';
+import RoiCalculator from '../components/sections/RoiCalculator.astro';
+import Faq from '../components/sections/Faq.astro';
+import Contact from '../components/sections/Contact.astro';
+import { faqs } from '../config/content';
+import { site } from '../config/site';
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: site.name,
+    url: site.url,
+    logo: `${site.url}/images/branding/aboutexport-icon.png`,
+    email: site.contactEmail,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: 'Schlüchterner Straße 31',
+      postalCode: '36391',
+      addressLocality: 'Sinntal',
+      addressCountry: 'DE',
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: site.name,
+    url: site.url,
+    inLanguage: 'de-DE',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a.join(' ') },
+    })),
+  },
+];
+---
+
+<BaseLayout
+  title="Export Compliance Software für Export Control Monitoring"
+  path="/"
+  jsonLd={jsonLd}
+>
+  <Hero />
+  <Sources />
+  <Problem />
+  <Features />
+  <HowItWorks />
+  <Pricing />
+  <RoiCalculator />
+  <Faq />
+  <Contact />
+</BaseLayout>

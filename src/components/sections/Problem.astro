@@ -1,0 +1,28 @@
+---
+import { problems } from '../../config/content';
+import FeatureIcon from '../ui/FeatureIcon.astro';
+import SectionHeader from '../ui/SectionHeader.astro';
+---
+
+<section class="py-20 sm:py-28" aria-labelledby="problem-title">
+  <div class="container-page">
+    <SectionHeader id="problem-title" eyebrow="Die Herausforderung" title="Export Compliance ist komplex genug.">
+      Vorschriften ändern sich laufend – in mehreren Jurisdiktionen, Sprachen und Formaten. Das Monitoring bleibt oft
+      Handarbeit.
+    </SectionHeader>
+
+    <ul class="mt-14 grid gap-px overflow-hidden rounded-2xl border border-slate-200 bg-slate-200 sm:grid-cols-2 lg:grid-cols-5">
+      {
+        problems.map((p, i) => (
+          <li class:list={['bg-white p-6', i === problems.length - 1 && 'sm:col-span-2 lg:col-span-1']}>
+            <span class="flex size-9 items-center justify-center rounded-lg bg-slate-100 text-ink-900">
+              <FeatureIcon name={p.icon} size={18} />
+            </span>
+            <h3 class="mt-4 text-[15px] font-semibold">{p.title}</h3>
+            <p class="mt-2 text-sm leading-relaxed text-slate-600">{p.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

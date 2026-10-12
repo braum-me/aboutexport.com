@@ -1,0 +1,38 @@
+---
+import { ChevronDown } from '@lucide/astro';
+import { faqs } from '../../config/content';
+import SectionHeader from '../ui/SectionHeader.astro';
+---
+
+<section id="faq" class="scroll-mt-16 border-t border-slate-200 bg-slate-50/70 py-20 sm:py-28" aria-labelledby="faq-title">
+  <div class="container-page grid gap-12 lg:grid-cols-[1fr_1.6fr]">
+    <SectionHeader id="faq-title" eyebrow="FAQ" title="Antworten auf Ihre Fragen." align="left">
+      Alles, was Sie vor der Anmeldung wissen möchten. Ihre Frage fehlt? <a
+        href="#kontakt"
+        class="font-medium text-brand-700 underline decoration-brand-300 underline-offset-2">Schreiben Sie uns.</a
+      >
+    </SectionHeader>
+
+    <div class="divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white">
+      {
+        faqs.map((f) => (
+          <details class="group px-5 sm:px-6" name="faq">
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-4 py-5 text-left text-[15px] font-medium text-ink-900 [&::-webkit-details-marker]:hidden">
+              {f.q}
+              <ChevronDown
+                size={18}
+                class="shrink-0 text-slate-500 transition-transform group-open:rotate-180"
+                aria-hidden="true"
+              />
+            </summary>
+            <div class="space-y-3 pb-5 text-sm leading-relaxed text-slate-600">
+              {f.a.map((p) => (
+                <p>{p}</p>
+              ))}
+            </div>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,45 @@
+---
+import { jurisdictions, roadmap } from '../../config/content';
+import SectionHeader from '../ui/SectionHeader.astro';
+const more = roadmap[0];
+---
+
+<section class="border-y border-slate-200 bg-slate-50/70 py-20 sm:py-24" aria-labelledby="sources-title">
+  <div class="container-page">
+    <SectionHeader id="sources-title" eyebrow="Jurisdiktionen" title="Drei Exportkontrollregime. Eine Übersicht.">
+      AboutExport stützt sich auf öffentliche, verlässliche Regulierungsquellen der jeweiligen Jurisdiktion.
+    </SectionHeader>
+
+    <ul class="mt-12 grid gap-4 md:grid-cols-3">
+      {
+        jurisdictions.map((j) => (
+          <li class="card flex flex-col p-6">
+            <div class="flex items-center gap-3">
+              <span class="flex size-10 items-center justify-center rounded-lg bg-ink-900 font-mono text-sm font-semibold text-white">
+                {j.code}
+              </span>
+              <h3 class="text-lg font-semibold">{j.name}</h3>
+            </div>
+            <p class="mt-5 text-xs font-semibold tracking-wider text-slate-500 uppercase">Typische Quellen</p>
+            <ul class="mt-2 space-y-1.5 text-sm text-slate-700">
+              {j.sources.map((s) => (
+                <li class="flex gap-2">
+                  <span class="mt-2 size-1 shrink-0 rounded-full bg-slate-400" aria-hidden="true" />
+                  {s}
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="mt-6 flex flex-col gap-2 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+      <p>{more.title} – nach dem Launch geplant.</p>
+      <p class="text-xs">
+        Die Nennung von Behörden dient nur der Einordnung der Quellen. Es besteht keine Partnerschaft, Zertifizierung oder
+        Billigung durch diese Stellen.
+      </p>
+    </div>
+  </div>
+</section>

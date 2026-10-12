@@ -1,0 +1,54 @@
+---
+import Logo from './Logo.astro';
+import { legalNav, nav, site } from '../config/site';
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-slate-200 bg-slate-50/60">
+  <div class="container-page grid gap-10 py-14 md:grid-cols-[1.4fr_1fr_1fr]">
+    <div class="max-w-sm">
+      <Logo class="h-6" />
+      <p class="mt-4 text-sm leading-relaxed text-slate-600">
+        Export Control Monitoring für EU, USA und China – automatisch überwacht, KI-zusammengefasst, auf Deutsch.
+      </p>
+      <p class="mt-4 text-sm font-medium text-ink-900">{site.launch}</p>
+    </div>
+    <nav aria-label="Footer-Navigation">
+      <h2 class="text-sm font-semibold text-ink-900">Produkt</h2>
+      <ul class="mt-4 space-y-2.5 text-sm">
+        {
+          nav.map((item) => (
+            <li>
+              <a href={item.href} class="text-slate-600 hover:text-ink-900">
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+        <li><a href="/#waitlist" class="text-slate-600 hover:text-ink-900">Waitlist</a></li>
+      </ul>
+    </nav>
+    <div>
+      <h2 class="text-sm font-semibold text-ink-900">Kontakt &amp; Rechtliches</h2>
+      <ul class="mt-4 space-y-2.5 text-sm">
+        <li><a href={`mailto:${site.contactEmail}`} class="text-slate-600 hover:text-ink-900">{site.contactEmail}</a></li>
+        <li><a href="/#kontakt" class="text-slate-600 hover:text-ink-900">Kontaktformular</a></li>
+        {
+          legalNav.map((item) => (
+            <li>
+              <a href={item.href} class="text-slate-600 hover:text-ink-900">
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+  <div class="border-t border-slate-200">
+    <div class="container-page flex flex-col gap-2 py-6 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+      <p>© {year} {site.owner}</p>
+      <p>Keine Tracking-Cookies. Keine Drittanbieter-Skripte.</p>
+    </div>
+  </div>
+</footer>

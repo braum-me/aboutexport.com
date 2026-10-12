@@ -1,0 +1,227 @@
+---
+import { ArrowRight, Info } from '@lucide/astro';
+import { pricing } from '../../config/pricing';
+import { roiConfig } from '../../config/roi';
+import { calculateRoi } from '../../lib/roi';
+import { formatCurrency, formatPercent } from '../../lib/format';
+import Button from '../ui/Button.astro';
+import SectionHeader from '../ui/SectionHeader.astro';
+
+const { defaults, limits, workingDaysPerYear } = roiConfig;
+const d = pricing.earlyAccessDiscount;
+const initial = calculateRoi({ ...defaults });
+if (!initial.ok) throw new Error('ROI-Defaults sind ungültig');
+const r = initial.result;
+const regionOptions = Array.from(
+  { length: pricing.maxRegions - pricing.minRegions + 1 },
+  (_, i) => pricing.minRegions + i,
+);
+---
+
+<section id="roi" class="scroll-mt-16 py-20 sm:py-28" aria-labelledby="roi-title">
+  <div class="container-page">
+    <SectionHeader id="roi-title" eyebrow="ROI-Rechner" title="Ab wann lohnt sich AboutExport?">
+      Vergleichen Sie Ihren heutigen Rechercheaufwand mit den Kosten eines Abonnements. Eine Schätzung – keine Garantie.
+    </SectionHeader>
+
+    <form class="card mx-auto mt-12 grid max-w-5xl overflow-hidden lg:grid-cols-2" data-roi novalidate>
+      <div class="space-y-7 p-6 sm:p-8">
+        <div>
+          <div class="flex items-baseline justify-between gap-4">
+            <label for="roi-minutes" class="label mb-0">Manuelle Recherche pro Arbeitstag</label>
+            <span class="text-sm text-slate-500">Minuten</span>
+          </div>
+          <div class="mt-3 flex items-center gap-4">
+            <input
+              type="range"
+              min={limits.minutesPerDay.min}
+              max={120}
+              step={limits.minutesPerDay.step}
+              value={defaults.minutesPerDay}
+              class="h-2 flex-1 cursor-pointer accent-brand-700"
+              aria-label="Minuten pro Arbeitstag (Schieberegler)"
+              data-roi-sync="minutesPerDay"
+            />
+            <input
+              id="roi-minutes"
+              name="minutesPerDay"
+              type="number"
+              inputmode="numeric"
+              min={limits.minutesPerDay.min}
+              max={limits.minutesPerDay.max}
+              step="1"
+              value={defaults.minutesPerDay}
+              class="input w-24 text-right tabular-nums"
+              aria-describedby="roi-minutes-error"
+              required
+            />
+          </div>
+          <p id="roi-minutes-error" class="field-error" data-roi-error="minutesPerDay" hidden></p>
+        </div>
+
+        <div>
+          <div class="flex items-baseline justify-between gap-4">
+            <label for="roi-rate" class="label mb-0">Interner Stundensatz</label>
+            <span class="text-sm text-slate-500">€ / Stunde</span>
+          </div>
+          <div class="mt-3 flex items-center gap-4">
+            <input
+              type="range"
+              min={limits.hourlyRate.min}
+              max={200}
+              step={limits.hourlyRate.step}
+              value={defaults.hourlyRate}
+              class="h-2 flex-1 cursor-pointer accent-brand-700"
+              aria-label="Stundensatz in Euro (Schieberegler)"
+              data-roi-sync="hourlyRate"
+            />
+            <input
+              id="roi-rate"
+              name="hourlyRate"
+              type="number"
+              inputmode="decimal"
+              min={limits.hourlyRate.min}
+              max={limits.hourlyRate.max}
+              step="0.01"
+              value={defaults.hourlyRate}
+              class="input w-24 text-right tabular-nums"
+              aria-describedby="roi-rate-error"
+              required
+            />
+          </div>
+          <p id="roi-rate-error" class="field-error" data-roi-error="hourlyRate" hidden></p>
+        </div>
+
+        <fieldset>
+          <legend class="label">Überwachte Regionen</legend>
+          <div class="grid grid-cols-3 gap-1 rounded-xl bg-slate-100 p-1">
+            {
+              regionOptions.map((n) => (
+                <label class="cursor-pointer">
+                  <input type="radio" name="regions" value={n} class="peer sr-only" checked={n === defaults.regions} />
+                  <span class="flex h-10 items-center justify-center rounded-lg text-sm font-medium text-slate-600 transition peer-checked:bg-white peer-checked:text-ink-900 peer-checked:shadow-card peer-focus-visible:outline-2 peer-focus-visible:outline-brand-600">
+                    {n} {n === 1 ? 'Region' : 'Regionen'}
+                  </span>
+                </label>
+              ))
+            }
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend class="label">Abrechnung</legend>
+          <div class="grid grid-cols-2 gap-1 rounded-xl bg-slate-100 p-1">
+            {
+              [
+                ['monthly', 'Monatlich'],
+                ['annual', 'Jährlich'],
+              ].map(([value, label]) => (
+                <label class="cursor-pointer">
+                  <input
+                    type="radio"
+                    name="interval"
+                    value={value}
+                    class="peer sr-only"
+                    checked={value === defaults.interval}
+                  />
+                  <span class="flex h-10 items-center justify-center rounded-lg text-sm font-medium text-slate-600 transition peer-checked:bg-white peer-checked:text-ink-900 peer-checked:shadow-card peer-focus-visible:outline-2 peer-focus-visible:outline-brand-600">
+                    {label}
+                  </span>
+                </label>
+              ))
+            }
+          </div>
+        </fieldset>
+
+        {
+          d.enabled && (
+            <label class="flex cursor-pointer items-start gap-3">
+              <input
+                type="checkbox"
+                name="applyDiscount"
+                class="mt-0.5 size-4 rounded border-slate-300 accent-brand-700"
+                checked={defaults.applyDiscount}
+              />
+              <span class="text-sm text-slate-700">
+                {d.percent} % {d.label} einrechnen
+                <span class="block text-xs text-slate-500">Nur für Waitlist-Mitglieder vorgesehen.</span>
+              </span>
+            </label>
+          )
+        }
+      </div>
+
+      <div class="flex flex-col border-t border-slate-200 bg-slate-50/80 p-6 sm:p-8 lg:border-t-0 lg:border-l" aria-live="polite" data-roi-results>
+        <dl class="grid grid-cols-2 gap-4">
+          <div class="rounded-xl border border-slate-200 bg-white p-4">
+            <dt class="text-xs text-slate-500">Manuelle Recherche / Jahr</dt>
+            <dd class="mt-1 text-xl font-semibold text-ink-900 tabular-nums" data-roi-out="annualManualCost">
+              {formatCurrency(r.annualManualCost)}
+            </dd>
+          </div>
+          <div class="rounded-xl border border-slate-200 bg-white p-4">
+            <dt class="text-xs text-slate-500">AboutExport / Jahr</dt>
+            <dd class="mt-1 text-xl font-semibold text-ink-900 tabular-nums" data-roi-out="annualSubscriptionCost">
+              {formatCurrency(r.annualSubscriptionCost)}
+            </dd>
+          </div>
+        </dl>
+
+        <div class="mt-4 rounded-xl bg-ink-900 p-5 text-white" data-roi-highlight>
+          <div class="flex items-start justify-between gap-3">
+            <p class="text-sm text-slate-300" data-roi-out="savingsLabel">
+              {r.isSaving ? 'Mögliche Ersparnis pro Jahr' : 'Mehrkosten pro Jahr'}
+            </p>
+            <span
+              class="shrink-0 whitespace-nowrap rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-semibold tabular-nums"
+              data-roi-out="roiPercent">ROI {r.roiPercent === null ? '–' : formatPercent(r.roiPercent)}</span
+            >
+          </div>
+          <p class="mt-2 text-4xl font-semibold tracking-tight tabular-nums" data-roi-out="annualSavings">
+            {formatCurrency(Math.abs(r.annualSavings))}
+          </p>
+          <p class="mt-1 text-sm text-slate-300">
+            <span data-roi-out="monthlySavings">{formatCurrency(Math.abs(r.monthlySavings))}</span>
+            <span data-roi-out="monthlyLabel">{r.isSaving ? 'pro Monat' : 'Mehrkosten pro Monat'}</span>
+          </p>
+        </div>
+
+        <p class="mt-4 hidden rounded-lg bg-red-50 px-3 py-2 text-sm text-red-800" data-roi-invalid>
+          Bitte korrigieren Sie die markierten Eingaben.
+        </p>
+
+        <details class="group mt-6 text-sm text-slate-600">
+          <summary class="flex cursor-pointer list-none items-center gap-2 font-medium text-ink-900 [&::-webkit-details-marker]:hidden">
+            <Info size={16} aria-hidden="true" /> Annahmen &amp; Berechnung
+          </summary>
+          <ul class="mt-3 list-disc space-y-1.5 pl-5 text-xs leading-relaxed">
+            <li>{workingDaysPerYear} Arbeitstage pro Jahr.</li>
+            <li>Manuelle Kosten = Minuten pro Tag ÷ 60 × Stundensatz × {workingDaysPerYear}.</li>
+            <li>
+              Abokosten = Regionen × {formatCurrency(pricing.monthlyPricePerRegion)} × 12 (monatlich) bzw. Regionen × {
+                formatCurrency(pricing.annualPricePerRegion)
+              } (jährlich), optional abzüglich Early-Access-Rabatt. {pricing.taxNote}
+            </li>
+            <li>ROI = (Manuelle Kosten − Abokosten) ÷ Abokosten × 100.</li>
+            <li>
+              Es wird angenommen, dass der eingegebene Rechercheaufwand vollständig entfällt. In der Praxis bleibt Aufwand für
+              Prüfung und Umsetzung bestehen – das Ergebnis ist eine Schätzung, keine zugesicherte Ersparnis.
+            </li>
+          </ul>
+        </details>
+
+        <div class="mt-auto pt-8">
+          <Button href="#waitlist" class="w-full">
+            Early Access sichern
+            <ArrowRight size={18} aria-hidden="true" />
+          </Button>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+
+<script>
+  import { initRoi } from '../../scripts/roi';
+  initRoi();
+</script>

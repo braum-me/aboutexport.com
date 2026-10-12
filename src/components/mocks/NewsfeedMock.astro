@@ -1,0 +1,36 @@
+---
+// Konzept: täglicher Newsfeed
+const items = [
+  { region: 'EU', tag: 'Sanktionen', w: 'w-4/5' },
+  { region: 'USA', tag: 'EAR', w: 'w-2/3' },
+  { region: 'China', tag: 'Exportkontrolle', w: 'w-3/4' },
+  { region: 'EU', tag: 'Dual-Use', w: 'w-3/5' },
+];
+---
+
+<div class="flex size-full flex-col bg-white p-5 text-[12px] select-none sm:p-7">
+  <div class="flex items-end justify-between border-b border-slate-100 pb-3">
+    <div>
+      <p class="text-[11px] font-medium text-brand-700">Täglicher Newsfeed</p>
+      <p class="text-base font-semibold text-ink-900">Ihre Compliance-News am Morgen</p>
+    </div>
+    <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] text-slate-600">nach Relevanz</span>
+  </div>
+  <ul class="mt-2 flex-1 divide-y divide-slate-100">
+    {
+      items.map((i, idx) => (
+        <li class="flex items-start gap-3 py-3">
+          <span class:list={['mt-0.5 size-2 shrink-0 rounded-full', idx === 0 ? 'bg-brand-600' : 'bg-slate-300']} />
+          <div class="min-w-0 flex-1 space-y-1.5">
+            <span class:list={['block h-2.5 rounded bg-slate-300', i.w]} />
+            <span class="block h-2 w-full rounded bg-slate-100" />
+          </div>
+          <div class="hidden shrink-0 gap-1 sm:flex">
+            <span class="rounded bg-brand-50 px-1.5 py-0.5 text-[10px] font-semibold text-brand-700">{i.region}</span>
+            <span class="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-600">{i.tag}</span>
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+</div>

@@ -1,0 +1,41 @@
+---
+import {
+  Bell,
+  Clock,
+  EyeOff,
+  Globe,
+  Languages,
+  Layers,
+  Newspaper,
+  Radar,
+  Search,
+  Sparkles,
+  TriangleAlert,
+} from '@lucide/astro';
+
+const icons = {
+  bell: Bell,
+  clock: Clock,
+  'eye-off': EyeOff,
+  globe: Globe,
+  languages: Languages,
+  layers: Layers,
+  newspaper: Newspaper,
+  radar: Radar,
+  search: Search,
+  sparkles: Sparkles,
+  alert: TriangleAlert,
+} as const;
+
+export type IconName = keyof typeof icons;
+
+interface Props {
+  name: IconName;
+  size?: number;
+  class?: string;
+}
+const { name, size = 20, class: className } = Astro.props;
+const Icon = icons[name];
+---
+
+<Icon size={size} class={className} aria-hidden="true" stroke-width={1.75} />

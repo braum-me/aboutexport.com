@@ -1,0 +1,10 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ResultPage from '../components/ResultPage.astro';
+---
+
+<BaseLayout title="Seite nicht gefunden" path="/404/" noindex>
+  <ResultPage eyebrow="Fehler 404" title="Diese Seite gibt es nicht.">
+    <p>Möglicherweise wurde sie verschoben. Über die Startseite finden Sie alle Inhalte zu AboutExport.</p>
+  </ResultPage>
+</BaseLayout>

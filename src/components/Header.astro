@@ -1,0 +1,114 @@
+---
+import { Menu, X } from '@lucide/astro';
+import Logo from './Logo.astro';
+import Button from './ui/Button.astro';
+import { nav } from '../config/site';
+---
+
+<header
+  class="sticky top-0 z-50 border-b border-slate-200/70 bg-white/85 backdrop-blur-md supports-[backdrop-filter]:bg-white/75"
+  data-header
+>
+  <div class="container-page flex h-16 items-center justify-between gap-6">
+    <a href="/" class="-m-1 flex shrink-0 items-center rounded-md p-1" aria-label="AboutExport – zur Startseite">
+      <Logo class="h-6 sm:h-7" />
+    </a>
+
+    <nav aria-label="Hauptnavigation" class="hidden md:block">
+      <ul class="flex items-center gap-1">
+        {
+          nav.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                class="rounded-md px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-ink-900"
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <div class="hidden lg:block"><Button href="/#kontakt" variant="ghost" size="sm">Kontakt</Button></div>
+      <div class="hidden sm:block"><Button href="/#waitlist" size="sm">Early Access sichern</Button></div>
+      <button
+        type="button"
+        class="inline-flex size-10 items-center justify-center rounded-lg text-ink-900 hover:bg-slate-100 md:hidden"
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+        aria-label="Menü öffnen"
+        data-nav-toggle
+      >
+        <Menu size={22} data-icon-open aria-hidden="true" />
+        <X size={22} data-icon-close class="hidden" aria-hidden="true" />
+      </button>
+    </div>
+  </div>
+
+  <nav
+    id="mobile-nav"
+    aria-label="Mobile Navigation"
+    class="border-t border-slate-200 bg-white md:hidden"
+    hidden
+    data-mobile-nav
+  >
+    <ul class="container-page flex flex-col py-3">
+      {
+        nav.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              class="block rounded-lg px-3 py-3 text-base font-medium text-ink-900 hover:bg-slate-50"
+              data-mobile-link
+            >
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+      <li>
+        <a
+          href="/#kontakt"
+          class="block rounded-lg px-3 py-3 text-base font-medium text-ink-900 hover:bg-slate-50"
+          data-mobile-link>Kontakt</a
+        >
+      </li>
+      <li class="px-3 pt-2 pb-2">
+        <Button href="/#waitlist" class="w-full" data-mobile-link>Early Access sichern</Button>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('[data-nav-toggle]');
+  const panel = document.querySelector<HTMLElement>('[data-mobile-nav]');
+
+  if (toggle && panel) {
+    const iconOpen = toggle.querySelector('[data-icon-open]');
+    const iconClose = toggle.querySelector('[data-icon-close]');
+
+    const setOpen = (open: boolean) => {
+      panel.hidden = !open;
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? 'Menü schließen' : 'Menü öffnen');
+      iconOpen?.classList.toggle('hidden', open);
+      iconClose?.classList.toggle('hidden', !open);
+    };
+
+    toggle.addEventListener('click', () => setOpen(Boolean(panel.hidden)));
+    panel.querySelectorAll('[data-mobile-link]').forEach((link) => link.addEventListener('click', () => setOpen(false)));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !panel.hidden) {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+    window.matchMedia('(min-width: 768px)').addEventListener('change', (e) => {
+      if (e.matches) setOpen(false);
+    });
+  }
+</script>

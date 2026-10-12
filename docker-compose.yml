@@ -1,0 +1,17 @@
+services:
+  web:
+    build: .
+    image: aboutexport-website:latest
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      HOST: 0.0.0.0
+      PORT: 4321
+    ports:
+      - "127.0.0.1:4321:4321" # nur lokal binden; TLS terminiert der Reverse Proxy
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true

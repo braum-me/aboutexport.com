@@ -1,0 +1,19 @@
+---
+interface Props {
+  variant?: 'color' | 'white';
+  class?: string;
+}
+const { variant = 'color', class: className } = Astro.props;
+---
+
+<picture>
+  {variant === 'color' && <source srcset="/images/branding/aboutexport-logo.webp" type="image/webp" />}
+  <img
+    src={variant === 'color' ? '/images/branding/aboutexport-logo.png' : '/images/branding/aboutexport-logo-white.png'}
+    alt="AboutExport"
+    width="640"
+    height="137"
+    class:list={['h-7 w-auto', className]}
+    decoding="async"
+  />
+</picture>

@@ -1,0 +1,36 @@
+---
+// Konzept: KI-Zusammenfassung
+---
+
+<div class="flex size-full items-center justify-center bg-gradient-to-br from-brand-50/70 via-white to-white p-5 text-[12px] select-none sm:p-8">
+  <div class="w-full max-w-md rounded-xl border border-brand-100 bg-white p-4 shadow-elevated sm:p-5">
+    <div class="flex items-center justify-between">
+      <p class="flex items-center gap-2 font-semibold text-ink-900">
+        <span class="flex size-7 items-center justify-center rounded-lg bg-brand-700 text-[13px] text-white">✦</span>
+        KI-Zusammenfassung
+      </p>
+      <span class="flex overflow-hidden rounded-md border border-slate-200 text-[10px] font-semibold">
+        <span class="px-2 py-0.5 text-slate-500">EN</span>
+        <span class="bg-brand-700 px-2 py-0.5 text-white">DE</span>
+      </span>
+    </div>
+    <p class="mt-4 text-[11px] font-semibold tracking-wide text-slate-500 uppercase">Kernaussagen</p>
+    <ul class="mt-2 space-y-3">
+      {
+        ['w-full', 'w-11/12', 'w-4/5'].map((w) => (
+          <li class="flex gap-2.5">
+            <span class="mt-1 size-1.5 shrink-0 rounded-full bg-brand-600" />
+            <span class="flex-1 space-y-1.5">
+              <span class:list={['block h-2 rounded bg-slate-200', w]} />
+              <span class="block h-2 w-2/3 rounded bg-slate-100" />
+            </span>
+          </li>
+        ))
+      }
+    </ul>
+    <div class="mt-4 rounded-lg bg-slate-50 p-3">
+      <p class="text-[11px] font-semibold text-ink-900">Mögliche Auswirkungen</p>
+      <span class="mt-2 block h-2 w-5/6 rounded bg-slate-200"></span>
+    </div>
+  </div>
+</div>

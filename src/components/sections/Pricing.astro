@@ -1,0 +1,180 @@
+---
+import { ArrowRight, Check, Info } from '@lucide/astro';
+import { includedFeatures, pricing } from '../../config/pricing';
+import { quote } from '../../lib/pricing';
+import { formatCurrency } from '../../lib/format';
+import Button from '../ui/Button.astro';
+import SectionHeader from '../ui/SectionHeader.astro';
+
+const defaultRegions = ['eu', 'us'];
+const d = pricing.earlyAccessDiscount;
+const initial = quote({ regions: defaultRegions.length, interval: 'monthly', applyDiscount: true });
+const initialList = quote({ regions: defaultRegions.length, interval: 'monthly', applyDiscount: false });
+const annualSavingPct = Math.round(
+  (1 - pricing.annualPricePerRegion / (pricing.monthlyPricePerRegion * 12)) * 100,
+);
+const regionLabel = (ids: string[]) =>
+  pricing.regions
+    .filter((r) => ids.includes(r.id))
+    .map((r) => r.label)
+    .join(', ');
+---
+
+<section id="preise" class="scroll-mt-16 bg-slate-50/70 py-20 sm:py-28" aria-labelledby="pricing-title">
+  <div class="container-page">
+    <SectionHeader id="pricing-title" eyebrow="Preise" title="Einfach. Transparent. Pro Region.">
+      Sie zahlen nur für die Jurisdiktionen, die Sie brauchen. Keine Pakete, keine versteckten Kosten.
+    </SectionHeader>
+
+    <div class="mx-auto mt-6 flex max-w-xl items-start gap-2.5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+      <Info size={18} class="mt-px shrink-0" aria-hidden="true" />
+      <p>
+        AboutExport ist noch nicht verfügbar – der Launch ist für 2027 geplant. Mit der Waitlist reservieren Sie Early
+        Access; es entstehen jetzt keine Kosten.
+      </p>
+    </div>
+
+    <div class="card mx-auto mt-10 grid max-w-5xl overflow-hidden lg:grid-cols-[1.1fr_1fr]" data-pricing>
+      <div class="p-6 sm:p-8">
+        <fieldset>
+          <legend class="text-sm font-semibold text-ink-900">Abrechnung</legend>
+          <div class="mt-3 grid grid-cols-2 gap-1 rounded-xl bg-slate-100 p-1">
+            <label class="relative cursor-pointer">
+              <input type="radio" name="pricing-interval" value="monthly" class="peer sr-only" checked data-interval />
+              <span
+                class="flex h-10 items-center justify-center rounded-lg text-sm font-medium text-slate-600 transition peer-checked:bg-white peer-checked:text-ink-900 peer-checked:shadow-card peer-focus-visible:outline-2 peer-focus-visible:outline-brand-600"
+                >Monatlich</span
+              >
+            </label>
+            <label class="relative cursor-pointer">
+              <input type="radio" name="pricing-interval" value="annual" class="peer sr-only" data-interval />
+              <span
+                class="flex h-10 items-center justify-center gap-1.5 rounded-lg text-sm font-medium text-slate-600 transition peer-checked:bg-white peer-checked:text-ink-900 peer-checked:shadow-card peer-focus-visible:outline-2 peer-focus-visible:outline-brand-600"
+                >Jährlich <span class="rounded-full bg-emerald-100 px-1.5 text-[11px] font-semibold text-emerald-800"
+                  >−{annualSavingPct} %</span
+                ></span
+              >
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset class="mt-8">
+          <legend class="text-sm font-semibold text-ink-900">Regionen</legend>
+          <p class="mt-1 text-sm text-slate-500" id="regions-hint">Wählen Sie mindestens eine Region.</p>
+          <div class="mt-3 grid gap-2 sm:grid-cols-3">
+            {
+              pricing.regions.map((r) => (
+                <label class="relative cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="pricing-region"
+                    value={r.id}
+                    class="peer sr-only"
+                    checked={defaultRegions.includes(r.id)}
+                    aria-describedby="regions-hint"
+                    data-region
+                  />
+                  <span class="flex h-full items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 transition peer-checked:border-brand-600 peer-checked:bg-brand-50/60 peer-checked:ring-1 peer-checked:ring-brand-600 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand-600 peer-disabled:cursor-not-allowed hover:border-slate-300 [&_.check]:opacity-0 peer-checked:[&_.check]:opacity-100 peer-checked:[&_.box]:border-brand-600 peer-checked:[&_.box]:bg-brand-600">
+                    <span class="box flex size-5 shrink-0 items-center justify-center rounded-md border border-slate-300 bg-white text-white">
+                      <Check size={14} stroke-width={3} class="check" aria-hidden="true" />
+                    </span>
+                    <span>
+                      <span class="block text-sm font-semibold text-ink-900">{r.label}</span>
+                      <span class="block text-xs text-slate-600">{r.name}</span>
+                    </span>
+                  </span>
+                </label>
+              ))
+            }
+          </div>
+        </fieldset>
+
+        <div class="mt-8">
+          <p class="text-sm font-semibold text-ink-900">In jeder Region enthalten</p>
+          <ul class="mt-3 grid gap-2 text-sm text-slate-700 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+            {
+              includedFeatures.map((f) => (
+                <li class="flex items-start gap-2">
+                  <Check size={16} class="mt-0.5 shrink-0 text-brand-600" aria-hidden="true" />
+                  {f}
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+
+      <div class="flex flex-col border-t border-slate-200 bg-slate-50/80 p-6 sm:p-8 lg:border-t-0 lg:border-l" aria-live="polite">
+        <p class="text-sm font-medium text-slate-600">
+          <span data-out="regionCount">{initial.regions}</span>
+          <span data-out="regionWord">{initial.regions === 1 ? 'Region' : 'Regionen'}</span>
+          · <span data-out="regionNames">{regionLabel(defaultRegions)}</span>
+        </p>
+
+        <div class="mt-4">
+          {
+            d.enabled && (
+              <p class="text-sm text-slate-500">
+                <span class="sr-only">Regulärer Preis:</span>
+                <s data-out="listPrice">{formatCurrency(initialList.price)}</s>
+              </p>
+            )
+          }
+          <p class="flex items-baseline gap-2">
+            <span class="text-5xl font-semibold tracking-tight text-ink-900 tabular-nums" data-out="price"
+              >{formatCurrency(initial.price)}</span
+            >
+            <span class="text-base text-slate-500" data-out="per">/ Monat</span>
+          </p>
+          {
+            d.enabled && (
+              <p class="mt-2 inline-flex items-center gap-1.5 rounded-full bg-brand-100 px-2.5 py-0.5 text-xs font-semibold text-brand-800">
+                inkl. {d.percent} % {d.label}
+              </p>
+            )
+          }
+        </div>
+
+        <dl class="mt-6 space-y-2.5 border-t border-slate-200 pt-5 text-sm">
+          <div class="flex justify-between gap-4">
+            <dt class="text-slate-600">Preis pro Region</dt>
+            <dd class="font-medium text-ink-900 tabular-nums" data-out="unit">
+              {formatCurrency(initial.price / initial.regions)} / Monat
+            </dd>
+          </div>
+          <div class="flex justify-between gap-4">
+            <dt class="text-slate-600">Effektiv pro Monat</dt>
+            <dd class="font-medium text-ink-900 tabular-nums" data-out="effectiveMonthly">
+              {formatCurrency(initial.effectiveMonthly)}
+            </dd>
+          </div>
+          <div class="flex justify-between gap-4">
+            <dt class="text-slate-600">Kosten pro Jahr</dt>
+            <dd class="font-medium text-ink-900 tabular-nums" data-out="annualCost">{formatCurrency(initial.annualCost)}</dd>
+          </div>
+          <div class="flex justify-between gap-4" data-annual-saving hidden>
+            <dt class="text-emerald-700">Ersparnis ggü. monatlich</dt>
+            <dd class="font-semibold text-emerald-700 tabular-nums" data-out="annualSavings">
+              {formatCurrency(initial.annualSavingsVsMonthly)}
+            </dd>
+          </div>
+        </dl>
+
+        <div class="mt-auto pt-8">
+          <Button href="#waitlist" size="lg" class="w-full">
+            Wartelistenplatz sichern
+            <ArrowRight size={18} aria-hidden="true" />
+          </Button>
+          <p class="mt-3 text-center text-xs leading-relaxed text-slate-500">
+            {d.enabled && <>{d.note} </>}{pricing.taxNote}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { initPricing } from '../../scripts/pricing';
+  initPricing();
+</script>

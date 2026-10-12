@@ -1,0 +1,89 @@
+@import '@fontsource-variable/inter/wght.css';
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Markenfarbe aus dem bestehenden Logo (#1E40AF) / Favicon (#2563EB) */
+  --color-brand-50: #eff4ff;
+  --color-brand-100: #dbe6fe;
+  --color-brand-200: #bfd3fe;
+  --color-brand-300: #93b4fd;
+  --color-brand-400: #608bfa;
+  --color-brand-500: #3b66f5;
+  --color-brand-600: #2563eb;
+  --color-brand-700: #1e40af;
+  --color-brand-800: #1e3a8a;
+  --color-brand-900: #172554;
+
+  --color-ink-950: #070b16;
+  --color-ink-900: #0b1220;
+  --color-ink-800: #111a2e;
+
+  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 1px 1px rgb(15 23 42 / 0.03);
+  --shadow-elevated: 0 1px 2px rgb(15 23 42 / 0.05), 0 12px 32px -8px rgb(15 23 42 / 0.14), 0 32px 64px -24px rgb(30 64 175 / 0.18);
+
+  --animate-fade-up: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    @apply bg-white font-sans text-slate-700 antialiased;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+  h1, h2, h3, h4 {
+    @apply text-ink-900;
+    text-wrap: balance;
+  }
+  p { text-wrap: pretty; }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand-600;
+  }
+  ::selection { @apply bg-brand-100 text-ink-900; }
+  [hidden] { display: none !important; }
+}
+
+@layer components {
+  .container-page { @apply mx-auto w-full max-w-6xl px-5 sm:px-6 lg:px-8; }
+  .eyebrow { @apply inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-brand-700; }
+  .card { @apply rounded-2xl border border-slate-200/80 bg-white shadow-card; }
+  .input {
+    @apply block w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-[15px] text-ink-900 shadow-card transition
+      placeholder:text-slate-400 hover:border-slate-400 focus:border-brand-600 focus:outline-none focus:ring-4 focus:ring-brand-600/15
+      aria-[invalid=true]:border-red-500 aria-[invalid=true]:focus:ring-red-500/15;
+  }
+  .label { @apply mb-1.5 block text-sm font-medium text-ink-900; }
+  .field-error { @apply mt-1.5 text-sm text-red-700; }
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, rgb(15 23 42 / 0.045) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(15 23 42 / 0.045) 1px, transparent 1px);
+    background-size: 44px 44px;
+  }
+  .prose-legal { @apply max-w-none text-[15px] leading-relaxed text-slate-700; }
+  .prose-legal h2 { @apply mt-12 mb-3 text-xl font-semibold tracking-tight; }
+  .prose-legal h3 { @apply mt-8 mb-2 text-base font-semibold; }
+  .prose-legal p, .prose-legal ul { @apply mb-4; }
+  .prose-legal ul { @apply list-disc space-y-1.5 pl-5; }
+  .prose-legal a { @apply text-brand-700 underline decoration-brand-300 underline-offset-2 hover:decoration-brand-700; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

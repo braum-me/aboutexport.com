@@ -1,0 +1,167 @@
+---
+import { Mail, Send } from '@lucide/astro';
+import Button from '../ui/Button.astro';
+import FormStatus from '../ui/FormStatus.astro';
+import { LIMITS, SPAM } from '../../lib/validation';
+import { pricing } from '../../config/pricing';
+import { site } from '../../config/site';
+const d = pricing.earlyAccessDiscount;
+---
+
+<section id="kontakt" class="relative isolate scroll-mt-16 overflow-hidden py-20 sm:py-28" aria-labelledby="contact-title">
+  <div class="bg-grid absolute inset-0 -z-10 [mask-image:radial-gradient(ellipse_60%_60%_at_50%_100%,#000_30%,transparent_100%)]"></div>
+  <div class="container-page">
+    <div class="mx-auto max-w-2xl text-center">
+      <p class="eyebrow">{site.launch}</p>
+      <h2 id="contact-title" class="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
+        Bereit für smartes Export-Compliance-Monitoring?
+      </h2>
+      <p class="mt-4 text-base text-slate-600 sm:text-lg">
+        Tragen Sie sich in die Waitlist ein oder schreiben Sie uns direkt.
+      </p>
+    </div>
+
+    <div class="mx-auto mt-12 grid max-w-5xl gap-6 lg:grid-cols-[1.1fr_1fr]">
+      <!-- Waitlist -->
+      <div id="waitlist" class="card scroll-mt-24 p-6 ring-1 ring-brand-600/10 sm:p-8">
+        <h3 class="text-xl font-semibold">Early Access sichern</h3>
+        <p class="mt-2 text-sm text-slate-600">
+          Wir informieren Sie, sobald AboutExport startet.{
+            d.enabled && <> Waitlist-Mitgliedern ist ein {d.percent} % {d.label} vorgesehen.</>
+          }
+        </p>
+
+        <form
+          class="mt-6 space-y-4"
+          action="/api/waitlist"
+          method="post"
+          novalidate
+          data-form="waitlist"
+          aria-describedby="waitlist-privacy"
+        >
+          <div>
+            <label for="wl-email" class="label">E-Mail-Adresse <span class="text-red-600" aria-hidden="true">*</span></label>
+            <input
+              id="wl-email"
+              name="email"
+              type="email"
+              autocomplete="email"
+              required
+              maxlength={LIMITS.email}
+              class="input"
+              placeholder="name@unternehmen.de"
+              aria-describedby="wl-email-error"
+            />
+            <p id="wl-email-error" class="field-error" data-error-for="email" hidden></p>
+          </div>
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label for="wl-name" class="label">Name <span class="font-normal text-slate-500">(optional)</span></label>
+              <input id="wl-name" name="name" type="text" autocomplete="name" maxlength={LIMITS.name} class="input" aria-describedby="wl-name-error" />
+              <p id="wl-name-error" class="field-error" data-error-for="name" hidden></p>
+            </div>
+            <div>
+              <label for="wl-company" class="label">Unternehmen <span class="font-normal text-slate-500">(optional)</span></label>
+              <input
+                id="wl-company"
+                name="company"
+                type="text"
+                autocomplete="organization"
+                maxlength={LIMITS.company}
+                class="input"
+                aria-describedby="wl-company-error"
+              />
+              <p id="wl-company-error" class="field-error" data-error-for="company" hidden></p>
+            </div>
+          </div>
+
+          <div class="hidden" aria-hidden="true">
+            <label for="wl-website">Website (bitte leer lassen)</label>
+            <input id="wl-website" name={SPAM.honeypotField} type="text" tabindex="-1" autocomplete="off" />
+          </div>
+          <input type="hidden" name={SPAM.timestampField} value="" data-ts />
+
+          <Button type="submit" size="lg" class="w-full" data-submit>
+            <span data-label>Auf die Waitlist</span>
+            <Send size={18} aria-hidden="true" />
+          </Button>
+
+          <p id="waitlist-privacy" class="text-xs leading-relaxed text-slate-500">
+            Wir verwenden Ihre Angaben ausschließlich, um Sie über den Start von AboutExport und Ihren Early-Access-Zugang
+            zu informieren. Das ist keine Newsletter-Anmeldung. Austragung jederzeit per E-Mail an {site.contactEmail}.
+            Details in der <a href="/datenschutz/" class="underline underline-offset-2 hover:text-ink-900">Datenschutzerklärung</a>.
+          </p>
+        </form>
+        <FormStatus id="waitlist-status" />
+      </div>
+
+      <!-- Kontakt -->
+      <div class="card p-6 sm:p-8">
+        <h3 class="text-xl font-semibold">Kontakt</h3>
+        <p class="mt-2 text-sm text-slate-600">
+          Fragen zu Funktionen, Regionen oder Preisen? Oder per E-Mail:
+          <a href={`mailto:${site.contactEmail}`} class="inline-flex items-center gap-1 font-medium text-brand-700 hover:underline"
+            ><Mail size={14} aria-hidden="true" />{site.contactEmail}</a
+          >
+        </p>
+
+        <form class="mt-6 space-y-4" action="/api/contact" method="post" novalidate data-form="contact">
+          <div>
+            <label for="ct-name" class="label">Name <span class="text-red-600" aria-hidden="true">*</span></label>
+            <input id="ct-name" name="name" type="text" autocomplete="name" required maxlength={LIMITS.name} class="input" aria-describedby="ct-name-error" />
+            <p id="ct-name-error" class="field-error" data-error-for="name" hidden></p>
+          </div>
+          <div>
+            <label for="ct-email" class="label">E-Mail-Adresse <span class="text-red-600" aria-hidden="true">*</span></label>
+            <input
+              id="ct-email"
+              name="email"
+              type="email"
+              autocomplete="email"
+              required
+              maxlength={LIMITS.email}
+              class="input"
+              aria-describedby="ct-email-error"
+            />
+            <p id="ct-email-error" class="field-error" data-error-for="email" hidden></p>
+          </div>
+          <div>
+            <label for="ct-message" class="label">Nachricht <span class="text-red-600" aria-hidden="true">*</span></label>
+            <textarea
+              id="ct-message"
+              name="message"
+              rows="5"
+              required
+              minlength={LIMITS.messageMin}
+              maxlength={LIMITS.messageMax}
+              class="input resize-y"
+              aria-describedby="ct-message-error"></textarea>
+            <p id="ct-message-error" class="field-error" data-error-for="message" hidden></p>
+          </div>
+
+          <div class="hidden" aria-hidden="true">
+            <label for="ct-website">Website (bitte leer lassen)</label>
+            <input id="ct-website" name={SPAM.honeypotField} type="text" tabindex="-1" autocomplete="off" />
+          </div>
+          <input type="hidden" name={SPAM.timestampField} value="" data-ts />
+
+          <Button type="submit" variant="secondary" size="lg" class="w-full" data-submit>
+            <span data-label>Nachricht senden</span>
+          </Button>
+          <p class="text-xs leading-relaxed text-slate-500">
+            Ihre Angaben verwenden wir nur zur Bearbeitung Ihrer Anfrage. Mehr in der <a
+              href="/datenschutz/"
+              class="underline underline-offset-2 hover:text-ink-900">Datenschutzerklärung</a
+            >.
+          </p>
+        </form>
+        <FormStatus id="contact-status" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { initForms } from '../../scripts/forms';
+  initForms();
+</script>

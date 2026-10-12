@@ -1,0 +1,78 @@
+---
+import { ArrowRight, Check } from '@lucide/astro';
+import Button from '../ui/Button.astro';
+import Screenshot from '../ui/Screenshot.astro';
+import DashboardMock from '../mocks/DashboardMock.astro';
+import { site } from '../../config/site';
+import { pricing } from '../../config/pricing';
+const d = pricing.earlyAccessDiscount;
+---
+
+<section class="relative isolate overflow-hidden" aria-labelledby="hero-title">
+  <div class="bg-grid absolute inset-0 -z-10 [mask-image:radial-gradient(ellipse_70%_60%_at_50%_0%,#000_40%,transparent_100%)]"></div>
+  <div
+    class="absolute inset-x-0 -top-40 -z-10 mx-auto h-[36rem] max-w-5xl rounded-full bg-[radial-gradient(closest-side,rgb(37_99_235/0.16),transparent)] blur-2xl"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="container-page pt-16 pb-14 text-center sm:pt-24 lg:pt-28">
+    <p
+      class="motion-safe:animate-fade-up inline-flex items-center gap-2 rounded-full border border-brand-200 bg-white/80 px-3 py-1 text-xs font-medium text-brand-800 shadow-card"
+    >
+      <span class="relative flex size-2">
+        <span class="absolute inline-flex size-full rounded-full bg-brand-500 opacity-60 motion-safe:animate-ping"></span>
+        <span class="relative inline-flex size-2 rounded-full bg-brand-600"></span>
+      </span>
+      {site.launch} · Early Access über die Waitlist
+    </p>
+
+    <h1
+      id="hero-title"
+      class="motion-safe:animate-fade-up mx-auto mt-6 max-w-5xl text-4xl leading-[1.08] font-semibold tracking-[-0.03em] sm:text-6xl lg:text-7xl"
+    >
+      Export Compliance.<br class="hidden sm:block" />
+      <span class="bg-gradient-to-r from-brand-700 via-brand-600 to-sky-500 bg-clip-text text-transparent">
+        Immer einen Schritt voraus.</span
+      >
+    </h1>
+
+    <p class="motion-safe:animate-fade-up mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-slate-600 sm:text-xl">
+      AboutExport überwacht internationale Exportkontrollvorschriften, erkennt relevante Änderungen und liefert
+      verständliche Updates direkt in Ihr Postfach.
+    </p>
+
+    <div class="motion-safe:animate-fade-up mt-9 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
+      <Button href="#waitlist" size="lg">
+        Early Access sichern
+        <ArrowRight size={18} class="transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+      </Button>
+      <Button href="#features" size="lg" variant="secondary">Features entdecken</Button>
+    </div>
+
+    <ul class="mt-7 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-slate-600">
+      <li class="flex items-center gap-1.5"><Check size={16} class="text-brand-600" aria-hidden="true" />EU · USA · China</li>
+      <li class="flex items-center gap-1.5"><Check size={16} class="text-brand-600" aria-hidden="true" />Updates auf Deutsch</li>
+      {
+        d.enabled && (
+          <li class="flex items-center gap-1.5">
+            <Check size={16} class="text-brand-600" aria-hidden="true" />
+            {d.percent} % {d.label} für Waitlist-Mitglieder
+          </li>
+        )
+      }
+    </ul>
+  </div>
+
+  <div class="container-page pb-20 sm:pb-28">
+    <Screenshot
+      src="/images/product/dashboard.webp"
+      alt="AboutExport Dashboard mit Alerts, Aktivität nach Region und KI-Zusammenfassung"
+      aspect="aspect-[4/3] sm:aspect-[16/10]"
+      priority
+      class="mx-auto max-w-5xl"
+    >
+      <DashboardMock />
+    </Screenshot>
+  </div>
+</section>
