@@ -19,6 +19,14 @@ describe('legal config', () => {
     expect(openLegalItems(complete)).toEqual([]);
   });
 
+  it('verlangt Umami-Angaben nur, wenn Umami aktiv ist', () => {
+    const base: LegalConfig = { ...legal, hosting: { ...legal.hosting!, serverLocationVerified: true }, accessLogRetention: 'none' };
+    expect(openLegalItems(base)).toEqual([]);
+    expect(openLegalItems(base, { analyticsEnabled: true })).toHaveLength(2);
+    const ok = { ...base, analytics: { operator: base.cloudflare, verified: true } };
+    expect(openLegalItems(ok, { analyticsEnabled: true })).toEqual([]);
+  });
+
   it('akzeptiert „keine USt-IdNr.“ und erkennt Widersprüche', () => {
     const base: LegalConfig = { ...legal, hosting: { ...legal.hosting!, serverLocationVerified: true }, accessLogRetention: 14 };
     expect(openLegalItems({ ...base, vatId: null, noVatId: true })).toEqual([]);

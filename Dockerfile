@@ -6,6 +6,10 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --ignore-scripts
 COPY . .
+# Optional: Umami (Build-Zeit, da statisch gerendert). Ohne Werte keine Reichweitenmessung.
+ARG UMAMI_SCRIPT_URL=
+ARG UMAMI_WEBSITE_ID=
+ARG UMAMI_DOMAINS=
 RUN npm run build
 
 # ---- Runtime --------------------------------------------------------------

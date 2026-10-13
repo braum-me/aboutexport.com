@@ -4,6 +4,7 @@ import geistLatin from '@fontsource-variable/geist/files/geist-latin-wght-normal
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { site } from '../config/site';
+import { readUmami } from '../lib/umami.mjs';
 
 interface Props {
   title?: string;
@@ -36,6 +37,7 @@ const {
 const fullTitle = rawTitle ?? (title ? `${title} | ${site.name}` : site.title);
 const canonical = new URL(path, site.url).toString();
 const ogImage = new URL(ogImagePath, site.url).toString();
+const umami = readUmami();
 ---
 
 <!doctype html>
@@ -80,6 +82,19 @@ const ogImage = new URL(ogImagePath, site.url).toString();
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+
+    {
+      umami && (
+        <script
+          is:inline
+          defer
+          src={umami.scriptUrl}
+          data-website-id={umami.websiteId}
+          data-domains={umami.domains}
+          data-do-not-track="true"
+        />
+      )
+    }
 
     {jsonLd.map((data) => <script type="application/ld+json" set:html={JSON.stringify(data)} />)}
   </head>

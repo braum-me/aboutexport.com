@@ -4,9 +4,11 @@
  */
 import { describe, expect, it } from 'vitest';
 import { legal, openLegalItems } from '../../src/config/legal';
+import { readUmami } from '../../src/lib/umami.mjs';
 
 describe('Go-live: rechtliche Pflichtangaben', () => {
   it('alle Angaben für Impressum und Datenschutzerklärung sind bestätigt', () => {
-    expect(openLegalItems(legal)).toEqual([]);
+    // Mit denselben UMAMI_*-Variablen wie beim Build ausführen, sonst entfällt die Umami-Prüfung
+    expect(openLegalItems(legal, { analyticsEnabled: readUmami() !== null })).toEqual([]);
   });
 });

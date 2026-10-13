@@ -163,6 +163,14 @@ markieren – keine DNS-Änderung. DMARC `p=quarantine` frühestens nach 2–4 W
 DNS-Einträge zeigen bereits (proxied) auf den VPS; SSL-Modus und Zertifikat (Let's Encrypt über Coolify/Traefik)
 bleiben wie für WordPress. HSTS sendet die App. Email Routing, MX, SPF, DKIM, DMARC: **unverändert**.
 
+## 5a. Optional: Umami Analytics
+
+Standardmäßig ist **keine** Reichweitenmessung aktiv. Aktivierung (die Seiten sind statisch, daher **Build-Zeit**):
+
+1. In Coolify → *Environment Variables* **mit „Available at Buildtime“** setzen: `UMAMI_SCRIPT_URL` (z. B. `https://<umami-host>/script.js`, nur `https://`) und `UMAMI_WEBSITE_ID` (UUID aus Umami). Optional `UMAMI_DOMAINS` (Standard: `aboutexport.com,www.aboutexport.com`, damit Staging nichts misst).
+2. **Neu deployen.** Die CSP wird beim Build automatisch um genau den Umami-Origin erweitert.
+3. Datenschutz: Mit aktivem Umami erscheint ein Abschnitt in `/datenschutz/`. Vor dem Go-live `legal.analytics` in `src/config/legal.ts` bestätigen (Betreiber/Standort der Instanz, rechtliche Prüfung). `npm run release:check` mit denselben `UMAMI_*`-Variablen meldet sonst die offenen Punkte.
+
 ## 6. Betrieb
 
 | Thema | Umsetzung |
