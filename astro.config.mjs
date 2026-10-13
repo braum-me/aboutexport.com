@@ -57,6 +57,7 @@ export default defineConfig({
     allowedDomains: [
       { hostname: 'aboutexport.com', protocol: 'https' },
       { hostname: 'www.aboutexport.com', protocol: 'https' },
+      { hostname: 'staging.aboutexport.com', protocol: 'https' },
       { hostname: 'localhost' },
       { hostname: '127.0.0.1' },
     ],
