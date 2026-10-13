@@ -29,7 +29,7 @@ Es wurden **keine** Angaben erfunden. Wo eine Information fehlt, steht sie hier 
 | D5 | Traefik-Access-Log ist aus (Startparameter am 13.10.2026 geprüft) → `legal.accessLogRetention: 'none'`. Docker-Logs der Container sind ohne Rotation (kein Bezug zur Website, separat optional) | erledigt |
 | D6 | Drittlandtransfer USA (Cloudflare, im Einzelfall Microsoft; DPF + SCC) im Text; DPF-Zertifizierung bei rechtlicher Prüfung bestätigen | erledigt – prüfen |
 | D7 | Waitlist: Rechtsgrundlage (Art. 6 Abs. 1 lit. b DSGVO) und Speicherdauer bestätigen | offen – prüfen |
-| D8 | Texte sind ein Entwurf zur rechtlichen Freigabe, nicht rechtlich geprüft | **offen – Blocker** |
+| D8 | Freigabe der Texte durch den Betreiber; Hinweis „Entwurf zur rechtlichen Freigabe“ von der Website entfernt (13.10.2026) | erledigt – Verantwortung beim Betreiber |
 | D9 | AGB/Nutzungsbedingungen – vor dem kommerziellen Launch erforderlich | offen (Launch 2027) |
 
 Die internen Prüfhinweise wurden von der Website entfernt (`ReviewNote` gelöscht). Diese Tabelle ersetzt sie.
