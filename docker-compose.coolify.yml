@@ -3,7 +3,12 @@
 # Domain, HTTPS und Router-Labels setzt Coolify; Werte für ${…} werden in der Coolify-UI gepflegt.
 services:
   web:
-    build: .
+    build:
+      context: .
+      args:
+        UMAMI_SCRIPT_URL: ${UMAMI_SCRIPT_URL:-}
+        UMAMI_WEBSITE_ID: ${UMAMI_WEBSITE_ID:-}
+        UMAMI_DOMAINS: ${UMAMI_DOMAINS:-}
     restart: unless-stopped
     expose:
       - "4321"

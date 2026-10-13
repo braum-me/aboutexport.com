@@ -2,8 +2,10 @@
 import LegalLayout from '../layouts/LegalLayout.astro';
 import { site } from '../config/site';
 import { legal } from '../config/legal';
+import { readUmami } from '../lib/umami.mjs';
 
-const { operator, hosting, cloudflare, smtp, mailbox, accessLogRetention } = legal;
+const { operator, hosting, cloudflare, smtp, mailbox, accessLogRetention, analytics } = legal;
+const umamiOn = readUmami() !== null;
 ---
 
 <LegalLayout
@@ -82,6 +84,25 @@ const { operator, hosting, cloudflare, smtp, mailbox, accessLogRetention } = leg
     (berechtigtes Interesse an einer sicheren und schnellen Auslieferung).
   </p>
 
+  {
+    umamiOn && (
+      <>
+        <h3>Reichweitenmessung mit Umami</h3>
+        <p>
+          Wir setzen Umami zur statistischen Auswertung der Nutzung dieser Website ein (Seitenaufrufe, Referrer,
+          Browser, Betriebssystem, Gerätetyp, Bildschirmgröße, Sprache und ungefähre Region). Die Messung läuft nur auf
+          unserer Produktiv-Domain und berücksichtigt die „Do Not Track“-Einstellung Ihres Browsers.
+          {analytics.instance === 'self'
+            ? ' Die Umami-Instanz betreiben wir selbst, auf demselben Hosting wie diese Website (siehe oben unter „Hosting“); es erfolgt keine Weitergabe an einen weiteren Anbieter.'
+            : analytics.instance
+              ? ` Die Umami-Instanz wird betrieben von ${analytics.instance.name}, ${analytics.instance.address} (${analytics.instance.location}).`
+              : ''}
+          Rechtsgrundlage: Art. 6 Abs. 1 S. 1 lit. f DSGVO (berechtigtes Interesse an der Optimierung unseres Angebots).
+        </p>
+      </>
+    )
+  }
+
   <h3>TLS-Verschlüsselung</h3>
   <p>
     Zum Schutz Ihrer Daten wird die Website ausschließlich über eine TLS-verschlüsselte Verbindung (https://)
@@ -142,10 +163,21 @@ const { operator, hosting, cloudflare, smtp, mailbox, accessLogRetention } = leg
   </p>
 
   <h2>7. Cookies und lokale Speicherung</h2>
-  <p>
-    Diese Website setzt keine Cookies und speichert keine Informationen auf Ihrem Endgerät. Ein Cookie-Banner ist daher
-    nicht erforderlich.
-  </p>
+  {
+    umamiOn ? (
+      <p>
+        Diese Website setzt keine Cookies.{' '}
+        {analytics.verified
+          ? 'Auch die Reichweitenmessung (Abschnitt 4) arbeitet ohne Cookies und ohne Speicherung von Informationen auf Ihrem Endgerät; ein Cookie-Banner ist daher nicht erforderlich.'
+          : 'Informationen zur Reichweitenmessung finden Sie in Abschnitt 4.'}
+      </p>
+    ) : (
+      <p>
+        Diese Website setzt keine Cookies und speichert keine Informationen auf Ihrem Endgerät. Ein Cookie-Banner ist daher
+        nicht erforderlich.
+      </p>
+    )
+  }
 
   <h2>8. Empfänger und Drittlandübermittlung</h2>
   <p>Personenbezogene Daten werden nur an Dienstleister übermittelt, die in unserem Auftrag tätig sind:</p>
@@ -154,6 +186,7 @@ const { operator, hosting, cloudflare, smtp, mailbox, accessLogRetention } = leg
     <li>{cloudflare.name} – {cloudflare.purpose} ({cloudflare.location})</li>
     <li>{smtp.name} – {smtp.purpose} ({smtp.location})</li>
     {mailbox && <li>{mailbox.name} – {mailbox.purpose} ({mailbox.location})</li>}
+    {umamiOn && analytics.instance && analytics.instance !== 'self' && <li>{analytics.instance.name} – Betrieb der Umami-Instanz zur Reichweitenmessung ({analytics.instance.location})</li>}
   </ul>
   <p>
     Eine Übermittlung in Drittländer außerhalb der EU/des EWR ist bei Cloudflare möglich (siehe Abschnitt 4){

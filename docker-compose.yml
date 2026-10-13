@@ -2,7 +2,12 @@
 # siehe docs/deployment.md. Start: cp .env.example .env && docker compose up -d --build
 services:
   web:
-    build: .
+    build:
+      context: .
+      args:
+        UMAMI_SCRIPT_URL: ${UMAMI_SCRIPT_URL:-}
+        UMAMI_WEBSITE_ID: ${UMAMI_WEBSITE_ID:-}
+        UMAMI_DOMAINS: ${UMAMI_DOMAINS:-}
     image: aboutexport-website:local
     container_name: aboutexport-web
     restart: unless-stopped

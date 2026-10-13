@@ -4,6 +4,10 @@ import node from '@astrojs/node';
 import tailwindcss from '@tailwindcss/vite';
 import { satteri } from '@astrojs/markdown-satteri';
 import { externalLinksPlugin } from './src/lib/external-links-plugin.mjs';
+import { readUmami } from './src/lib/umami.mjs';
+
+// Optional: Umami nur bei gesetzten UMAMI_*-Variablen (Build-Zeit); erweitert die CSP um genau diesen Origin
+const umami = readUmami();
 
 export default defineConfig({
   site: 'https://aboutexport.com',
@@ -66,11 +70,12 @@ export default defineConfig({
         "default-src 'self'",
         "img-src 'self' data:",
         "font-src 'self'",
-        "connect-src 'self'",
+        `connect-src 'self'${umami ? ` ${umami.origin}` : ''}`,
         "object-src 'none'",
         "base-uri 'self'",
         "form-action 'self'",
       ],
+      ...(umami && { scriptDirective: { resources: ["'self'", umami.origin] } }),
     },
   },
   vite: {

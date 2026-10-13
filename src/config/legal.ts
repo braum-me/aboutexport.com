@@ -42,6 +42,13 @@ export interface LegalConfig {
    * Anzahl Tage, 'none' (keine Access-Logs aktiv) oder null (noch nicht geprüft)
    */
   accessLogRetention: number | 'none' | null;
+  /**
+   * Optionale Reichweitenmessung mit Umami (nur relevant, wenn UMAMI_* gesetzt ist).
+   * instance: 'self' = von uns selbst auf demselben Hosting wie die Website betrieben, sonst der
+   * externe Betreiber (Provider), null = noch nicht angegeben.
+   * verified: Rechtsgrundlage, Cookie-/Speicherfreiheit und Auftragsverarbeitung rechtlich geprüft.
+   */
+  analytics: { instance: 'self' | Provider | null; verified: boolean };
 }
 
 export const legal: LegalConfig = {
@@ -87,10 +94,12 @@ export const legal: LegalConfig = {
       'EU; Übermittlungen in die USA im Einzelfall (z. B. Support) möglich – Microsoft Corporation ist nach dem EU-U.S. Data Privacy Framework zertifiziert',
   },
   accessLogRetention: null,
+  // Betreiber 13.10.2026: Umami-Instanz (analytics.jetzt.group) selbst betrieben, gleiches Hosting wie die Website
+  analytics: { instance: 'self', verified: false },
 };
 
 /** Offene Pflichtangaben (für release:check und Doku) */
-export function openLegalItems(c: LegalConfig = legal): string[] {
+export function openLegalItems(c: LegalConfig = legal, opts: { analyticsEnabled?: boolean } = {}): string[] {
   const open: string[] = [];
   if (!c.operator.owner) open.push('operator.owner: Vor- und Nachname des Inhabers (Impressum, Verantwortlicher)');
   if (!c.vatId && !c.noVatId) open.push('vatId/noVatId: USt-IdNr. eintragen oder bestätigen, dass keine existiert');
@@ -101,5 +110,10 @@ export function openLegalItems(c: LegalConfig = legal): string[] {
   if (!c.mailbox) open.push('mailbox: Anbieter des Ziel-Postfachs von info@aboutexport.com');
   if (c.accessLogRetention === null)
     open.push('accessLogRetention: Access-Logs des Reverse Proxy prüfen (Tage oder "none")');
+  if (opts.analyticsEnabled) {
+    if (!c.analytics.instance) open.push('analytics.instance: Betreiber und Standort der Umami-Instanz');
+    if (!c.analytics.verified)
+      open.push('analytics.verified: Umami rechtlich prüfen (Rechtsgrundlage, Cookie-/Speicherfreiheit, Auftragsverarbeitung)');
+  }
   return open;
 }
