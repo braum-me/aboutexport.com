@@ -1,27 +1,41 @@
 ---
 import LegalLayout from '../layouts/LegalLayout.astro';
 import { site } from '../config/site';
+import { legal } from '../config/legal';
+
+const { operator } = legal;
 ---
 
 <LegalLayout
   title="Impressum"
   path="/impressum/"
   description="Impressum von AboutExport – A Brand of Braum Consulting, Sinntal."
-  updated="Oktober 2026"
+  updated={legal.updated}
 >
   <h2>Angaben gemäß § 5 DDG</h2>
   <p>
-    AboutExport – A Brand of Braum Consulting<br />
-    Schlüchterner Straße 31<br />
-    36391 Sinntal<br />
-    Deutschland
+    {operator.company}{operator.owner && <><br />Inhaber: {operator.owner}</>}<br />
+    {operator.legalForm}<br />
+    {operator.street}<br />
+    {operator.postalCode} {operator.city}<br />
+    {operator.country}
   </p>
+  <p>AboutExport ist eine Marke von {operator.company}.</p>
 
   <h2>Kontakt</h2>
   <p>
     E-Mail: <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a><br />
     Kontaktformular: <a href="/#kontakt">aboutexport.com/#kontakt</a>
   </p>
+
+  {
+    legal.vatId && (
+      <>
+        <h2>Umsatzsteuer-Identifikationsnummer</h2>
+        <p>Umsatzsteuer-Identifikationsnummer gemäß § 27a Umsatzsteuergesetz: {legal.vatId}</p>
+      </>
+    )
+  }
 
   <h2>Verbraucherstreitbeilegung</h2>
   <p>

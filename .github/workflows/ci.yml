@@ -1,8 +1,10 @@
 name: CI
 
-# Läuft nur für Pull Requests gegen main (und manuell). Kein Deployment, keine Secrets.
+# Läuft für Pull Requests gegen main, Pushes auf main (z. B. Merges) und manuell. Kein Deployment, keine Secrets.
 on:
   pull_request:
+    branches: [main]
+  push:
     branches: [main]
   workflow_dispatch:
 
@@ -32,6 +34,9 @@ jobs:
       - name: npm ci
         run: npm ci
 
+      - name: npm audit (Produktionsabhängigkeiten)
+        run: npm audit --omit=dev --audit-level=high
+
       - name: TypeScript / Astro Check
         run: npm run check
 
@@ -57,3 +62,30 @@ jobs:
           name: playwright-test-results
           path: test-results/
           retention-days: 7
+
+  docker:
+    name: Docker-Build + Smoke-Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Image bauen
+        run: docker build -t aboutexport-website:ci .
+
+      - name: Container starten (gehärtet wie docker-compose.yml, ohne SMTP)
+        run: |
+          docker run -d --name web -p 127.0.0.1:4321:4321 --read-only --tmpfs /tmp \
+            --cap-drop ALL --security-opt no-new-privileges:true aboutexport-website:ci
+          for i in $(seq 1 30); do
+            [ "$(docker inspect -f '{{.State.Health.Status}}' web)" = healthy ] && break
+            sleep 2
+          done
+          docker inspect -f '{{.State.Health.Status}}' web | grep -q healthy
+
+      - name: Smoke-Test
+        run: deploy/smoke-test.sh http://127.0.0.1:4321
+
+      - name: Container-Logs bei Fehler
+        if: failure()
+        run: docker logs web

@@ -1,0 +1,19 @@
+# Nur verwenden, falls auf dem VPS bereits Traefik (z. B. via Coolify) läuft (siehe docs/deployment.md, Schritt 1).
+# docker-compose.override.yml neben docker-compose.yml; Netzwerkname an die bestehende Traefik-Instanz anpassen.
+services:
+  web:
+    ports: !reset []           # kein Host-Port nötig, Traefik spricht den Container direkt an
+    networks: [proxy]
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.aboutexport.rule=Host(`aboutexport.com`) || Host(`www.aboutexport.com`)
+      - traefik.http.routers.aboutexport.entrypoints=websecure
+      - traefik.http.routers.aboutexport.tls=true
+      - traefik.http.routers.aboutexport.middlewares=aboutexport-www
+      - traefik.http.middlewares.aboutexport-www.redirectregex.regex=^https://www\.aboutexport\.com/(.*)
+      - traefik.http.middlewares.aboutexport-www.redirectregex.replacement=https://aboutexport.com/$${1}
+      - traefik.http.middlewares.aboutexport-www.redirectregex.permanent=true
+      - traefik.http.services.aboutexport.loadbalancer.server.port=4321
+networks:
+  proxy:
+    external: true

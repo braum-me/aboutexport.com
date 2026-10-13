@@ -21,4 +21,22 @@ test.describe('Rechtstexte und öffentliche Angaben', () => {
     expect(text).toContain('49');
     expect(text).toMatch(/20\s?%/);
   });
+
+  test('Datenschutz nennt die tatsächlich eingesetzten Dienstleister', async ({ page }) => {
+    await page.goto('/datenschutz/');
+    const text = ((await page.locator('main').textContent()) ?? '').replace(/\s+/g, ' ');
+    expect(text).toContain('Cloudflare, Inc.');
+    expect(text).toContain('Data Privacy Framework');
+    expect(text).toContain('Sendinblue SAS (Brevo)');
+    expect(text).not.toMatch(/Drittländer außerhalb der EU\/des EWR ist nicht vorgesehen/);
+    expect(text).not.toMatch(/null|undefined/);
+  });
+
+  test('Impressum nennt Braum Consulting als Einzelunternehmen', async ({ page }) => {
+    await page.goto('/impressum/');
+    const text = ((await page.locator('main').textContent()) ?? '').replace(/\s+/g, ' ');
+    expect(text).toContain('Braum Consulting');
+    expect(text).toContain('Einzelunternehmen');
+    expect(text).not.toMatch(/null|undefined/);
+  });
 });

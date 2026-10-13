@@ -1,21 +1,24 @@
 ---
 import LegalLayout from '../layouts/LegalLayout.astro';
 import { site } from '../config/site';
+import { legal } from '../config/legal';
+
+const { operator, hosting, cloudflare, smtp, mailbox, logRetentionDays } = legal;
 ---
 
 <LegalLayout
   title="Datenschutzerklärung"
   path="/datenschutz/"
   description="Datenschutzerklärung von AboutExport: welche Daten wir beim Besuch der Website und bei Kontakt- oder Waitlist-Anfragen verarbeiten."
-  updated="Oktober 2026 (Entwurf)"
+  updated={legal.updated}
 >
 
   <h2>1. Verantwortlicher</h2>
   <p>
-    AboutExport – A Brand of Braum Consulting<br />
-    Schlüchterner Straße 31<br />
-    36391 Sinntal<br />
-    Deutschland<br />
+    {operator.company}{operator.owner && <> (Inhaber: {operator.owner})</>}<br />
+    {operator.street}<br />
+    {operator.postalCode} {operator.city}<br />
+    {operator.country}<br />
     E-Mail: <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a><br />
     Impressum: <a href="/impressum/">aboutexport.com/impressum/</a>
   </p>
@@ -39,14 +42,42 @@ import { site } from '../config/site';
 
   <h2>4. Bereitstellung der Website und Server-Logfiles</h2>
   <p>
-    Beim Aufruf der Website verarbeitet der Server technisch notwendige Daten, insbesondere IP-Adresse, Datum und Uhrzeit
+    Beim Aufruf der Website werden technisch notwendige Daten verarbeitet, insbesondere IP-Adresse, Datum und Uhrzeit
     des Abrufs, aufgerufene Seite, übertragene Datenmenge, Referrer-URL sowie Browsertyp und Betriebssystem. Dies ist
     erforderlich, um die Website auszuliefern und ihre Sicherheit zu gewährleisten.
   </p>
   <p>
     Rechtsgrundlage: Art. 6 Abs. 1 S. 1 lit. f DSGVO (berechtigtes Interesse an einem sicheren und stabilen Betrieb).
-    Logdaten werden für höchstens 30 Tage gespeichert und danach gelöscht, sofern sie nicht zur Aufklärung eines
-    Sicherheitsvorfalls benötigt werden.
+    {
+      logRetentionDays !== null
+        ? `Zugriffs-Logs unseres Servers werden für höchstens ${logRetentionDays} Tage gespeichert und danach gelöscht, sofern sie nicht zur Aufklärung eines Sicherheitsvorfalls benötigt werden.`
+        : 'Zugriffs-Logs unseres Servers werden nur so lange gespeichert, wie es für diese Zwecke erforderlich ist, und danach gelöscht.'
+    }
+    Die Website-Anwendung selbst protokolliert keine IP-Adressen, Namen oder E-Mail-Adressen.
+  </p>
+
+  <h3>Hosting</h3>
+  <p>
+    Die Website wird auf einem von uns angemieteten virtuellen Server betrieben{
+      hosting ? (
+        <>
+          {' '}bei {hosting.name}, {hosting.address}. Serverstandort: {hosting.serverLocation}.
+        </>
+      ) : (
+        '.'
+      )
+    }{' '}
+    Der Anbieter verarbeitet die oben genannten Daten in unserem Auftrag (Art. 28 DSGVO).
+  </p>
+
+  <h3>Cloudflare</h3>
+  <p>
+    Für {cloudflare.purpose} nutzen wir {cloudflare.name}, {cloudflare.address}. Aufrufe der Website werden über
+    das Netzwerk von Cloudflare geleitet; dabei verarbeitet Cloudflare insbesondere IP-Adresse und Verbindungsdaten, um
+    die Website auszuliefern und vor Angriffen zu schützen. Cloudflare ist als Auftragsverarbeiter tätig (Art. 28 DSGVO).
+    Eine Übermittlung in die USA ist möglich; Cloudflare ist nach dem EU-U.S. Data Privacy Framework zertifiziert
+    (Angemessenheitsbeschluss der EU-Kommission, Art. 45 DSGVO). Rechtsgrundlage: Art. 6 Abs. 1 S. 1 lit. f DSGVO
+    (berechtigtes Interesse an einer sicheren und schnellen Auslieferung).
   </p>
 
   <h3>TLS-Verschlüsselung</h3>
@@ -84,8 +115,20 @@ import { site } from '../config/site';
 
   <h3>Technische Umsetzung und E-Mail-Versand</h3>
   <p>
-    Formulareingaben werden verschlüsselt an unseren Server übertragen, dort geprüft und per E-Mail (SMTP) an unser
-    Postfach {site.contactEmail} weitergeleitet. Eine Speicherung in einer Datenbank findet nicht statt.
+    Formulareingaben werden verschlüsselt an unseren Server übertragen, dort geprüft und per E-Mail an unsere Adresse
+    {site.contactEmail} gesendet. Eine Speicherung in einer Datenbank findet nicht statt.
+  </p>
+  <p>
+    Für den Versand nutzen wir {smtp.name}, {smtp.address} ({smtp.purpose}). Eingehende E-Mails an
+    {site.contactEmail} werden über Cloudflare Email Routing an unser Postfach{
+      mailbox ? (
+        <>
+          {' '}bei {mailbox.name}, {mailbox.address}
+        </>
+      ) : (
+        ''
+      )
+    } weitergeleitet. Die beteiligten Anbieter verarbeiten die Nachrichten in unserem Auftrag (Art. 28 DSGVO).
   </p>
 
   <h3>Spam-Schutz und Missbrauchsabwehr</h3>
@@ -103,9 +146,18 @@ import { site } from '../config/site';
   </p>
 
   <h2>8. Empfänger und Drittlandübermittlung</h2>
+  <p>Personenbezogene Daten werden nur an Dienstleister übermittelt, die in unserem Auftrag tätig sind:</p>
+  <ul>
+    {hosting && <li>{hosting.name} – Hosting (Serverstandort: {hosting.serverLocation})</li>}
+    <li>{cloudflare.name} – {cloudflare.purpose} ({cloudflare.location})</li>
+    <li>{smtp.name} – {smtp.purpose} ({smtp.location})</li>
+    {mailbox && <li>{mailbox.name} – {mailbox.purpose} ({mailbox.location})</li>}
+  </ul>
   <p>
-    Personenbezogene Daten werden nur an Dienstleister übermittelt, die wir für Hosting und E-Mail-Versand einsetzen und
-    die in unserem Auftrag tätig sind. Eine Übermittlung in Drittländer außerhalb der EU/des EWR ist nicht vorgesehen.
+    Eine Übermittlung in Drittländer außerhalb der EU/des EWR findet nur im Rahmen der Nutzung von Cloudflare statt
+    (siehe Abschnitt 4).{
+      mailbox && !/^(EU|EWR|Deutschland)/.test(mailbox.location) ? ` Für ${mailbox.name} gilt: ${mailbox.location}.` : ''
+    }
   </p>
 
   <h2>9. Ihre Rechte</h2>

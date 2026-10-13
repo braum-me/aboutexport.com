@@ -16,7 +16,7 @@ ENV NODE_ENV=production \
     PORT=4321
 WORKDIR /app
 COPY --from=build --chown=node:node /app/dist ./dist
-COPY --from=build --chown=node:node /app/server.mjs ./server.mjs
+COPY --from=build --chown=node:node /app/server.mjs /app/server-utils.mjs ./
 RUN echo '{"type":"module"}' > package.json
 USER node
 EXPOSE 4321
