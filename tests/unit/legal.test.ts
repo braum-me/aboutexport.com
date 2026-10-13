@@ -5,6 +5,7 @@ describe('legal config', () => {
   it('erfindet keine Angaben: offene Punkte bleiben null', () => {
     expect(legal.operator.company).toBe('Braum Consulting');
     expect(legal.operator.legalForm).toBe('Einzelunternehmen');
+    expect(legal.vatId).toBeNull();
     expect(JSON.stringify(legal)).not.toMatch(/Steuer-?ID/i);
   });
 
@@ -12,12 +13,17 @@ describe('legal config', () => {
     expect(openLegalItems(legal).length).toBeGreaterThan(0);
     const complete: LegalConfig = {
       ...legal,
-      operator: { ...legal.operator, owner: 'Vorname Nachname' },
-      noVatId: true,
-      hosting: { name: 'H', address: 'A', purpose: 'Hosting', location: 'EU', serverLocation: 'Deutschland' },
-      mailbox: { name: 'M', address: 'A', purpose: 'Postfach', location: 'EU' },
-      logRetentionDays: 14,
+      hosting: { ...legal.hosting!, serverLocationVerified: true },
+      accessLogRetention: 'none',
     };
     expect(openLegalItems(complete)).toEqual([]);
+  });
+
+  it('akzeptiert „keine USt-IdNr.“ und erkennt Widersprüche', () => {
+    const base: LegalConfig = { ...legal, hosting: { ...legal.hosting!, serverLocationVerified: true }, accessLogRetention: 14 };
+    expect(openLegalItems({ ...base, vatId: null, noVatId: true })).toEqual([]);
+    expect(openLegalItems({ ...base, vatId: 'DE123456789', noVatId: false })).toEqual([]);
+    expect(openLegalItems({ ...base, vatId: null, noVatId: false })).toHaveLength(1);
+    expect(openLegalItems({ ...base, vatId: 'DE123456789', noVatId: true })).toHaveLength(1);
   });
 });

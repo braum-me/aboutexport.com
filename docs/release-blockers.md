@@ -12,9 +12,9 @@ Es wurden **keine** Angaben erfunden. Wo eine Information fehlt, steht sie hier 
 
 | # | Punkt | Status |
 |---|---|---|
-| L1 | Vollständiger Vor- und Nachname des Inhabers (§ 5 DDG, Einzelunternehmen) – `legal.operator.owner` | **offen – Blocker** |
+| L1 | Inhaber Stefan Braum eingetragen (Angabe 13.10.2026) | erledigt |
 | L2 | Betreiber Braum Consulting, Einzelunternehmen (Angabe 13.10.2026); AboutExport als Marke | erledigt – Anschrift vor Go-live bestätigen |
-| L3 | USt-IdNr. (§ 27a UStG) **nur falls vorhanden** – `legal.vatId` oder `legal.noVatId = true`. Persönliche Steuer-ID **nicht** einsetzen. | **offen – Blocker** |
+| L3 | Keine USt-IdNr. vorhanden (Angabe 13.10.2026) → keine Angabe im Impressum. Persönliche Steuer-ID **nicht** einsetzen. | erledigt |
 | L4 | Erklärung zur Verbraucherstreitbeilegung: erforderlich/gewünscht? (§ 36 VSBG nur > 10 Beschäftigte, B2B-Angebot) | offen – prüfen |
 | L5 | Persönliche Steuer-ID entfernt | erledigt (12.10.2026) |
 
@@ -22,12 +22,12 @@ Es wurden **keine** Angaben erfunden. Wo eine Information fehlt, steht sie hier 
 
 | # | Punkt | Status |
 |---|---|---|
-| D1 | VPS-Anbieter (Name, Anschrift) – `legal.hosting` | **offen – Blocker** |
-| D2 | Serverstandort – `legal.hosting.serverLocation` | **offen – Blocker** |
-| D3 | SMTP: Brevo (Sendinblue SAS) und Cloudflare (DNS/Proxy/Email Routing) eingetragen; Ziel-Postfach-Anbieter fehlt – `legal.mailbox` | **offen – Blocker** (Postfach) |
-| D4 | Auftragsverarbeitungsverträge (Art. 28 DSGVO): VPS-Hoster, Brevo, Cloudflare, Postfach-Anbieter | **offen – Blocker** |
-| D5 | Log-Retention des Reverse Proxy – `legal.logRetentionDays`, passend zur Proxy-Konfiguration (App loggt keine IPs) | **offen – Blocker** |
-| D6 | Drittlandtransfer USA über Cloudflare (EU-U.S. DPF) im Text ergänzt; Postfach-Anbieter noch zu prüfen | teilweise erledigt |
+| D1 | VPS-Anbieter OVH SAS, Roubaix eingetragen | erledigt |
+| D2 | Serverstandort Frankreich (Angabe Betreiber) – Rechenzentrum im OVH-Kundenbereich bestätigen → `serverLocationVerified` | **offen – Verifikation** |
+| D3 | Brevo (SMTP), Cloudflare (DNS/Proxy/Email Routing), Microsoft Exchange Online (Postfach) eingetragen | erledigt |
+| D4 | Auftragsverarbeitungsverträge (Art. 28 DSGVO) ablegen: OVH, Brevo, Cloudflare, Microsoft | **offen – Blocker** |
+| D5 | Log-Retention unbekannt (Coolify-Standard). Read-only-Prüfung + Konfigurationsvorschlag (14 Tage oder kein Access-Log) in `docs/deployment.md` → `legal.accessLogRetention` | **offen – Blocker** |
+| D6 | Drittlandtransfer USA (Cloudflare, im Einzelfall Microsoft; DPF + SCC) im Text; DPF-Zertifizierung bei rechtlicher Prüfung bestätigen | erledigt – prüfen |
 | D7 | Waitlist: Rechtsgrundlage (Art. 6 Abs. 1 lit. b DSGVO) und Speicherdauer bestätigen | offen – prüfen |
 | D8 | Texte sind ein Entwurf zur rechtlichen Freigabe, nicht rechtlich geprüft | **offen – Blocker** |
 | D9 | AGB/Nutzungsbedingungen – vor dem kommerziellen Launch erforderlich | offen (Launch 2027) |

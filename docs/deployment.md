@@ -1,132 +1,184 @@
-# Deployment auf dem VPS (Docker Compose hinter Reverse Proxy)
+# Deployment: OVHcloud-VPS mit Coolify + Traefik hinter Cloudflare
 
-Zielbild: **Cloudflare (DNS + Proxy) → Reverse Proxy auf dem VPS (TLS) → 1 Container `aboutexport-web` (Node 22)**.
-Keine Datenbank, kein WordPress. Secrets ausschließlich in `.env` auf dem VPS.
+Zielbild: AboutExport als **eigene Coolify-Anwendung** auf dem bestehenden VPS, geroutet über den **vorhandenen
+Traefik** (`coolify-proxy`). Keine zusätzliche Proxy-Instanz, keine Datenbank, kein öffentlicher Container-Port.
 
 ```
-Browser ──HTTPS──▶ Cloudflare ──HTTPS (Full strict)──▶ Reverse Proxy :443 ──HTTP──▶ 127.0.0.1:4321 (Container)
-                                                                                     │
-Formular ─▶ /api/* ─▶ Nodemailer ─SMTP 587/STARTTLS─▶ Brevo ─▶ info@aboutexport.com (Cloudflare Email Routing) ─▶ Postfach
+Browser ─HTTPS─▶ Cloudflare (Proxy) ─HTTPS─▶ Traefik (coolify-proxy, :443) ─▶ Container web:4321 (Coolify-Netz)
+Formular ─▶ /api/* ─▶ Nodemailer ─SMTP 587 STARTTLS + AUTH─▶ Brevo ─▶ info@aboutexport.com
+                                       ─▶ Cloudflare Email Routing (MX) ─▶ Microsoft 365 / Exchange Online
 ```
 
-| Baustein | Umsetzung im Repo |
-|---|---|
-| Container | `Dockerfile` (Multi-Stage, Runtime ohne `node_modules`, User `node`), ~245 MB |
-| Härtung | `read_only`, `cap_drop: ALL`, `no-new-privileges`, `pids_limit`, `mem_limit: 256m` |
-| Restart / Health | `restart: unless-stopped`, Healthcheck `GET /healthz` |
-| Kompression | Brotli + gzip werden beim Build vorberechnet und von `server.mjs` ausgeliefert (unabhängig vom Proxy) |
-| Caching | `/_astro/*` 1 Jahr immutable, Bilder 1 Tag, HTML revalidiert (ETag) |
-| Security-Header | HSTS, CSP (Meta + Header), XFO, nosniff, Referrer-, Permissions-Policy, COOP/CORP |
-| Logs | JSON auf stdout, **ohne** IP/Name/E-Mail; Docker-Rotation 5 × 10 MB |
-| Rollback | Images mit Git-SHA getaggt, `deploy/rollback.sh` startet das vorherige Image ohne Build |
-| Graceful Shutdown | SIGTERM → offene Requests beenden, spätestens nach 10 s |
+WordPress läuft auf demselben VPS hinter demselben Traefik → **kein Cloudflare-DNS-Wechsel**; der Cutover ist ein
+Umhängen der Domain zwischen zwei Coolify-Ressourcen (`docs/go-live.md`).
 
-## 1. Bestandsaufnahme auf dem VPS (vor jeder Änderung)
+## Was im Repo für Coolify relevant ist
 
-Welcher Reverse Proxy läuft bereits? Nur lesende Befehle:
+| Datei | Zweck | Status |
+|---|---|---|
+| `Dockerfile` | Multi-Stage-Build, Runtime ohne `node_modules`, User `node`, `HEALTHCHECK /healthz` | genutzt |
+| `docker-compose.coolify.yml` | Coolify-Build-Pack „Docker Compose“: Härtung, Healthcheck, Restart, Log-Rotation, kein Host-Port | **genutzt** |
+| `deploy/smoke-test.sh` | Prüft Seiten, Redirects, Kompression, Header (Staging + nach Go-live) | genutzt |
+| `docker-compose.yml` | Lokaler, produktionsnaher Test mit `127.0.0.1:4321` | lokal |
+| `server.mjs` | Kompression (br/gzip), Security-Header, Client-IP, Graceful Shutdown | genutzt |
+| ~~`deploy/deploy.sh`, `rollback.sh`, Proxy-Vorlagen~~ | durch Coolify (Build, Rollback) und vorhandenen Traefik ersetzt | entfernt |
+
+## 1. Read-only-Bestandsaufnahme auf dem VPS (vor jeder Änderung)
+
+Nur lesende Befehle – Ausgaben bitte zurückmelden (Secrets vorher schwärzen):
 
 ```bash
-sudo ss -tlnp | grep -E ':(80|443)\s'                         # wer belegt 80/443?
-docker ps --format 'table {{.Names}}\t{{.Image}}\t{{.Ports}}'  # Traefik/Caddy/NPM als Container?
-systemctl is-active nginx caddy apache2 traefik 2>/dev/null    # als Dienst?
-docker --version && docker compose version
-free -h && df -h /
+# Versionen / Ressourcen
+docker --version; docker compose version; free -h; df -h /
+docker ps --format 'table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}'
+
+# Traefik (coolify-proxy): Startparameter → Access-Log, Forwarded-Header, Log-Level
+docker inspect coolify-proxy --format '{{range .Args}}{{println .}}{{end}}' | grep -iE 'accesslog|forwardedheaders|log\.|entrypoints'
+docker inspect coolify-proxy --format '{{json .HostConfig.LogConfig}}'
+ls -la /data/coolify/proxy/ /data/coolify/proxy/dynamic/ 2>/dev/null
+
+# WordPress: läuft? Welche Traefik-Router-Regeln (Domains) sind aktiv?
+for c in $(docker ps --format '{{.Names}}'); do
+  docker inspect "$c" --format '{{range $k,$v := .Config.Labels}}{{$k}}={{$v}}{{"\n"}}{{end}}' \
+    | grep -E '^traefik\.http\.routers\..*\.rule=' | sed "s/^/$c  /"
+done | grep -i aboutexport
+grep -rn 'aboutexport' /data/coolify/proxy/dynamic/ 2>/dev/null
+
+# Docker-Logging (Rotation) und journald
+cat /etc/docker/daemon.json 2>/dev/null || echo "kein daemon.json → Docker-Default json-file OHNE Rotation"
+docker info --format 'LoggingDriver={{.LoggingDriver}}'
+journalctl --disk-usage
+grep -hE '^(SystemMaxUse|MaxRetentionSec|Storage)' /etc/systemd/journald.conf /etc/systemd/journald.conf.d/*.conf 2>/dev/null
 ```
 
-Je nach Ergebnis die passende Vorlage verwenden – **keinen zweiten Proxy daneben installieren**:
+Serverstandort: OVH-Kundenbereich → *Bare Metal Cloud → VPS → <VPS> → Standort/Rechenzentrum* ablesen und in
+`src/config/legal.ts` `serverLocationVerified: true` setzen.
 
-| Vorhanden | Vorlage | App-ENV |
-|---|---|---|
-| nginx | `deploy/proxy/nginx.conf.example` | `TRUST_PROXY=true`, `TRUST_PROXY_HOPS=2` |
-| Caddy | `deploy/proxy/Caddyfile.example` | `TRUST_PROXY=true`, `TRUST_PROXY_HOPS=2` |
-| Traefik / Coolify | `deploy/proxy/traefik-labels.example.yml` | `TRUST_PROXY=true`, `TRUST_PROXY_HOPS=2` (nur mit `forwardedHeaders.trustedIPs` = Cloudflare), sonst `CLIENT_IP_HEADER` |
-| nichts | Caddy (automatisches HTTPS, eine Datei) | wie Caddy |
+## 2. Log-Retention bewerten
 
-`TRUST_PROXY_HOPS=2`: Cloudflare und der lokale Proxy hängen je einen Eintrag an `X-Forwarded-For` an; die App nimmt
-den vorletzten Eintrag (= von Cloudflare ermittelte Client-IP). Vom Client mitgeschickte Einträge werden ignoriert.
+| Log | Inhalt | Wo | Retention |
+|---|---|---|---|
+| App (`scope:server/forms`) | **keine** IP/Name/E-Mail | Docker json-file des Containers | begrenzt durch Compose: 5 × 10 MB |
+| Traefik Access-Log | IP, URL, User-Agent | nur wenn `--accesslog` gesetzt (Datei oder stdout) | **zu prüfen** |
+| Traefik Error-Log | gelegentlich IPs | stdout von `coolify-proxy` → Docker-Logs | ohne `daemon.json`-Rotation unbegrenzt – **zu prüfen** |
+| Coolify Deploy-Logs | Build-Ausgaben | Coolify | keine Besucherdaten |
+| journald | System | `/var/log/journal` | laut `journald.conf` – **zu prüfen** |
+| Cloudflare | Edge-Logs | Cloudflare (Auftragsverarbeiter) | laut Cloudflare |
 
-**Empfohlen (robust, unabhängig vom Proxy):** Port 80/443 per Firewall nur für die
-[Cloudflare-IP-Bereiche](https://www.cloudflare.com/ips/) öffnen und `CLIENT_IP_HEADER=cf-connecting-ip` setzen.
-Dann ist die Client-IP für das Rate-Limiting nicht fälschbar. Ohne diese Sperre `CLIENT_IP_HEADER` **nicht** setzen.
+Empfehlung (Ziel: max. 14 Tage für personenbezogene Access-Logs) – **Änderungen an Traefik/Docker nur nach Freigabe**:
 
-## 2. Cloudflare-Einstellungen (Zone aboutexport.com)
+- **Variante A (datensparsam, wartungsfrei):** Traefik-Access-Log aus lassen bzw. deaktivieren →
+  `accessLogRetention: 'none'`. Fehlersuche über App-Logs (ohne IP) und Cloudflare.
+- **Variante B (Access-Log gewünscht):** Coolify → *Servers → Proxy → Configuration*: `--accesslog=true` und
+  `--accesslog.filepath=/traefik/access.log`, dazu auf dem Host `/etc/logrotate.d/coolify-traefik`:
+  ```
+  /data/coolify/proxy/access.log {
+      daily
+      rotate 14
+      missingok
+      notifempty
+      compress
+      delaycompress
+      copytruncate
+  }
+  ```
+  → `accessLogRetention: 14`.
+- **Docker-Rotation global** (Error-Logs von `coolify-proxy` und alle Container; Docker-Neustart → Wartungsfenster):
+  `/etc/docker/daemon.json` → `{"log-driver":"json-file","log-opts":{"max-size":"10m","max-file":"5"}}`.
+
+Die Datenschutzerklärung nennt erst dann eine Frist, wenn `accessLogRetention` bestätigt eingetragen ist –
+bis dahin ohne Zahl („so lange wie erforderlich“), und `npm run release` bleibt rot.
+
+## 3. Coolify-Anwendung anlegen (isoliertes Staging) – erst nach Freigabe
 
 | Einstellung | Wert |
 |---|---|
-| DNS `aboutexport.com`, `www` | A/AAAA → VPS-IP, **Proxied** (orange) – erst beim Cutover ändern |
-| SSL/TLS-Modus | **Full (strict)** (Origin-Zertifikat: Cloudflare Origin CA oder Let's Encrypt) |
-| Always Use HTTPS | an |
-| HSTS | wird von der App gesendet – in Cloudflare nicht zusätzlich nötig |
-| Caching | Standard (Cloudflare cacht statische Dateiendungen, HTML nicht) |
-| Email Routing / MX / SPF / DKIM / DMARC | **unverändert lassen** (siehe Abschnitt 4) |
+| Ressource | *Project → New Resource → Public Repository* `https://github.com/braum-me/aboutexport.com`, Branch `main` |
+| Build Pack | **Docker Compose**, Compose-Datei `/docker-compose.coolify.yml` |
+| Domain für Service `web` | **leer lassen** (WordPress behält aboutexport.com bis zum Cutover) |
+| Auto Deploy | **aus** bis zur Go-live-Freigabe (sonst deployt jeder Merge auf `main` sofort) |
+| Rollback | Coolify → *Rollback* (früheres Image ohne Neubau); „Docker Images to keep“ ≥ 3 |
 
-## 3. Installation
+Umgebungsvariablen (Coolify → *Environment Variables*; Laufzeit-, keine Build-Variablen; Werte nie ins Repo):
+
+| Variable | Wert |
+|---|---|
+| `SMTP_HOST` | `smtp-relay.brevo.com` |
+| `SMTP_PORT` | `587` (STARTTLS wird erzwungen) |
+| `SMTP_USER` | Brevo-SMTP-Login (Brevo → *SMTP & API → SMTP*) |
+| `SMTP_PASSWORD` | eigener Brevo-SMTP-Schlüssel nur für diese Website |
+| `SMTP_FROM` | `AboutExport Website <noreply@aboutexport.com>` |
+| `CONTACT_RECIPIENT` | `info@aboutexport.com` |
+| `TRUST_PROXY` / `CLIENT_IP_HEADER` | `true` / `cf-connecting-ip` (Default in der Compose-Datei) |
+
+`CLIENT_IP_HEADER=cf-connecting-ip`: Cloudflare setzt die echte Client-IP, Traefik reicht den Header unverändert
+durch – unabhängig von Traefiks `forwardedHeaders`. Restrisiko: Wer die OVH-IP direkt (an Cloudflare vorbei) anspricht,
+kann den Header fälschen und damit nur das Rate-Limit umgehen. Optional später (betrifft alle Sites, separat freigeben):
+80/443 in der OVH-Firewall nur für die [Cloudflare-IP-Bereiche](https://www.cloudflare.com/ips/) öffnen.
+
+### Staging-Zugriff ohne Domain und ohne öffentlichen Port
 
 ```bash
-# einmalig
-sudo mkdir -p /opt/aboutexport && sudo chown "$USER" /opt/aboutexport
-git clone https://github.com/braum-me/aboutexport.com.git /opt/aboutexport
-cd /opt/aboutexport
-cp .env.example .env && chmod 600 .env   # Werte eintragen (SMTP, TRUST_PROXY …)
+# auf dem VPS: Container-IP im Coolify-Netz ermitteln
+docker ps --format '{{.Names}}' | grep -i web
+docker inspect <container> --format '{{range .NetworkSettings.Networks}}{{.IPAddress}} {{end}}'
 
-# Deployment (baut origin/main als aboutexport-website:<sha>, wartet auf "healthy")
-deploy/deploy.sh
-deploy/smoke-test.sh                      # lokal gegen 127.0.0.1:4321
+# vom eigenen Rechner: SSH-Tunnel → http://localhost:4321
+ssh -L 4321:<container-ip>:4321 <user>@<vps>
 
-# Rollback auf das vorherige Image (ohne Build)
-deploy/rollback.sh
+# Smoke-Test über den Tunnel (im lokalen Repo-Checkout)
+deploy/smoke-test.sh http://localhost:4321
 ```
 
-Update: `deploy/deploy.sh` erneut ausführen (optional mit Git-Ref, z. B. `deploy/deploy.sh v1.0.0`).
-Schlägt der Healthcheck fehl, startet das Skript automatisch das vorherige Image.
+Formulare funktionieren im Tunnel (`localhost` ist in `security.allowedDomains` erlaubt).
 
-Alte Images aufräumen (die letzten 3 behalten):
-`docker images aboutexport-website --format '{{.Tag}}' | tail -n +4 | xargs -r -I{} docker rmi aboutexport-website:{}`
+## 4. E-Mail-Kette Website → Brevo → Cloudflare Email Routing → Exchange Online
 
-## 4. E-Mail: Brevo SMTP-Relay
-
-Entscheidung: **Brevo** (bereits für aboutexport.com eingerichtet).
-
-| Kriterium | Brevo SMTP | Cloudflare Email Sending |
-|---|---|---|
-| Kosten | Free: 300 Mails/Tag | Workers Paid (5 $/Monat) für beliebige Empfänger; gratis nur an verifizierte Routing-Ziele |
-| Status | GA | Beta (seit April 2026) |
-| DNS | **bereits vollständig eingerichtet** (SPF-Include, DKIM `brevo1/2`, DMARC) | neue Einträge unter `cf-bounce` + DMARC nötig |
-| Nodemailer | SMTP 587 STARTTLS – ohne Codeänderung | SMTP 465 – ohne Codeänderung |
-| Datenschutz | EU-Anbieter (Paris), zusätzlicher Auftragsverarbeiter | kein zusätzlicher Anbieter |
-
-Bestehende DNS-Einträge (öffentlich geprüft am 13.10.2026, **nicht ändern**):
+DNS (öffentlich geprüft am 13.10.2026) – **für den Go-live keine Änderung nötig**:
 
 | Name | Typ | Wert | Zweck |
 |---|---|---|---|
 | `aboutexport.com` | MX | `route1/2/3.mx.cloudflare.net` | Email Routing (Empfang info@) |
 | `aboutexport.com` | TXT | `v=spf1 include:_spf.mx.cloudflare.net include:spf.brevo.com ~all` | SPF: Cloudflare + Brevo |
 | `aboutexport.com` | TXT | `brevo-code:…` | Brevo-Domainverifizierung |
-| `brevo1._domainkey`, `brevo2._domainkey` | CNAME | `b1/b2.aboutexport-com.dkim.brevo.com` | DKIM Brevo |
+| `brevo1._domainkey`, `brevo2._domainkey` | CNAME | `b1/b2.aboutexport-com.dkim.brevo.com` | DKIM (Brevo signiert mit d=aboutexport.com) |
 | `cf2024-1._domainkey` | TXT | DKIM-Key | DKIM Cloudflare Email Routing |
 | `_dmarc` | TXT | `v=DMARC1; p=none; rua=mailto:rua@dmarc.brevo.com` | DMARC (Monitoring) |
 
-Damit ist der Versand von `noreply@aboutexport.com` über Brevo **DKIM-aligned** (d=aboutexport.com) und besteht DMARC.
-Für den Go-live sind **keine DNS-Änderungen nötig**. Optional später: nach 2–4 Wochen sauberer DMARC-Reports
-`p=quarantine` – nur nach Prüfung, dass alle legitimen Absender (Brevo, Cloudflare, ggf. Postfach-Anbieter) aligned sind.
+| Prüfpunkt | Umsetzung / Erwartung |
+|---|---|
+| SMTP-Auth + TLS | Port 587, `requireTLS` (kein Klartext-Fallback), Login + Schlüssel nur in Coolify |
+| SPF | Brevo im SPF enthalten (gilt für die Annahme bei Cloudflare); nach der Weiterleitung ist für Exchange DKIM maßgeblich |
+| DKIM / DMARC | Brevo-DKIM `d=aboutexport.com` ist DMARC-aligned und übersteht die Weiterleitung → erwartet `dmarc=pass` |
+| Reply-To | validierte Absenderadresse des Besuchers; `From` fest `noreply@aboutexport.com` |
+| Logs | nur `outcome`/Fehlercode, keine Zugangsdaten, keine personenbezogenen Daten |
 
-Einrichtung:
-1. Brevo-Konto prüfen/reaktivieren → *Senders, Domains & Dedicated IPs → Domains*: `aboutexport.com` muss „authenticated“ sein.
-2. *SMTP & API → SMTP*: neuen SMTP-Schlüssel erzeugen (nur für diese Website), Login + Schlüssel in `.env` auf dem VPS.
-3. Brevo-Auftragsverarbeitungsvertrag (DPA) im Konto akzeptieren/ablegen.
-4. `.env`: `SMTP_HOST=smtp-relay.brevo.com`, `SMTP_PORT=587`, `SMTP_USER=<Login>`, `SMTP_PASSWORD=<Schlüssel>`,
-   `SMTP_FROM="AboutExport Website <noreply@aboutexport.com>"`, `CONTACT_RECIPIENT=info@aboutexport.com`.
+Brevo vorbereiten: Konto reaktivieren, *Senders, Domains & Dedicated IPs → Domains*: `aboutexport.com` muss
+„authenticated“ sein, neuen SMTP-Schlüssel erzeugen, DPA im Konto ablegen. Zustelltest: `docs/go-live.md`, Schritt 2.
+Landet die Mail in Exchange im Junk: `Authentication-Results` prüfen, ggf. Absender in Exchange als vertrauenswürdig
+markieren – keine DNS-Änderung. DMARC `p=quarantine` frühestens nach 2–4 Wochen sauberer Reports (separat freigeben).
 
-Fallback ohne Codeänderung: Cloudflare Email Sending (`SMTP_HOST=smtp.mx.cloudflare.net`, `SMTP_PORT=465`,
-`SMTP_USER=api_token`, `SMTP_PASSWORD=<API-Token mit "Email Sending: Edit">`) – erfordert Onboarding der Domain
-(neue DNS-Einträge unter `cf-bounce`) und Anpassung der Datenschutzerklärung.
+## 5. Cloudflare
 
-## 5. Formulare – Schutzmechanismen
+DNS-Einträge zeigen bereits (proxied) auf den VPS; SSL-Modus und Zertifikat (Let's Encrypt über Coolify/Traefik)
+bleiben wie für WordPress. HSTS sendet die App. Email Routing, MX, SPF, DKIM, DMARC: **unverändert**.
+
+## 6. Betrieb
+
+| Thema | Umsetzung |
+|---|---|
+| Restart | `restart: unless-stopped` + Coolify-Überwachung |
+| Healthcheck | `GET /healthz` (Compose + Dockerfile) |
+| Härtung | read-only, `cap_drop: ALL`, `no-new-privileges`, `pids_limit`, 256 MB RAM-Limit |
+| Kompression | Brotli/gzip vorberechnet, von `server.mjs` ausgeliefert |
+| Caching | `/_astro/*` 1 Jahr immutable, Bilder 1 Tag, HTML revalidiert |
+| Ressourcen | ~25 MB RAM im Betrieb |
+| Updates | Merge auf `main` → in Coolify *Deploy* (Auto Deploy erst nach Go-live) |
+
+## Formulare – Schutzmechanismen
 
 - Serverseitige Validierung, Header-Injection-Schutz, nur Plain-Text-Mails, fester Empfänger, `Reply-To` = Absender
 - Spam: Honeypot, Mindest-Ausfüllzeit, Origin-Check (`checkOrigin`), Rate Limiting 5 / 10 min je IP und Formular
 - Erfolg **nur** nach angenommener SMTP-Zustellung; SMTP fehlt → 503, Zustellung fehlgeschlagen → 502 mit Hinweis auf info@
-- Rate Limiting ist In-Memory (eine Instanz) – passt zum Ein-Container-Setup
-
-Getestet (automatisch, lokaler SMTP-Sink): Zustellung Kontakt + Waitlist, Validierungsfehler, Honeypot,
-Header-Injection, fremder Origin (403), Rate Limit inkl. gefälschtem `X-Forwarded-For`, SMTP-Ausfall, No-JS-Fallback.
+- Automatisch getestet (lokaler SMTP-Sink, auch im Container): Zustellung, Validierung, Honeypot, Header-Injection,
+  fremder Origin (403), Rate Limit inkl. gefälschtem `X-Forwarded-For`, SMTP-Ausfall, No-JS-Fallback

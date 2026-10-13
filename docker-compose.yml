@@ -1,8 +1,9 @@
+# Lokaler, produktionsnaher Test (gleiche Härtung wie in Coolify). Produktion läuft über Coolify –
+# siehe docs/deployment.md. Start: cp .env.example .env && docker compose up -d --build
 services:
   web:
     build: .
-    # Versioniertes Image (Git-SHA) → Rollback = vorheriges Tag starten (deploy/rollback.sh)
-    image: aboutexport-website:${APP_VERSION:-latest}
+    image: aboutexport-website:local
     container_name: aboutexport-web
     restart: unless-stopped
     env_file: .env
@@ -11,7 +12,7 @@ services:
       HOST: 0.0.0.0
       PORT: 4321
     ports:
-      # Nur lokal binden; TLS terminiert der Reverse Proxy auf dem VPS.
+      # Nur lokal binden
       - "127.0.0.1:${HOST_PORT:-4321}:4321"
     read_only: true
     tmpfs:

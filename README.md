@@ -158,14 +158,14 @@ Die E2E-Tests starten automatisch einen lokalen SMTP-Sink (`tests/e2e/smtp-sink.
 
 ## Deployment
 
-Produktion: Docker Compose auf dem VPS hinter Cloudflare und einem Reverse Proxy – Anleitung in
-[`docs/deployment.md`](docs/deployment.md), Go-live/Rollback in [`docs/go-live.md`](docs/go-live.md).
+Produktion: Coolify (Build Pack „Docker Compose“, `docker-compose.coolify.yml`) auf dem OVH-VPS hinter dem
+vorhandenen Traefik und Cloudflare – Anleitung in [`docs/deployment.md`](docs/deployment.md), Go-live/Rollback in
+[`docs/go-live.md`](docs/go-live.md).
 
 ```bash
-deploy/deploy.sh          # baut origin/main als aboutexport-website:<sha>, startet, wartet auf "healthy"
-deploy/smoke-test.sh      # prüft Seiten, Redirects, Kompression, Header
-deploy/rollback.sh        # vorheriges Image ohne Build starten
-npm run release:check     # Go-live-Gate: Pflichtangaben für Impressum/Datenschutz vollständig?
+docker compose up -d --build            # lokaler, produktionsnaher Test (127.0.0.1:4321, liest .env)
+deploy/smoke-test.sh [base-url]         # prüft Seiten, Redirects, Kompression, Header
+npm run release                         # Go-live-Gate: Pflichtangaben für Impressum/Datenschutz vollständig?
 ```
 
 - Runtime-Image: nur `dist/` + `server.mjs` (+ `server-utils.mjs`), User `node`, read-only, ohne Capabilities

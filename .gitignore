@@ -11,5 +11,3 @@ coverage/
 .DS_Store
 *.log
 
-# Deployment-Status auf dem VPS (deploy/deploy.sh)
-.deploy/

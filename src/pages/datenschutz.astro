@@ -3,7 +3,7 @@ import LegalLayout from '../layouts/LegalLayout.astro';
 import { site } from '../config/site';
 import { legal } from '../config/legal';
 
-const { operator, hosting, cloudflare, smtp, mailbox, logRetentionDays } = legal;
+const { operator, hosting, cloudflare, smtp, mailbox, accessLogRetention } = legal;
 ---
 
 <LegalLayout
@@ -49,9 +49,11 @@ const { operator, hosting, cloudflare, smtp, mailbox, logRetentionDays } = legal
   <p>
     Rechtsgrundlage: Art. 6 Abs. 1 S. 1 lit. f DSGVO (berechtigtes Interesse an einem sicheren und stabilen Betrieb).
     {
-      logRetentionDays !== null
-        ? `Zugriffs-Logs unseres Servers werden für höchstens ${logRetentionDays} Tage gespeichert und danach gelöscht, sofern sie nicht zur Aufklärung eines Sicherheitsvorfalls benötigt werden.`
-        : 'Zugriffs-Logs unseres Servers werden nur so lange gespeichert, wie es für diese Zwecke erforderlich ist, und danach gelöscht.'
+      accessLogRetention === 'none'
+        ? 'Unser Server speichert keine Zugriffs-Logs mit IP-Adressen; die Daten werden nur für die Dauer der Verbindung verarbeitet.'
+        : typeof accessLogRetention === 'number'
+          ? `Zugriffs-Logs unseres Servers werden für höchstens ${accessLogRetention} Tage gespeichert und danach gelöscht, sofern sie nicht zur Aufklärung eines Sicherheitsvorfalls benötigt werden.`
+          : 'Zugriffs-Logs unseres Servers werden nur so lange gespeichert, wie es für diese Zwecke erforderlich ist, und danach gelöscht.'
     }
     Die Website-Anwendung selbst protokolliert keine IP-Adressen, Namen oder E-Mail-Adressen.
   </p>
@@ -154,10 +156,10 @@ const { operator, hosting, cloudflare, smtp, mailbox, logRetentionDays } = legal
     {mailbox && <li>{mailbox.name} – {mailbox.purpose} ({mailbox.location})</li>}
   </ul>
   <p>
-    Eine Übermittlung in Drittländer außerhalb der EU/des EWR findet nur im Rahmen der Nutzung von Cloudflare statt
-    (siehe Abschnitt 4).{
-      mailbox && !/^(EU|EWR|Deutschland)/.test(mailbox.location) ? ` Für ${mailbox.name} gilt: ${mailbox.location}.` : ''
-    }
+    Eine Übermittlung in Drittländer außerhalb der EU/des EWR ist bei Cloudflare möglich (siehe Abschnitt 4){
+      mailbox ? ' sowie im Einzelfall bei Microsoft' : ''
+    }. Grundlage ist jeweils der Angemessenheitsbeschluss der EU-Kommission zum EU-U.S. Data Privacy Framework
+    (Art. 45 DSGVO), ergänzend die von den Anbietern verwendeten EU-Standardvertragsklauseln (Art. 46 DSGVO).
   </p>
 
   <h2>9. Ihre Rechte</h2>

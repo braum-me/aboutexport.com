@@ -31,13 +31,17 @@ export interface LegalConfig {
   vatId: string | null;
   /** Bestätigt, dass keine USt-IdNr. existiert (dann entfällt die Angabe) */
   noVatId: boolean;
-  hosting: (Provider & { serverLocation: string }) | null;
+  /** serverLocationVerified: Rechenzentrum technisch bestätigt (OVH-Kundenbereich / Server-Standortcode) */
+  hosting: (Provider & { serverLocation: string; serverLocationVerified: boolean }) | null;
   cloudflare: Provider;
   smtp: Provider;
   /** Anbieter des Postfachs, an das Cloudflare Email Routing info@ weiterleitet */
   mailbox: Provider | null;
-  /** Tatsächliche Aufbewahrungsdauer der Zugriffs-Logs (Reverse Proxy) in Tagen */
-  logRetentionDays: number | null;
+  /**
+   * Zugriffs-Logs des Reverse Proxy (Traefik/Coolify) mit IP-Adressen:
+   * Anzahl Tage, 'none' (keine Access-Logs aktiv) oder null (noch nicht geprüft)
+   */
+  accessLogRetention: number | 'none' | null;
 }
 
 export const legal: LegalConfig = {
@@ -45,7 +49,7 @@ export const legal: LegalConfig = {
   operator: {
     brand: 'AboutExport – A Brand of Braum Consulting',
     company: 'Braum Consulting',
-    owner: null,
+    owner: 'Stefan Braum',
     legalForm: 'Einzelunternehmen',
     street: 'Schlüchterner Straße 31',
     postalCode: '36391',
@@ -53,8 +57,16 @@ export const legal: LegalConfig = {
     country: 'Deutschland',
   },
   vatId: null,
-  noVatId: false,
-  hosting: null,
+  noVatId: true,
+  hosting: {
+    name: 'OVH SAS',
+    address: '2 rue Kellermann, 59100 Roubaix, Frankreich',
+    purpose: 'Hosting (virtueller Server)',
+    location: 'EU',
+    serverLocation: 'Frankreich',
+    // Angabe Betreiber 13.10.2026; Rechenzentrum im OVH-Kundenbereich bestätigen (docs/deployment.md)
+    serverLocationVerified: false,
+  },
   cloudflare: {
     name: 'Cloudflare, Inc.',
     address: '101 Townsend St., San Francisco, CA 94107, USA',
@@ -67,8 +79,14 @@ export const legal: LegalConfig = {
     purpose: 'Versand der über die Formulare übermittelten Nachrichten an unser Postfach (SMTP-Relay)',
     location: 'EU',
   },
-  mailbox: null,
-  logRetentionDays: null,
+  mailbox: {
+    name: 'Microsoft Ireland Operations Limited (Microsoft 365 / Exchange Online)',
+    address: 'One Microsoft Place, South County Business Park, Leopardstown, Dublin 18, Irland',
+    purpose: 'Empfang und Speicherung der an info@aboutexport.com weitergeleiteten E-Mails (Postfach)',
+    location:
+      'EU; Übermittlungen in die USA im Einzelfall (z. B. Support) möglich – Microsoft Corporation ist nach dem EU-U.S. Data Privacy Framework zertifiziert',
+  },
+  accessLogRetention: null,
 };
 
 /** Offene Pflichtangaben (für release:check und Doku) */
@@ -76,8 +94,12 @@ export function openLegalItems(c: LegalConfig = legal): string[] {
   const open: string[] = [];
   if (!c.operator.owner) open.push('operator.owner: Vor- und Nachname des Inhabers (Impressum, Verantwortlicher)');
   if (!c.vatId && !c.noVatId) open.push('vatId/noVatId: USt-IdNr. eintragen oder bestätigen, dass keine existiert');
+  if (c.vatId && c.noVatId) open.push('vatId/noVatId: widersprüchlich (USt-IdNr. gesetzt und „keine vorhanden“)');
   if (!c.hosting) open.push('hosting: VPS-Anbieter (Name, Anschrift, Serverstandort)');
+  else if (!c.hosting.serverLocationVerified)
+    open.push('hosting.serverLocationVerified: Rechenzentrum im OVH-Kundenbereich bestätigen');
   if (!c.mailbox) open.push('mailbox: Anbieter des Ziel-Postfachs von info@aboutexport.com');
-  if (c.logRetentionDays === null) open.push('logRetentionDays: tatsächliche Aufbewahrung der Zugriffs-Logs');
+  if (c.accessLogRetention === null)
+    open.push('accessLogRetention: Access-Logs des Reverse Proxy prüfen (Tage oder "none")');
   return open;
 }

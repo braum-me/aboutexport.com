@@ -28,6 +28,8 @@ test.describe('Rechtstexte und öffentliche Angaben', () => {
     expect(text).toContain('Cloudflare, Inc.');
     expect(text).toContain('Data Privacy Framework');
     expect(text).toContain('Sendinblue SAS (Brevo)');
+    expect(text).toContain('OVH SAS');
+    expect(text).toContain('Microsoft Ireland Operations Limited');
     expect(text).not.toMatch(/Drittländer außerhalb der EU\/des EWR ist nicht vorgesehen/);
     expect(text).not.toMatch(/null|undefined/);
   });
@@ -37,6 +39,8 @@ test.describe('Rechtstexte und öffentliche Angaben', () => {
     const text = ((await page.locator('main').textContent()) ?? '').replace(/\s+/g, ' ');
     expect(text).toContain('Braum Consulting');
     expect(text).toContain('Einzelunternehmen');
+    expect(text).toContain('Inhaber: Stefan Braum');
+    expect(text).not.toMatch(/Umsatzsteuer-Identifikationsnummer/);
     expect(text).not.toMatch(/null|undefined/);
   });
 });
