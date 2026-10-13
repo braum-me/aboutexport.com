@@ -1,17 +1,37 @@
+# Lokaler, produktionsnaher Test (gleiche Härtung wie in Coolify). Produktion läuft über Coolify –
+# siehe docs/deployment.md. Start: cp .env.example .env && docker compose up -d --build
 services:
   web:
     build: .
-    image: aboutexport-website:latest
+    image: aboutexport-website:local
+    container_name: aboutexport-web
     restart: unless-stopped
     env_file: .env
     environment:
+      NODE_ENV: production
       HOST: 0.0.0.0
       PORT: 4321
     ports:
-      - "127.0.0.1:4321:4321" # nur lokal binden; TLS terminiert der Reverse Proxy
+      # Nur lokal binden
+      - "127.0.0.1:${HOST_PORT:-4321}:4321"
     read_only: true
     tmpfs:
       - /tmp
     cap_drop: [ALL]
     security_opt:
       - no-new-privileges:true
+    pids_limit: 128
+    mem_limit: 256m
+    stop_grace_period: 15s
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:4321/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 3s
+      start_period: 10s
+      retries: 3
+    logging:
+      # Container-Logs (ohne personenbezogene Daten) rotieren: max. 5 × 10 MB
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"

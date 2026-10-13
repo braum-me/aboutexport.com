@@ -8,8 +8,10 @@ interface Props {
   /** Großformat für den neuesten Beitrag */
   featured?: boolean;
   headingLevel?: 'h2' | 'h3';
+  /** Bild ist oberhalb des Falzes (LCP): sofort und priorisiert laden */
+  priority?: boolean;
 }
-const { post, featured = false, headingLevel = 'h3' } = Astro.props;
+const { post, featured = false, headingLevel = 'h3', priority = false } = Astro.props;
 const { data } = post;
 const Heading = headingLevel;
 const cat = blogCategories[data.category];
@@ -34,7 +36,8 @@ const minutes = readingTime(post.body ?? '');
       alt=""
       width={data.image.width}
       height={data.image.height}
-      loading="lazy"
+      loading={priority ? 'eager' : 'lazy'}
+      fetchpriority={priority ? 'high' : undefined}
       decoding="async"
       class="absolute inset-0 size-full object-cover transition duration-700 ease-out group-hover:scale-[1.03]"
     />

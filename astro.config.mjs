@@ -26,6 +26,28 @@ export default defineConfig({
     '/category/maerkte-regionen': '/blog/',
     '/author/aboutadmin': '/blog/',
     '/Datenschutz': '/datenschutz/',
+    // Cookie-Richtlinie entfällt (keine Cookies) → Abschnitt in der Datenschutzerklärung
+    '/cookie-richtlinie': '/datenschutz/',
+    // WordPress-Feeds (Kommentare, Kategorien, Autor, Beitrag) → zentraler RSS-Feed
+    '/comments/feed': '/feed/',
+    '/category/news/feed': '/feed/',
+    '/category/regulierung/feed': '/feed/',
+    '/category/export-compliance/feed': '/feed/',
+    '/category/maerkte-regionen/feed': '/feed/',
+    '/author/aboutadmin/feed': '/feed/',
+    '/aboutexport-waitlist-early-access/feed': '/feed/',
+    '/bafa-exportkontrolle-april-2026/feed': '/feed/',
+    '/vision-export-compliance-monitoring/feed': '/feed/',
+    // Yoast-/WordPress-Sitemaps (in der Search Console hinterlegt) → neue Sitemap
+    '/sitemap_index.xml': '/sitemap.xml',
+    '/post-sitemap.xml': '/sitemap.xml',
+    '/page-sitemap.xml': '/sitemap.xml',
+    '/category-sitemap.xml': '/sitemap.xml',
+    '/author-sitemap.xml': '/sitemap.xml',
+    '/wp-sitemap.xml': '/sitemap.xml',
+    // WordPress-Paginierung (alle Beiträge stehen auf /blog/)
+    '/blog/page/2': '/blog/',
+    '/blog/page/3': '/blog/',
   },
   devToolbar: { enabled: false },
   image: { service: { entrypoint: 'astro/assets/services/noop' } },

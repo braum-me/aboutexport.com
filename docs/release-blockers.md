@@ -3,15 +3,18 @@
 Diese Punkte müssen vor einer **öffentlichen Veröffentlichung** (Deployment auf aboutexport.com) erledigt sein.
 Sie blockieren nicht den Merge der PRs nach `main`, solange nicht deployt wird.
 
+Maschinelle Prüfung der Pflichtangaben: `npm run release:check` (schlägt fehl, solange Werte in
+`src/config/legal.ts` offen sind). Go-live-Ablauf: [`docs/go-live.md`](go-live.md), Setup: [`docs/deployment.md`](deployment.md).
+
 Es wurden **keine** Angaben erfunden. Wo eine Information fehlt, steht sie hier – nicht als Platzhalter auf der Website.
 
 ## 1. Impressum (`src/pages/impressum.astro`)
 
 | # | Punkt | Status |
 |---|---|---|
-| L1 | Vollständiger Vor- und Nachname des Inhabers (§ 5 DDG, Einzelunternehmen) fehlt | **offen – Blocker** |
-| L2 | Rechtsform prüfen („A Brand of Braum Consulting“ ist keine Rechtsform) | **offen – Blocker** |
-| L3 | Steuerliche Pflichtangaben: USt-IdNr. (§ 27a UStG) bzw. W-IdNr., **falls vorhanden**, ergänzen. Ohne USt-IdNr. entfällt die Angabe. Persönliche Steuer-ID **nicht** wieder einsetzen. | **offen – Blocker** |
+| L1 | Inhaber Stefan Braum eingetragen (Angabe 13.10.2026) | erledigt |
+| L2 | Betreiber Braum Consulting, Einzelunternehmen (Angabe 13.10.2026); AboutExport als Marke | erledigt – Anschrift vor Go-live bestätigen |
+| L3 | Keine USt-IdNr. vorhanden (Angabe 13.10.2026) → keine Angabe im Impressum. Persönliche Steuer-ID **nicht** einsetzen. | erledigt |
 | L4 | Erklärung zur Verbraucherstreitbeilegung: erforderlich/gewünscht? (§ 36 VSBG nur > 10 Beschäftigte, B2B-Angebot) | offen – prüfen |
 | L5 | Persönliche Steuer-ID entfernt | erledigt (12.10.2026) |
 
@@ -19,14 +22,14 @@ Es wurden **keine** Angaben erfunden. Wo eine Information fehlt, steht sie hier 
 
 | # | Punkt | Status |
 |---|---|---|
-| D1 | Hosting-Anbieter (Name, Anschrift) ergänzen | **offen – Blocker** |
-| D2 | Serverstandort angeben | **offen – Blocker** |
-| D3 | SMTP-/E-Mail-Anbieter (Name, Anschrift) ergänzen | **offen – Blocker** |
-| D4 | Auftragsverarbeitungsverträge (Art. 28 DSGVO) mit Hoster und SMTP-Anbieter abschließen | **offen – Blocker** |
-| D5 | Log-Retention: Text nennt „höchstens 30 Tage“ – gegen tatsächliche Konfiguration von Reverse Proxy/Hoster prüfen | **offen – Blocker** |
-| D6 | Drittlandtransfers: Text sagt „nicht vorgesehen“ – nach Anbieterwahl verifizieren | **offen – Blocker** |
+| D1 | VPS-Anbieter OVH SAS, Roubaix eingetragen | erledigt |
+| D2 | Serverstandort Frankreich (Angabe Betreiber) – Rechenzentrum im OVH-Kundenbereich bestätigen → `serverLocationVerified` | **offen – Verifikation** |
+| D3 | Brevo (SMTP), Cloudflare (DNS/Proxy/Email Routing), Microsoft Exchange Online (Postfach) eingetragen | erledigt |
+| D4 | Auftragsverarbeitungsverträge (Art. 28 DSGVO) ablegen: OVH, Brevo, Cloudflare, Microsoft | **offen – Blocker** |
+| D5 | Log-Retention unbekannt (Coolify-Standard). Read-only-Prüfung + Konfigurationsvorschlag (14 Tage oder kein Access-Log) in `docs/deployment.md` → `legal.accessLogRetention` | **offen – Blocker** |
+| D6 | Drittlandtransfer USA (Cloudflare, im Einzelfall Microsoft; DPF + SCC) im Text; DPF-Zertifizierung bei rechtlicher Prüfung bestätigen | erledigt – prüfen |
 | D7 | Waitlist: Rechtsgrundlage (Art. 6 Abs. 1 lit. b DSGVO) und Speicherdauer bestätigen | offen – prüfen |
-| D8 | Gesamter Text ist ein Entwurf („Stand: Oktober 2026 (Entwurf)“), nicht rechtlich geprüft | **offen – Blocker** |
+| D8 | Texte sind ein Entwurf zur rechtlichen Freigabe, nicht rechtlich geprüft | **offen – Blocker** |
 | D9 | AGB/Nutzungsbedingungen – vor dem kommerziellen Launch erforderlich | offen (Launch 2027) |
 
 Die internen Prüfhinweise wurden von der Website entfernt (`ReviewNote` gelöscht). Diese Tabelle ersetzt sie.

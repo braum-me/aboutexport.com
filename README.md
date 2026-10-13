@@ -125,6 +125,8 @@ Ungültige Eingaben (negativ, leer, außerhalb der Grenzen) werden markiert, es 
 | `CONTACT_RECIPIENT` | nein | Fester Empfänger, Default `info@aboutexport.com` |
 | `SMTP_SECURE` | nein | TLS explizit erzwingen/abschalten |
 | `TRUST_PROXY` | nein | `true` nur hinter Reverse Proxy (X-Forwarded-For für Rate Limiting) |
+| `TRUST_PROXY_HOPS` | nein (1) | Anzahl Proxies, die `X-Forwarded-For` ergänzen (Cloudflare + lokaler Proxy = 2) |
+| `CLIENT_IP_HEADER` | nein | z. B. `cf-connecting-ip` – nur wenn der Server ausschließlich über Cloudflare erreichbar ist |
 | `RATE_LIMIT_MAX` / `RATE_LIMIT_WINDOW_MS` | nein | Default 5 Anfragen / 10 min je IP und Formular |
 
 Verhalten:
@@ -156,26 +158,20 @@ Die E2E-Tests starten automatisch einen lokalen SMTP-Sink (`tests/e2e/smtp-sink.
 
 ## Deployment
 
-### Docker (empfohlen)
+Produktion: Coolify (Build Pack „Docker Compose“, `docker-compose.coolify.yml`) auf dem OVH-VPS hinter dem
+vorhandenen Traefik und Cloudflare – Anleitung in [`docs/deployment.md`](docs/deployment.md), Go-live/Rollback in
+[`docs/go-live.md`](docs/go-live.md).
 
 ```bash
-docker compose up -d --build     # bindet auf 127.0.0.1:4321, liest .env
+docker compose up -d --build            # lokaler, produktionsnaher Test (127.0.0.1:4321, liest .env)
+deploy/smoke-test.sh [base-url]         # prüft Seiten, Redirects, Kompression, Header
+npm run release                         # Go-live-Gate: Pflichtangaben für Impressum/Datenschutz vollständig?
 ```
 
-- Multi-Stage-Build; das Runtime-Image enthält nur `dist/` + `server.mjs` (Server-Bundle ist self-contained,
-  keine `node_modules`), läuft als User `node`, read-only, ohne Capabilities
-- Healthcheck: `GET /healthz`
-- Davor einen Reverse Proxy (Caddy, Traefik, nginx) für **TLS und gzip/brotli-Kompression** betreiben und
-  `TRUST_PROXY=true` setzen. HTTP → HTTPS-Redirect und `www` → Apex-Redirect dort konfigurieren.
-
-### Ohne Docker
-
-Node.js ≥ 22.12: `npm ci && npm run build`, dann `node server.mjs` per systemd o. ä. starten (ENV setzen).
-
-### Rein statisches Hosting?
-
-Alle Seiten sind statisch (`dist/client/`). Die Formulare benötigen jedoch den Node-Server für `/api/*`.
-Ohne Server funktionieren Waitlist und Kontakt nicht.
+- Runtime-Image: nur `dist/` + `server.mjs` (+ `server-utils.mjs`), User `node`, read-only, ohne Capabilities
+- Brotli/gzip werden beim Build vorberechnet (`scripts/precompress.mjs`) und von `server.mjs` ausgeliefert
+- `TRUST_PROXY`, `TRUST_PROXY_HOPS`, `CLIENT_IP_HEADER` steuern die Client-IP hinter Cloudflare/Proxy (Rate Limiting)
+- Ohne Node-Server funktionieren Waitlist und Kontakt nicht (rein statisches Hosting reicht nicht)
 
 ### Security-Header
 
@@ -188,8 +184,8 @@ COOP/CORP sowie `frame-ancestors`. Die Content-Security-Policy mit Hashes für S
 Impressum und Datenschutzerklärung sind **nicht rechtlich geprüft**. Interne Prüfhinweise werden nicht öffentlich
 angezeigt; alle offenen Punkte stehen als **Release-Blocker** in [`docs/release-blockers.md`](docs/release-blockers.md).
 
-- Die persönliche Steuer-ID wurde aus dem Impressum entfernt (sie ist keine Pflichtangabe). Sie ist aber noch in
-  der Git-Historie enthalten – Bereinigung siehe `docs/release-blockers.md`.
+- Angaben für Impressum/Datenschutz stehen in `src/config/legal.ts`; offene Werte (`null`) werden nicht angezeigt,
+  sondern von `npm run release:check` gemeldet.
 - OS-Plattform-Hinweis entfernt (Plattform seit Juli 2025 eingestellt)
 - Entfernt (auf der neuen Website nicht mehr im Einsatz): Real Cookie Banner, WP Compress, UpdraftPlus,
   Google reCAPTCHA, Brevo, Umami, Ally, Google Fonts, Font Awesome, CDN
