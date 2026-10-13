@@ -2,9 +2,10 @@ import { getCollection, type CollectionEntry } from 'astro:content';
 
 export type Post = CollectionEntry<'blog'>;
 
-/** Veröffentlichte Beiträge, neueste zuerst. */
+/** Veröffentlichte Beiträge (Entwürfe und Beiträge mit pubDate in der Zukunft ausgenommen), neueste zuerst. */
 export async function getPosts(): Promise<Post[]> {
-  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  const now = Date.now();
+  const posts = await getCollection('blog', ({ data }) => !data.draft && data.pubDate.getTime() <= now);
   return posts.sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
 }
 

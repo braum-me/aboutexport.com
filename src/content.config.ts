@@ -4,8 +4,9 @@ import { z } from 'astro/zod';
 
 /**
  * Blog-Beiträge (migriert von WordPress, Stand 12.10.2026).
- * Veröffentlichungs- und Änderungsdaten sind die Originalwerte aus WordPress (UTC)
- * und dürfen nicht automatisch aktualisiert werden.
+ * pubDate ist das Datum der Veröffentlichung auf dieser Website. Bei migrierten Beiträgen
+ * steht das ursprüngliche WordPress-Datum in legacy.publishedDate und wird auf der Seite ausgewiesen.
+ * Beiträge mit pubDate in der Zukunft erscheinen erst bei einem Build ab diesem Zeitpunkt.
  */
 const blog = defineCollection({
   loader: glob({ base: './src/content/blog', pattern: '**/*.md' }),
@@ -32,6 +33,8 @@ const blog = defineCollection({
       .object({
         wpId: z.number().int(),
         url: z.url(),
+        /** Ursprüngliches Veröffentlichungsdatum in WordPress (bleibt sichtbar, wenn pubDate neu gesetzt wurde) */
+        publishedDate: z.coerce.date().optional(),
         /** Letztes Änderungsdatum in WordPress, falls danach korrigiert wurde */
         modifiedDate: z.coerce.date().optional(),
       })

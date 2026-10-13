@@ -6,8 +6,8 @@ title: 'Keine Schonfrist mehr: Was die neuen BAFA-Regeln für Ihre Export Compli
 seoTitle: 'BAFA April 2026: Neue Regeln für Export Compliance'
 description: 'Neue Sanktions-Compliance-Erklärung, keine Schonfrist mehr, verschärftes Strafrecht: Was die BAFA-Änderungen April 2026 für Sie bedeutet.'
 excerpt: 'Das BAFA hat zum April 2026 weitreichende Änderungen in Kraft gesetzt – von neuen Pflichten bei Allgemeinen Genehmigungen bis zur entfallenen Schonfrist bei EU-Sanktionen. Was jetzt konkret zu tun ist.'
-pubDate: 2026-04-04T19:22:53Z
-updatedDate: 2026-10-12T20:55:25Z
+pubDate: 2026-10-13T07:00:00Z
+updatedDate: 2026-10-13T07:00:00Z
 category: regulierung
 kind: regulatory
 author: AboutExport Team
@@ -20,6 +20,8 @@ image:
 legacy:
   wpId: 2181
   url: https://aboutexport.com/bafa-exportkontrolle-april-2026/
+  # Ursprüngliches Veröffentlichungsdatum in WordPress; pubDate = Veröffentlichung auf der neuen Website
+  publishedDate: 2026-04-04T19:22:53Z
   # Änderungsdatum in WordPress vor den Korrekturen
   modifiedDate: 2026-04-04T19:31:36Z
 corrections:

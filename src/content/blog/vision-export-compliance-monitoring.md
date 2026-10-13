@@ -5,7 +5,7 @@ title: 'Warum wir AboutExport gebaut haben – und was wir gemeinsam daraus mach
 seoTitle: 'Warum wir AboutExport gebaut haben | AboutExport'
 description: 'Hinter AboutExport steckt ein Problem aus dem Export Compliance Alltag. Hier ist unsere Story – und wie du die Plattform mitgestalten kannst.'
 excerpt: 'Export Compliance Monitoring kostet Unternehmen täglich wertvolle Stunden – manuell, verteilt über dutzende Quellen, ohne smartes Werkzeug. Wir haben AboutExport gebaut um das zu ändern.'
-pubDate: 2026-04-04T10:12:22Z
+pubDate: 2026-10-01T07:00:00Z
 updatedDate: 2026-10-12T20:01:09Z
 category: news
 kind: product
@@ -19,6 +19,8 @@ image:
 legacy:
   wpId: 2033
   url: https://aboutexport.com/vision-export-compliance-monitoring/
+  # Ursprüngliches Veröffentlichungsdatum in WordPress; pubDate = Veröffentlichung auf der neuen Website
+  publishedDate: 2026-04-04T10:12:22Z
   # Änderungsdatum in WordPress vor den Korrekturen
   modifiedDate: 2026-04-04T19:58:29Z
 corrections:
