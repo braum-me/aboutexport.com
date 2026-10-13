@@ -32,14 +32,28 @@ const blog = defineCollection({
       .object({
         wpId: z.number().int(),
         url: z.url(),
+        /** Letztes Änderungsdatum in WordPress, falls danach korrigiert wurde */
+        modifiedDate: z.coerce.date().optional(),
       })
       .optional(),
+    /** Transparent ausgewiesene nachträgliche Änderungen (öffentlich sichtbar) */
+    corrections: z
+      .array(
+        z.object({
+          date: z.coerce.date(),
+          summary: z.string().min(1),
+          changes: z.array(z.object({ from: z.string(), to: z.string() })).default([]),
+        }),
+      )
+      .default([]),
+    /** Interne redaktionelle Prüfhinweise – nur im Repository, nicht öffentlich dargestellt */
     review: z
       .object({
         status: z.enum(['pending', 'done']),
         notes: z.array(z.string()).default([]),
+        resolved: z.array(z.string()).default([]),
       })
-      .default({ status: 'done', notes: [] }),
+      .default({ status: 'done', notes: [], resolved: [] }),
     draft: z.boolean().default(false),
   }),
 });

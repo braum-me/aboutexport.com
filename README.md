@@ -55,8 +55,11 @@ tests/unit, tests/e2e
 - `pubDate`/`updatedDate` sind feste Werte – nie automatisch setzen. Neue Beiträge: Datei anlegen, Bild unter
   `public/images/blog/<slug>.webp` + `<slug>-og.jpg` (1200×630).
 - `kind: regulatory` zeigt den Hinweis „Historische Regulierungsmeldung“, `kind: product` den Archiv-Hinweis.
-- `review.status: pending` blendet einen Prüfhinweis mit `review.notes` ein. Für die Produktion entweder auf `done`
-  setzen oder mit `HIDE_EDITORIAL_NOTES=true npm run build` bauen.
+- `review` enthält interne redaktionelle Prüfhinweise (offen/erledigt). Sie bleiben im Repository und werden
+  **nicht** auf der Website angezeigt.
+- Nachträgliche inhaltliche Änderungen: Text ändern, `updatedDate` setzen und einen Eintrag unter `corrections`
+  (Datum, Zusammenfassung, `from`/`to`) anlegen. Die Zusammenfassung wird im Artikel als „Nachträglich aktualisiert“
+  angezeigt; `pubDate` bleibt unverändert. Regulatorische Aussagen nur nach Quellenprüfung ändern.
 - Migrationsbericht: [`docs/blog-migration.md`](docs/blog-migration.md)
 
 ## Screenshots austauschen
@@ -168,13 +171,12 @@ COOP/CORP sowie `frame-ancestors`. Die Content-Security-Policy mit Hashes für S
 
 ## Rechtliche Prüfung (vor Go-live)
 
-Impressum und Datenschutzerklärung enthalten sichtbare **Prüfhinweise** (`<ReviewNote>`), die vor dem Go-live
-bearbeitet und entfernt werden müssen. Die Texte sind **nicht rechtlich geprüft**. Offene Punkte:
+Impressum und Datenschutzerklärung sind **nicht rechtlich geprüft**. Interne Prüfhinweise werden nicht öffentlich
+angezeigt; alle offenen Punkte stehen als **Release-Blocker** in [`docs/release-blockers.md`](docs/release-blockers.md).
 
-- Impressum: vollständiger Name des Inhabers fehlt (§ 5 DDG); Veröffentlichung der persönlichen Steuer-ID prüfen
-  (stattdessen ggf. USt-IdNr.); Erklärung zur Verbraucherstreitbeilegung prüfen
+- Die persönliche Steuer-ID wurde aus dem Impressum entfernt (sie ist keine Pflichtangabe). Sie ist aber noch in
+  der Git-Historie enthalten – Bereinigung siehe `docs/release-blockers.md`.
 - OS-Plattform-Hinweis entfernt (Plattform seit Juli 2025 eingestellt)
-- Datenschutz: Hosting- und SMTP-Anbieter ergänzen, AV-Verträge, Log-Aufbewahrung, Drittlandübermittlung verifizieren
 - Entfernt (auf der neuen Website nicht mehr im Einsatz): Real Cookie Banner, WP Compress, UpdraftPlus,
   Google reCAPTCHA, Brevo, Umami, Ally, Google Fonts, Font Awesome, CDN
 - Waitlist-Rechtsgrundlage (Art. 6 Abs. 1 lit. b DSGVO) und Speicherdauer bestätigen

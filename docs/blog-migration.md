@@ -19,7 +19,7 @@ Maschinenlesbare Inventur inkl. SEO-Titel, Meta-Beschreibung und Original-Bild-U
 ## Was übernommen wurde
 
 - **Inhalt:** per pandoc aus dem WordPress-HTML nach Markdown (`src/content/blog/*.md`). Ein E2E-Test vergleicht den
-  gerenderten Artikeltext Wort für Wort mit dem Original.
+  gerenderten Artikeltext Wort für Wort mit dem Original zuzüglich der dokumentierten Korrekturen.
 - **Daten:** Original-Veröffentlichungs- und Änderungsdatum (UTC) aus WordPress; keine automatische Aktualisierung.
 - **SEO:** Yoast-Titel (`seoTitle`, unverändert) und Yoast-Meta-Beschreibung (`description`), Excerpt, Kategorie.
 - **Beitragsbilder:** lokal unter `public/images/blog/` (WebP für die Seite, 1200×630-JPEG für Open Graph).
@@ -57,27 +57,49 @@ Nicht übernommen: WordPress-Kurzlinks (`/?p=<id>`), Anhang-Seiten und `/wp-cont
 - **Produktnews:** Hinweis „Archivbeitrag · Planungsstand“ mit Verweis auf aktuelle Preise/FAQ.
 - Der Originaltext bleibt unverändert; überholte Aussagen werden nur markiert.
 
-## Redaktionelle Prüfung (offen)
+## Nachträgliche Korrekturen (12.10.2026, freigegeben)
 
-Pro Artikel im Frontmatter unter `review.notes`, auf der Seite als gelber Prüfhinweis sichtbar. Ausblenden für die
-Produktion: `review.status: done` setzen oder beim Build `HIDE_EDITORIAL_NOTES=true`.
+Veröffentlichungsdatum unverändert. `updatedDate` auf das Korrekturdatum gesetzt, WordPress-Änderungsdatum unter
+`legacy.modifiedDate` erhalten. Jede Änderung steht als `from`/`to` unter `corrections` im Frontmatter; die
+Zusammenfassung erscheint im Artikel als „Nachträglich aktualisiert … Ursprünglich veröffentlicht am …“.
+
+| Artikel | Original | Korrigiert |
+|---|---|---|
+| Waitlist | „Jede Region kostet 49 € pro Monat und Nutzer“ | „Jede Region kostet 49 € pro Monat“ |
+| Waitlist | `info@aboutexport.de` | `info@aboutexport.com` |
+| Waitlist | „…befindet sich in der finalen Entwicklungsphase einer ersten Validierungsversion.“ | „…befindet sich in der Entwicklung einer ersten Validierungsversion; der Launch ist für 2027 geplant.“ |
+| Vision | „Wir befinden uns in der finalen Entwicklungsphase einer ersten Validierungsversion des Produkts.“ | „Wir befinden uns in der Entwicklung einer ersten Validierungsversion des Produkts; der Launch ist für 2027 geplant.“ |
+
+### Zweite Korrekturrunde (12.10.2026): nicht bestätigte Produktaussagen
+
+Verbindlich bestätigt sind nur: Launch 2027, 49 € pro Region/Monat, 490 € pro Region/Jahr, 20 % Early-Access-Rabatt,
+Regionen EU/USA/China. Alles darüber hinaus wurde neutralisiert und als Korrektur ausgewiesen:
+
+| Artikel | Vorher | Nachher |
+|---|---|---|
+| Waitlist | „… – dauerhaft, nicht nur im ersten Monat. Dieser Vorteil gilt für alle zum Launch verfügbaren Abonnements, unabhängig von Region oder Laufzeit.“ | „Die verbindlichen Konditionen, etwa zur Laufzeit des Rabatts, teilen wir vor dem Launch mit.“ |
+| Waitlist | „Jeder neue Nutzer erhält zudem 14 Tage kostenlosen Zugang – ohne Kreditkarte, ohne Verpflichtung.“ | „Ob und in welcher Form es einen Testzugang geben wird, teilen wir vor dem Launch mit.“ |
+| Waitlist | „… und der 20 % Frühbucher-Rabatt gilt für die ersten Anmeldungen.“ | „… für Mitglieder ist ein Early-Access-Rabatt von 20 % vorgesehen; die verbindlichen Konditionen teilen wir vor dem Launch mit.“ |
+| BAFA | Überschrift „Echtzeit-Monitoring als Antwort“ | „Automatisiertes Monitoring als Antwort“ |
+| BAFA | „Unsere Plattform überwacht automatisch … Export Control Alerts in Echtzeit … keine übersehenen Änderungen.“ | „Ab dem geplanten Launch 2027 prüft die Plattform die Quellen der gebuchten Regionen laufend automatisiert …“ |
+| BAFA | „AboutExport stellt sicher, dass Sie informiert sind – bevor es zum Problem wird.“ | „AboutExport soll Ihnen helfen, solche Änderungen frühzeitig zu erkennen.“ |
+
+Im BAFA-Artikel wurde **nur der abschließende Produktabsatz** geändert (per Unit-Test abgesichert). Die
+regulatorischen Aussagen sind unverändert und werden nur nach Quellenprüfung angepasst. `pubDate` bleibt bei allen
+Artikeln erhalten.
+
+## Redaktionelle Prüfung (intern)
+
+Pro Artikel im Frontmatter unter `review.notes` (offen) und `review.resolved` (erledigt). Die Hinweise werden
+**nicht** auf der Website angezeigt. Offene Punkte:
 
 **BAFA-Artikel**
 - Regulatorische Aussagen bei der Migration nicht erneut fachlich geprüft.
 - Zeitgebunden: Verlängerung der Allgemeinen Genehmigungen „bis 31. März 2027“, „20. Sanktionspaket in Arbeit“.
 - Quellenangabe: Linktexte passen nicht zu den Linkzielen.
-- Produktaussagen („Echtzeit“, „20 % Rabatt auf jeden Plan“) weichen von der aktuellen Positionierung ab.
 - Beitragsbild ist ein Stockfoto – Lizenz für die weitere Nutzung prüfen.
 
-**Waitlist-Artikel**
-- „49 € pro Monat und Nutzer“ vs. bestätigtes Modell „pro Region“.
-- Rabatt „dauerhaft“ / „für die ersten Anmeldungen“ vs. „Konditionen werden vor Launch mitgeteilt“.
-- „14 Tage kostenlos“ vs. „Testzeitraum vorgesehen“.
-- „Finale Entwicklungsphase“ – Launch inzwischen 2027.
-- Kontaktadresse `info@aboutexport.de` vs. `info@aboutexport.com`.
-
 **Vision-Artikel**
-- „Finale Entwicklungsphase“ – Launch inzwischen 2027.
 - Genannte Quellen mit tatsächlichem Quellenumfang abgleichen.
 - Meta-Beschreibung duzt, Artikel siezt.
 
