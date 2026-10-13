@@ -23,10 +23,10 @@ Es wurden **keine** Angaben erfunden. Wo eine Information fehlt, steht sie hier 
 | # | Punkt | Status |
 |---|---|---|
 | D1 | VPS-Anbieter OVH SAS, Roubaix eingetragen | erledigt |
-| D2 | Serverstandort Frankreich (Angabe Betreiber) – Rechenzentrum im OVH-Kundenbereich bestätigen → `serverLocationVerified` | **offen – Verifikation** |
+| D2 | Serverstandort Frankreich, Rechenzentrum Gravelines (Betreiber, OVH-Kundenbereich, 13.10.2026) → `serverLocationVerified` | erledigt |
 | D3 | Brevo (SMTP), Cloudflare (DNS/Proxy/Email Routing), Microsoft Exchange Online (Postfach) eingetragen | erledigt |
-| D4 | Auftragsverarbeitungsverträge (Art. 28 DSGVO) ablegen: OVH, Brevo, Cloudflare, Microsoft | **offen – Blocker** |
-| D5 | Log-Retention unbekannt (Coolify-Standard). Read-only-Prüfung + Konfigurationsvorschlag (14 Tage oder kein Access-Log) in `docs/deployment.md` → `legal.accessLogRetention` | **offen – Blocker** |
+| D4 | Auftragsverarbeitungsverträge (Art. 28 DSGVO) abgelegt: OVH, Brevo, Cloudflare, Microsoft (Angabe Betreiber 13.10.2026) | erledigt |
+| D5 | Traefik-Access-Log ist aus (Startparameter am 13.10.2026 geprüft) → `legal.accessLogRetention: 'none'`. Docker-Logs der Container sind ohne Rotation (kein Bezug zur Website, separat optional) | erledigt |
 | D6 | Drittlandtransfer USA (Cloudflare, im Einzelfall Microsoft; DPF + SCC) im Text; DPF-Zertifizierung bei rechtlicher Prüfung bestätigen | erledigt – prüfen |
 | D7 | Waitlist: Rechtsgrundlage (Art. 6 Abs. 1 lit. b DSGVO) und Speicherdauer bestätigen | offen – prüfen |
 | D8 | Texte sind ein Entwurf zur rechtlichen Freigabe, nicht rechtlich geprüft | **offen – Blocker** |

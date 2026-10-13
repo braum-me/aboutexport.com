@@ -70,9 +70,9 @@ export const legal: LegalConfig = {
     address: '2 rue Kellermann, 59100 Roubaix, Frankreich',
     purpose: 'Hosting (virtueller Server)',
     location: 'EU',
-    serverLocation: 'Frankreich',
-    // Angabe Betreiber 13.10.2026; Rechenzentrum im OVH-Kundenbereich bestätigen (docs/deployment.md)
-    serverLocationVerified: false,
+    serverLocation: 'Frankreich (Rechenzentrum Gravelines)',
+    // Rechenzentrum Gravelines, vom Betreiber im OVH-Kundenbereich bestätigt (13.10.2026)
+    serverLocationVerified: true,
   },
   cloudflare: {
     name: 'Cloudflare, Inc.',
@@ -93,9 +93,10 @@ export const legal: LegalConfig = {
     location:
       'EU; Übermittlungen in die USA im Einzelfall (z. B. Support) möglich – Microsoft Corporation ist nach dem EU-U.S. Data Privacy Framework zertifiziert',
   },
-  accessLogRetention: null,
+  // Traefik (coolify-proxy) ohne Access-Log, geprüft am 13.10.2026; Variante A, Bestätigung Betreiber
+  accessLogRetention: 'none',
   // Betreiber 13.10.2026: Umami-Instanz (analytics.jetzt.group) selbst betrieben, gleiches Hosting wie die Website
-  analytics: { instance: 'self', verified: false },
+  analytics: { instance: 'self', verified: true },
 };
 
 /** Offene Pflichtangaben (für release:check und Doku) */
