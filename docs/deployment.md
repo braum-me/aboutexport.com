@@ -169,7 +169,7 @@ Standardmäßig ist **keine** Reichweitenmessung aktiv. Aktivierung (die Seiten 
 
 1. In Coolify → *Environment Variables* **mit „Available at Buildtime“** setzen: `UMAMI_SCRIPT_URL` (z. B. `https://<umami-host>/script.js`, nur `https://`) und `UMAMI_WEBSITE_ID` (UUID aus Umami). Optional `UMAMI_DOMAINS` (Standard: `aboutexport.com,www.aboutexport.com`, damit Staging nichts misst).
 2. **Neu deployen.** Die CSP wird beim Build automatisch um genau den Umami-Origin erweitert.
-3. Datenschutz: Mit aktivem Umami erscheint ein Abschnitt in `/datenschutz/`. Vor dem Go-live `legal.analytics` in `src/config/legal.ts` bestätigen (Betreiber/Standort der Instanz, rechtliche Prüfung). `npm run release:check` mit denselben `UMAMI_*`-Variablen meldet sonst die offenen Punkte.
+3. Datenschutz: Mit aktivem Umami erscheint ein Abschnitt in `/datenschutz/`. Betreiber der Instanz steht in `legal.analytics.instance` (aktuell: selbst betrieben, gleiches Hosting). Vor dem Go-live `legal.analytics.verified` nach rechtlicher Prüfung bestätigen (Rechtsgrundlage, Cookie-/Speicherfreiheit). `npm run release:check` mit denselben `UMAMI_*`-Variablen meldet sonst die offenen Punkte.
 
 ## 6. Betrieb
 

@@ -44,10 +44,11 @@ export interface LegalConfig {
   accessLogRetention: number | 'none' | null;
   /**
    * Optionale Reichweitenmessung mit Umami (nur relevant, wenn UMAMI_* gesetzt ist).
-   * operator: Betreiber/Hosting der Umami-Instanz; verified: Rechtsgrundlage, Cookie-/Speicherfreiheit
-   * und Auftragsverarbeitung geprüft.
+   * instance: 'self' = von uns selbst auf demselben Hosting wie die Website betrieben, sonst der
+   * externe Betreiber (Provider), null = noch nicht angegeben.
+   * verified: Rechtsgrundlage, Cookie-/Speicherfreiheit und Auftragsverarbeitung rechtlich geprüft.
    */
-  analytics: { operator: Provider | null; verified: boolean };
+  analytics: { instance: 'self' | Provider | null; verified: boolean };
 }
 
 export const legal: LegalConfig = {
@@ -93,7 +94,8 @@ export const legal: LegalConfig = {
       'EU; Übermittlungen in die USA im Einzelfall (z. B. Support) möglich – Microsoft Corporation ist nach dem EU-U.S. Data Privacy Framework zertifiziert',
   },
   accessLogRetention: null,
-  analytics: { operator: null, verified: false },
+  // Betreiber 13.10.2026: Umami-Instanz (analytics.jetzt.group) selbst betrieben, gleiches Hosting wie die Website
+  analytics: { instance: 'self', verified: false },
 };
 
 /** Offene Pflichtangaben (für release:check und Doku) */
@@ -109,7 +111,7 @@ export function openLegalItems(c: LegalConfig = legal, opts: { analyticsEnabled?
   if (c.accessLogRetention === null)
     open.push('accessLogRetention: Access-Logs des Reverse Proxy prüfen (Tage oder "none")');
   if (opts.analyticsEnabled) {
-    if (!c.analytics.operator) open.push('analytics.operator: Betreiber und Standort der Umami-Instanz');
+    if (!c.analytics.instance) open.push('analytics.instance: Betreiber und Standort der Umami-Instanz');
     if (!c.analytics.verified)
       open.push('analytics.verified: Umami rechtlich prüfen (Rechtsgrundlage, Cookie-/Speicherfreiheit, Auftragsverarbeitung)');
   }

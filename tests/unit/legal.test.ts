@@ -22,9 +22,12 @@ describe('legal config', () => {
   it('verlangt Umami-Angaben nur, wenn Umami aktiv ist', () => {
     const base: LegalConfig = { ...legal, hosting: { ...legal.hosting!, serverLocationVerified: true }, accessLogRetention: 'none' };
     expect(openLegalItems(base)).toEqual([]);
-    expect(openLegalItems(base, { analyticsEnabled: true })).toHaveLength(2);
-    const ok = { ...base, analytics: { operator: base.cloudflare, verified: true } };
-    expect(openLegalItems(ok, { analyticsEnabled: true })).toEqual([]);
+    // Betreiber ist angegeben (selbst betrieben), nur die rechtliche Prüfung fehlt
+    expect(openLegalItems(base, { analyticsEnabled: true })).toHaveLength(1);
+    const none = { ...base, analytics: { instance: null, verified: false } };
+    expect(openLegalItems(none, { analyticsEnabled: true })).toHaveLength(2);
+    expect(openLegalItems({ ...none, analytics: { instance: 'self', verified: true } }, { analyticsEnabled: true })).toEqual([]);
+    expect(openLegalItems({ ...none, analytics: { instance: base.cloudflare, verified: true } }, { analyticsEnabled: true })).toEqual([]);
   });
 
   it('akzeptiert „keine USt-IdNr.“ und erkennt Widersprüche', () => {
