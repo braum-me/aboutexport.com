@@ -1,4 +1,4 @@
-# Release-Blocker (Stand 12.10.2026)
+# Release-Blocker (Stand 13.10.2026)
 
 Diese Punkte müssen vor einer **öffentlichen Veröffentlichung** (Deployment auf aboutexport.com) erledigt sein.
 Sie blockieren nicht den Merge der PRs nach `main`, solange nicht deployt wird.
@@ -33,49 +33,27 @@ Die internen Prüfhinweise wurden von der Website entfernt (`ReviewNote` gelösc
 
 ## 3. Steuer-ID in der Git-Historie
 
-Die persönliche Steuer-ID stand in `src/pages/impressum.astro` und ist im aktuellen Stand entfernt. Sie ist aber in
-der **Historie** enthalten (öffentliches Repository):
+**Bereinigt am 13.10.2026.** Die persönliche Steuer-ID wurde mit `git filter-repo --replace-text` aus allen
+Commits von `main`, `claude/gifted-rubin-gua47p` (PR #1) und `claude/sweet-bardeen-r6yjlw` (PR #2) entfernt
+(betroffen waren `src/pages/impressum.astro` und frühere Stände dieser Datei). Die Branches wurden per
+`--force-with-lease` aktualisiert; alle Commit-SHAs vor dem 13.10.2026 haben sich dadurch geändert.
+Ein Backup des alten Stands liegt ausschließlich lokal und nicht öffentlich.
 
-- **`src/pages/impressum.astro`:** in allen Commits seit `0a3cbb5` (Einführung, liegt auf `main`) bis
-  einschließlich `2f4793f` (PR #1) bzw. `88b2d2b` (PR #2).
-- **`docs/release-blockers.md`:** versehentlich im Bereinigungsbeispiel dieser Datei in `9c21240`, `cedbb19`,
-  `7215821` (PR #1) sowie `a1d72b9`, `4bcfa22` (PR #2); im aktuellen Stand entfernt.
+Verbleibend außerhalb unserer Kontrolle:
 
-Prüfen (lokal, ID nicht in Dateien speichern): `git log --all --oneline -S "<Steuer-ID>"`.
-`git filter-repo --replace-text` (unten) erfasst beide Fundstellen.
+| # | Punkt | Status |
+|---|---|---|
+| H1 | GitHub hält alte Objekte über PR-Refs (`refs/pull/*`), Caches und direkte Commit-URLs der alten SHAs vorerst erreichbar → GitHub Support „Remove sensitive data“ beauftragen | **offen – manuell** |
+| H2 | Bestehende lokale Clones (auch anderer Sessions) enthalten die alte Historie → nicht mehr pushen, neu klonen | offen |
+| H3 | Forks: zum Zeitpunkt der Bereinigung keine vorhanden | erledigt |
 
-Zusätzlich hält GitHub die PR-Refs (`refs/pull/1/head`, `refs/pull/2/head`) – die kann man selbst nicht umschreiben.
-
-### Empfohlenes Vorgehen (erst nach ausdrücklicher Freigabe, nicht automatisiert)
-
-1. **Sofortmaßnahme (reversibel):** Repository auf *private* stellen (Settings → General → Danger Zone →
-   Change visibility). Stoppt die weitere öffentliche Abrufbarkeit, ohne die Historie anzufassen.
-2. **Nach dem Merge beider PRs** (damit keine offenen PRs auf alte SHAs zeigen):
-   ```bash
-   # frischer Mirror-Clone, nie im Arbeits-Clone
-   git clone --mirror https://github.com/braum-me/aboutexport.com.git ae-mirror.git
-   cd ae-mirror.git
-   # Steuer-ID nur lokal eintragen – niemals in eine Datei im Repository schreiben
-   read -r -p 'Steuer-ID (wie im alten Impressum): ' TAXID
-   printf '%s==>[entfernt]\n' "$TAXID" > ../replacements.txt
-   git filter-repo --replace-text ../replacements.txt
-   git grep -n -F "$TAXID" $(git rev-list --all) || echo "sauber"
-   rm ../replacements.txt
-   git push --force --mirror origin   # Force-Push – nur mit Freigabe
-   ```
-3. **GitHub Support** kontaktieren („Remove sensitive data“), damit gecachte Ansichten und die PR-Refs gelöscht
-   werden. Ablauf: <https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository>
-4. Alle lokalen Clones neu klonen; Forks prüfen (Settings → Insights → Forks).
-
-Hinweis: Eine bereits veröffentlichte Steuer-ID lässt sich nicht „zurückholen“ (Clones, Caches). Die Steuer-ID
-ist allein wenig missbrauchsanfällig, sollte aber nicht öffentlich stehen. Ob ein Austausch beim Finanzamt nötig
-ist: nein, die Steuer-ID ist lebenslang fest.
+Hinweis: Bereits veröffentlichte Daten lassen sich aus fremden Clones oder Caches nicht zuverlässig entfernen.
 
 ## 4. Repository-Einstellungen (manuell)
 
 | # | Punkt | Status |
 |---|---|---|
-| R1 | Default-Branch ist `claude/gifted-rubin-gua47p` statt `main` → Settings → General → Default branch → `main`. Mit den verfügbaren Tools nicht änderbar. | **offen – vor Merge** |
+| R1 | Default-Branch auf `main` umgestellt | erledigt (13.10.2026) |
 | R2 | Branch Protection für `main`: CI-Checks als „required“ markieren (Settings → Branches) | empfohlen |
 
 ## 5. Inhalte
