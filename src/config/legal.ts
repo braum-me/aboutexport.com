@@ -3,7 +3,7 @@
  *
  * `null` = Angabe noch nicht bestätigt. Solche Werte werden NICHT als Platzhalter angezeigt,
  * sondern von `npm run release:check` als Go-live-Blocker gemeldet. Keine Angaben erfinden.
- * Die Texte sind ein Entwurf zur rechtlichen Freigabe und nicht rechtlich geprüft.
+ * Die Freigabe der Texte liegt beim Betreiber.
  */
 export interface Provider {
   name: string;
@@ -52,7 +52,7 @@ export interface LegalConfig {
 }
 
 export const legal: LegalConfig = {
-  updated: 'Oktober 2026 (Entwurf zur rechtlichen Freigabe)',
+  updated: 'Oktober 2026',
   operator: {
     brand: 'AboutExport – A Brand of Braum Consulting',
     company: 'Braum Consulting',
