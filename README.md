@@ -5,8 +5,8 @@ Kein SaaS-Produkt – nur die öffentliche Website mit Waitlist und Kontaktformu
 
 | | |
 |---|---|
-| Framework | Astro 7 (statische Seiten), TypeScript (strict) |
-| Styling | Tailwind CSS 4, Inter (self-hosted), Lucide Icons (SVG inline) |
+| Framework | Astro 7 (statische Seiten), TypeScript (strict), Content Collections (Blog) |
+| Styling | Tailwind CSS 4, Geist + Geist Mono (self-hosted), Lucide Icons (SVG inline) |
 | Server | Node.js 22, `@astrojs/node` – nur `/api/waitlist` und `/api/contact` laufen serverseitig |
 | E-Mail | Nodemailer via SMTP (Konfiguration über ENV) |
 | Tests | Vitest (Unit), Playwright (E2E inkl. lokalem SMTP-Sink), ESLint, `astro check` |
@@ -35,8 +35,9 @@ src/
   config/        pricing.ts (Single Source of Truth für Preise & Rabatt), roi.ts, content.ts, site.ts
   lib/           pricing.ts, roi.ts, format.ts, validation.ts, mail.ts, submit.ts, rateLimit.ts, api.ts
   scripts/       Client-Skripte (Preisrechner, ROI-Rechner, Formulare)
-  components/    ui/ (Button, Screenshot, StatusBadge …), sections/ (Hero, Pricing, RoiCalculator …), mocks/
-  pages/         index, impressum, datenschutz, 404, anfrage-*, api/*, sitemap.xml
+  components/    ui/ (Button, Screenshot, StatusBadge …), sections/ (Hero, Pricing, RoiCalculator, BlogTeaser …),
+                 mocks/ (Konzept-Interfaces, gemeinsame Beispieldaten in mocks/sample.ts), blog/
+  pages/         index, [slug] (Blog-Artikel), blog/, category/, feed, impressum, datenschutz, 404, anfrage-*, api/*, sitemap.xml
 src/content/blog/  Blog-Beiträge (Markdown)
 public/images/
   blog/          Beitragsbilder
@@ -70,14 +71,27 @@ gezeigt. Sobald eine Datei existiert, wird sie beim nächsten Build verwendet (S
 
 | Datei | Verwendung | Format |
 |---|---|---|
-| `public/images/product/dashboard.webp` | Hero | 16:10, ≥ 1600 px breit |
+| `public/images/product/dashboard.webp` | Hero (blendet die schwebenden Konzept-Karten automatisch aus) | 16:10, ≥ 1600 px breit |
+| `public/images/features/monitoring.webp` | Feature „Monitoring“ | 4:3 |
 | `public/images/features/alerts.webp` | Feature „Alerts“ | 4:3 |
 | `public/images/features/newsfeed.webp` | Feature „Newsfeed“ | 4:3 |
-| `public/images/features/ai-summary.webp` | Feature „KI-Zusammenfassung“ | 4:3 |
+| `public/images/features/ai-summary.webp` | Feature „KI-Zusammenfassung“ | 16:6 (breit) |
 | `public/images/features/translation.webp` | Feature „Übersetzung“ | 4:3 |
 
 Bilder vorab als WebP optimieren (z. B. `cwebp -q 82`). Es gibt bewusst keinen Image-Endpoint und keine
 Bildverarbeitungs-Dependency.
+
+## Design-System
+
+- Farben: `ink-*` (Deep Navy / Near Black) als Primärfläche, `brand-*` (Electric Blue) als einziger Akzent – Tokens in `src/styles/global.css`
+- Typografie: Geist (Display & Text), Geist Mono (Labels, Daten, Metadaten); Klassen `display-xl|lg|md`, `lead`, `eyebrow`
+- Rhythmus: dunkle Sektionen (Hero, Jurisdiktionen, Alerts, Preise, Kontakt, Footer) wechseln mit hellen
+- Motion: `data-reveal` (IntersectionObserver, nur unterhalb des Viewports), CSS View Transitions; alles respektiert `prefers-reduced-motion`
+- CSP: keine `style`-Attribute – dynamische Werte über SVG-Attribute bzw. CSSOM aus Skripten
+
+## Blog
+
+Siehe `docs/blog-migration.md` (Migration, URLs, Redirects, Tests). Das Blog nutzt dasselbe Design-System wie die Startseite.
 
 ## Preise & Rabatt
 

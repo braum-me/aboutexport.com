@@ -1,36 +1,82 @@
 ---
-// Konzept: KI-Zusammenfassung
+// Konzept: Originaltext → KI-Zusammenfassung → mögliche Auswirkungen. Beispieltext, keine reale Veröffentlichung.
+import { ArrowRight, ArrowUpRight, FileText, Scale, Sparkles } from '@lucide/astro';
 ---
 
-<div class="flex size-full items-center justify-center bg-gradient-to-br from-brand-50/70 via-white to-white p-5 text-[12px] select-none sm:p-8">
-  <div class="w-full max-w-md rounded-xl border border-brand-100 bg-white p-4 shadow-elevated sm:p-5">
-    <div class="flex items-center justify-between">
-      <p class="flex items-center gap-2 font-semibold text-ink-900">
-        <span class="flex size-7 items-center justify-center rounded-lg bg-brand-700 text-[13px] text-white">✦</span>
-        KI-Zusammenfassung
+<div class="@container size-full bg-slate-50 p-3 text-[11.5px] text-slate-600 select-none @lg:p-5">
+  <div class="grid h-full gap-3 @3xl:grid-cols-[1.05fr_auto_1fr_auto_0.9fr] @3xl:items-stretch">
+    <!-- Original -->
+    <div class="flex flex-col rounded-xl border border-slate-200 bg-white p-4">
+      <div class="flex items-center gap-2">
+        <FileText size={13} class="text-slate-500" />
+        <span class="font-semibold text-ink-900">Originaltext</span>
+        <span class="chip ml-auto bg-slate-100 text-slate-500">EN</span>
+      </div>
+      <p class="mt-1 font-mono text-[9.5px] text-slate-500">Amtsblatt der EU · Beispieltext</p>
+      <p class="mt-3 font-mono text-[10.5px] leading-[1.7] text-slate-500">
+        Commission Delegated Regulation amending Regulation (EU) 2021/821 as regards the list of dual-use items …
+        <mark class="rounded-sm bg-brand-100 px-0.5 text-ink-900">Annex I is replaced by the text set out in the Annex</mark>
+        to this Regulation …
+        <span class="hidden @3xl:inline">The control parameters of certain items are amended to reflect</span>
+        <mark class="rounded-sm bg-brand-100 px-0.5 text-ink-900">changes agreed within the international regimes</mark>
+        … This Regulation shall enter into force
+        <mark class="rounded-sm bg-brand-100 px-0.5 text-ink-900">on the day following its publication</mark> …
       </p>
-      <span class="flex overflow-hidden rounded-md border border-slate-200 text-[10px] font-semibold">
-        <span class="px-2 py-0.5 text-slate-500">EN</span>
-        <span class="bg-brand-700 px-2 py-0.5 text-white">DE</span>
-      </span>
     </div>
-    <p class="mt-4 text-[11px] font-semibold tracking-wide text-slate-500 uppercase">Kernaussagen</p>
-    <ul class="mt-2 space-y-3">
-      {
-        ['w-full', 'w-11/12', 'w-4/5'].map((w) => (
-          <li class="flex gap-2.5">
-            <span class="mt-1 size-1.5 shrink-0 rounded-full bg-brand-600" />
-            <span class="flex-1 space-y-1.5">
-              <span class:list={['block h-2 rounded bg-slate-200', w]} />
-              <span class="block h-2 w-2/3 rounded bg-slate-100" />
-            </span>
-          </li>
-        ))
-      }
-    </ul>
-    <div class="mt-4 rounded-lg bg-slate-50 p-3">
-      <p class="text-[11px] font-semibold text-ink-900">Mögliche Auswirkungen</p>
-      <span class="mt-2 block h-2 w-5/6 rounded bg-slate-200"></span>
+
+    <span class="hidden items-center justify-center text-slate-300 @3xl:flex"><ArrowRight size={16} /></span>
+
+    <!-- Zusammenfassung -->
+    <div class="flex flex-col rounded-xl border border-brand-200 bg-white p-4 shadow-[0_12px_30px_-14px_rgb(43_89_240/0.45)] ring-1 ring-brand-100">
+      <div class="flex items-center gap-2">
+        <span class="flex size-5 items-center justify-center rounded-md bg-brand-600 text-white"><Sparkles size={11} /></span>
+        <span class="font-semibold text-ink-900">KI-Zusammenfassung</span>
+        <span class="chip ml-auto bg-brand-600 text-white">DE</span>
+      </div>
+      <p class="mt-3 font-mono text-[9.5px] tracking-wider text-slate-500 uppercase">Kernaussagen</p>
+      <ol class="mt-2 space-y-2.5 text-ink-900">
+        <li class="flex gap-2">
+          <span class="flex size-4 shrink-0 items-center justify-center rounded bg-brand-100 font-mono text-[9px] font-semibold text-brand-800">1</span>
+          Anhang I (Liste der Dual-Use-Güter) wird vollständig ersetzt.
+        </li>
+        <li class="flex gap-2">
+          <span class="flex size-4 shrink-0 items-center justify-center rounded bg-brand-100 font-mono text-[9px] font-semibold text-brand-800">2</span>
+          Anlass sind Änderungen in den internationalen Kontrollregimen.
+        </li>
+        <li class="flex gap-2">
+          <span class="flex size-4 shrink-0 items-center justify-center rounded bg-brand-100 font-mono text-[9px] font-semibold text-brand-800">3</span>
+          Gilt ab dem Tag nach der Veröffentlichung.
+        </li>
+      </ol>
+      <div class="mt-auto hidden border-t border-slate-100 pt-3 @3xl:block">
+        <p class="font-mono text-[9.5px] tracking-wider text-slate-500 uppercase">Betroffen</p>
+        <div class="mt-1.5 flex flex-wrap gap-1">
+          <span class="chip bg-brand-50 text-brand-800 ring-1 ring-inset ring-brand-600/15">EU</span>
+          <span class="chip bg-slate-100 text-slate-600">Dual-Use</span>
+          <span class="chip bg-slate-100 text-slate-600">Anhang I</span>
+        </div>
+      </div>
+    </div>
+
+    <span class="hidden items-center justify-center text-slate-300 @3xl:flex"><ArrowRight size={16} /></span>
+
+    <!-- Auswirkungen -->
+    <div class="flex flex-col rounded-xl border border-slate-200 bg-white p-4">
+      <div class="flex items-center gap-2">
+        <Scale size={13} class="text-slate-500" />
+        <span class="font-semibold text-ink-900">Mögliche Auswirkungen</span>
+      </div>
+      <ul class="mt-3 space-y-2">
+        <li class="flex items-start gap-2"><span class="mt-[6px] h-px w-2.5 shrink-0 bg-brand-600"></span>Klassifizierung betroffener Güter prüfen</li>
+        <li class="flex items-start gap-2"><span class="mt-[6px] h-px w-2.5 shrink-0 bg-brand-600"></span>Interne Güterlisten abgleichen</li>
+        <li class="flex items-start gap-2"><span class="mt-[6px] h-px w-2.5 shrink-0 bg-brand-600"></span>Genehmigungsbedarf neu bewerten</li>
+      </ul>
+      <div class="mt-auto pt-4">
+        <span class="flex items-center justify-between rounded-lg bg-ink-900 px-3 py-2 text-[10.5px] font-medium text-white">
+          Originalquelle öffnen <ArrowUpRight size={12} />
+        </span>
+        <p class="mt-2 text-[9.5px] leading-snug text-slate-500">Ersetzt keine rechtliche Prüfung.</p>
+      </div>
     </div>
   </div>
 </div>

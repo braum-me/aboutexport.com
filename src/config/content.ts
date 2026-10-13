@@ -12,26 +12,31 @@ export const problems = [
     icon: 'layers',
     title: 'Fragmentierte Quellen',
     text: 'Amtsblätter, Behördenportale und Listen in mehreren Sprachen – jede Jurisdiktion veröffentlicht anders.',
+    answer: 'Eine Übersicht für EU, USA und China',
   },
   {
     icon: 'search',
     title: 'Manuelles Monitoring',
     text: 'Quellen werden täglich von Hand geprüft. Relevantes geht in der Masse unter.',
+    answer: 'Automatisierte Überwachung der Quellen',
   },
   {
     icon: 'clock',
     title: 'Hoher Rechercheaufwand',
     text: 'Zeit für Recherche und Einordnung fehlt für Klassifizierung, Prüfungen und Beratung im Unternehmen.',
+    answer: 'KI-Zusammenfassungen auf Deutsch',
   },
   {
     icon: 'alert',
     title: 'Risiko verpasster Änderungen',
     text: 'Eine übersehene Änderung kann Genehmigungspflichten, Lieferstopps oder Bußgelder nach sich ziehen.',
+    answer: 'Alerts bei kritischen Änderungen',
   },
   {
     icon: 'eye-off',
     title: 'Keine zentrale Übersicht',
     text: 'Änderungen und Trends sind verstreut dokumentiert – Nachweise für Audits sind mühsam.',
+    answer: 'Täglicher Newsfeed, nach Relevanz sortiert',
   },
 ] as const;
 
@@ -112,18 +117,21 @@ export const jurisdictions = [
     code: 'EU',
     name: 'Europäische Union',
     sources: ['Europäische Kommission', 'Amtsblatt der Europäischen Union'],
+    topics: ['Dual-Use', 'Sanktionen'],
   },
   {
     id: 'us',
     code: 'US',
     name: 'Vereinigte Staaten',
     sources: ['U.S. Department of Commerce', 'Bureau of Industry and Security (BIS)'],
+    topics: ['EAR', 'Entity List'],
   },
   {
     id: 'cn',
     code: 'CN',
     name: 'China',
     sources: ['Ministry of Commerce of the PRC (MOFCOM)'],
+    topics: ['Exportkontrolle'],
   },
 ] as const;
 

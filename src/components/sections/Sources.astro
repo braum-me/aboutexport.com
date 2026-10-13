@@ -1,45 +1,166 @@
 ---
+import { ArrowUpRight } from '@lucide/astro';
 import { jurisdictions, roadmap } from '../../config/content';
-import SectionHeader from '../ui/SectionHeader.astro';
+import StatusBadge from '../ui/StatusBadge.astro';
+
 const more = roadmap[0];
+/*
+ * Knotenpunkte auf der Weltkarte (equirektangulär, viewBox 960 × 366, 80° N bis 58° S).
+ * x = (Länge + 180) × 8/3, y = (80 − Breite) × 8/3
+ */
+const nodes = [
+  { code: 'EU', name: 'Europäische Union', x: 491.6, y: 77.7, pos: 'left-[51.2%] top-[21.2%]', label: 'top' },
+  { code: 'US', name: 'Vereinigte Staaten', x: 274.6, y: 109.6, pos: 'left-[28.6%] top-[29.9%]', label: 'bottom' },
+  { code: 'CN', name: 'China', x: 790.4, y: 106.9, pos: 'left-[82.3%] top-[29.2%]', label: 'bottom' },
+] as const;
+// Nach dem Launch geplant: UK, Indien, Japan (London liegt auf der Karte am EU-Knoten)
+const planned = [
+  { x: 479.7, y: 76 },
+  { x: 685.9, y: 137.1 },
+  { x: 852.5, y: 118.1 },
+];
 ---
 
-<section class="border-y border-slate-200 bg-slate-50/70 py-20 sm:py-24" aria-labelledby="sources-title">
-  <div class="container-page">
-    <SectionHeader id="sources-title" eyebrow="Jurisdiktionen" title="Drei Exportkontrollregime. Eine Übersicht.">
-      AboutExport stützt sich auf öffentliche, verlässliche Regulierungsquellen der jeweiligen Jurisdiktion.
-    </SectionHeader>
+<section
+  class="on-dark relative isolate overflow-hidden bg-gradient-to-b from-ink-900 to-ink-950 pt-20 pb-24 text-slate-400 sm:pt-24 sm:pb-32"
+  aria-labelledby="sources-title"
+>
+  <div
+    class="absolute inset-x-0 top-24 -z-10 mx-auto h-[30rem] max-w-5xl rounded-full bg-[radial-gradient(closest-side,rgb(43_89_240/0.16),transparent)] blur-2xl"
+    aria-hidden="true"
+  >
+  </div>
 
-    <ul class="mt-12 grid gap-4 md:grid-cols-3">
+  <div class="container-page">
+    <div class="grid gap-8 lg:grid-cols-12 lg:items-end">
+      <div class="lg:col-span-7" data-reveal>
+        <p class="eyebrow"><span class="eyebrow-index">01 /</span> Jurisdiktionen</p>
+        <h2 id="sources-title" class="display-lg mt-4 text-white">
+          Globale Regulierung.<br /><span class="text-slate-400">Eine zentrale Perspektive.</span>
+        </h2>
+      </div>
+      <p class="lead lg:col-span-5 lg:pb-2" data-reveal>
+        Drei Exportkontrollregime, ein Arbeitsplatz. AboutExport stützt sich auf öffentliche, verlässliche
+        Regulierungsquellen der jeweiligen Jurisdiktion und bündelt Änderungen in einer Übersicht.
+      </p>
+    </div>
+
+    <!-- Weltkarte -->
+    <div class="relative mt-14 sm:mt-20" data-reveal>
+      <div class="relative aspect-[960/366] w-full">
+        <img
+          src="/images/world-dots.svg"
+          alt=""
+          width="960"
+          height="366"
+          loading="lazy"
+          decoding="async"
+          class="absolute inset-0 size-full opacity-40"
+        />
+        <svg viewBox="0 0 960 366" class="absolute inset-0 size-full overflow-visible" aria-hidden="true">
+          <defs>
+            <linearGradient id="arc-us" x1="1" x2="0" y1="0" y2="0">
+              <stop offset="0" stop-color="#94b2ff" stop-opacity="0.9"></stop>
+              <stop offset="1" stop-color="#4271ff" stop-opacity="0.15"></stop>
+            </linearGradient>
+            <linearGradient id="arc-cn" x1="0" x2="1" y1="0" y2="0">
+              <stop offset="0" stop-color="#94b2ff" stop-opacity="0.9"></stop>
+              <stop offset="1" stop-color="#4271ff" stop-opacity="0.15"></stop>
+            </linearGradient>
+            <radialGradient id="node-glow">
+              <stop offset="0" stop-color="#4271ff" stop-opacity="0.55"></stop>
+              <stop offset="1" stop-color="#4271ff" stop-opacity="0"></stop>
+            </radialGradient>
+          </defs>
+          <path d="M491.6 77.7 Q383 6 274.6 109.6" fill="none" stroke="url(#arc-us)" stroke-width="1.4" stroke-dasharray="3 5"
+          ></path>
+          <path d="M491.6 77.7 Q641 -4 790.4 106.9" fill="none" stroke="url(#arc-cn)" stroke-width="1.4" stroke-dasharray="3 5"
+          ></path>
+          {
+            planned.map((p) => (
+              <circle cx={p.x} cy={p.y} r="3.2" fill="none" stroke="#94a3b8" stroke-opacity="0.7" stroke-width="1.2" />
+            ))
+          }
+          {
+            nodes.map((n) => (
+              <g>
+                <circle cx={n.x} cy={n.y} r="34" fill="url(#node-glow)" />
+                <circle cx={n.x} cy={n.y} r="11" fill="none" stroke="#6b90ff" stroke-opacity="0.45" />
+                <circle cx={n.x} cy={n.y} r="4.5" fill="#fff" />
+                <circle cx={n.x} cy={n.y} r="2.5" fill="#2b59f0" />
+              </g>
+            ))
+          }
+        </svg>
+
+        {
+          nodes.map((n) => (
+            <span
+              class:list={[
+                'absolute -translate-x-1/2 rounded-md border border-white/10 bg-ink-800/90 px-2 py-1 font-mono text-[10px] whitespace-nowrap text-white shadow-lg backdrop-blur sm:text-[11px]',
+                n.pos,
+                n.label === 'top' ? '-mt-10 sm:-mt-12' : 'mt-4 sm:mt-6',
+              ]}
+              aria-hidden="true"
+            >
+              <span class="font-semibold">{n.code}</span>
+              <span class="hidden text-slate-400 sm:inline"> · {n.name}</span>
+            </span>
+          ))
+        }
+      </div>
+      <div class="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-[11px] text-slate-400">
+        <span class="flex items-center gap-2"
+          ><span class="size-2 rounded-full bg-brand-500 ring-2 ring-brand-500/30"></span>Zum Launch: EU, USA, China</span
+        >
+        <span class="flex items-center gap-2"
+          ><span class="size-2 rounded-full ring-1 ring-slate-400"></span>{more.title.replace('Weitere Regionen: ', 'Nach dem Launch geplant: ')}</span
+        >
+      </div>
+    </div>
+
+    <!-- Jurisdiktionen -->
+    <ul class="mt-14 grid overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.02] md:grid-cols-3">
       {
-        jurisdictions.map((j) => (
-          <li class="card flex flex-col p-6">
-            <div class="flex items-center gap-3">
-              <span class="flex size-10 items-center justify-center rounded-lg bg-ink-900 font-mono text-sm font-semibold text-white">
-                {j.code}
-              </span>
-              <h3 class="text-lg font-semibold">{j.name}</h3>
+        jurisdictions.map((j, i) => (
+          <li
+            class:list={[
+              'group relative flex flex-col p-6 transition-colors duration-300 hover:bg-white/[0.03] sm:p-8',
+              i > 0 && 'border-t border-white/[0.08] md:border-t-0 md:border-l',
+            ]}
+            data-reveal
+            data-reveal-delay={i * 80}
+          >
+            <div class="flex items-start justify-between gap-4">
+              <span class="font-mono text-4xl font-medium tracking-tight text-white">{j.code}</span>
+              <StatusBadge status="launch" tone="dark" />
             </div>
-            <p class="mt-5 text-xs font-semibold tracking-wider text-slate-500 uppercase">Typische Quellen</p>
-            <ul class="mt-2 space-y-1.5 text-sm text-slate-700">
+            <h3 class="mt-3 text-lg font-medium text-white">{j.name}</h3>
+
+            <p class="mt-7 font-mono text-[10px] tracking-[0.16em] text-slate-400 uppercase">Typische Quellen</p>
+            <ul class="mt-3 space-y-2 text-sm text-slate-300">
               {j.sources.map((s) => (
-                <li class="flex gap-2">
-                  <span class="mt-2 size-1 shrink-0 rounded-full bg-slate-400" aria-hidden="true" />
+                <li class="flex items-start gap-2.5">
+                  <ArrowUpRight size={14} class="mt-[3px] shrink-0 text-brand-400" aria-hidden="true" />
                   {s}
                 </li>
               ))}
             </ul>
+
+            <p class="mt-7 font-mono text-[10px] tracking-[0.16em] text-slate-400 uppercase">Themen (Beispiele)</p>
+            <div class="mt-3 flex flex-wrap gap-1.5">
+              {j.topics.map((t) => (
+                <span class="rounded-md border border-white/10 bg-white/[0.04] px-2 py-0.5 font-mono text-[11px] text-slate-300">{t}</span>
+              ))}
+            </div>
           </li>
         ))
       }
     </ul>
 
-    <div class="mt-6 flex flex-col gap-2 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
-      <p>{more.title} – nach dem Launch geplant.</p>
-      <p class="text-xs">
-        Die Nennung von Behörden dient nur der Einordnung der Quellen. Es besteht keine Partnerschaft, Zertifizierung oder
-        Billigung durch diese Stellen.
-      </p>
-    </div>
+    <p class="mt-6 max-w-3xl text-xs leading-relaxed text-slate-400">
+      Die Nennung von Behörden dient nur der Einordnung der Quellen. Es besteht keine Partnerschaft, Zertifizierung oder
+      Billigung durch diese Stellen.
+    </p>
   </div>
 </section>

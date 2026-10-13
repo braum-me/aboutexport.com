@@ -1,7 +1,7 @@
 ---
-import { ArrowRight } from '@lucide/astro';
+import { ArrowUpRight } from '@lucide/astro';
 import { blogCategories } from '../../config/blog';
-import { formatDate, postUrl, type Post } from '../../lib/blog';
+import { formatDate, postUrl, readingTime, type Post } from '../../lib/blog';
 
 interface Props {
   post: Post;
@@ -13,16 +13,22 @@ const { post, featured = false, headingLevel = 'h3' } = Astro.props;
 const { data } = post;
 const Heading = headingLevel;
 const cat = blogCategories[data.category];
+const minutes = readingTime(post.body ?? '');
 ---
 
 <article
   class:list={[
-    'group relative flex flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-card transition hover:border-slate-300 hover:shadow-elevated',
-    featured && 'lg:grid lg:grid-cols-[1.2fr_1fr]',
+    'group relative flex w-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-card transition duration-300 hover:-translate-y-0.5 hover:shadow-elevated',
+    featured && 'rounded-3xl lg:grid lg:grid-cols-12 lg:hover:translate-y-0',
   ]}
   data-post-card
 >
-  <div class:list={['relative overflow-hidden bg-slate-100', featured ? 'aspect-[16/9] lg:aspect-auto lg:h-full' : 'aspect-[16/9]']}>
+  <div
+    class:list={[
+      'relative overflow-hidden bg-ink-900',
+      featured ? 'aspect-[16/9] lg:col-span-7 lg:aspect-auto lg:min-h-[26rem]' : 'aspect-[16/9]',
+    ]}
+  >
     <img
       src={data.image.src}
       alt=""
@@ -30,22 +36,44 @@ const cat = blogCategories[data.category];
       height={data.image.height}
       loading="lazy"
       decoding="async"
-      class="absolute inset-0 size-full object-cover transition duration-500 group-hover:scale-[1.02]"
+      class="absolute inset-0 size-full object-cover transition duration-700 ease-out group-hover:scale-[1.03]"
     />
+    {
+      featured && (
+        <span class="absolute top-4 left-4 rounded-full bg-white/90 px-2.5 py-1 font-mono text-[10.5px] font-medium tracking-wider text-ink-900 uppercase backdrop-blur">
+          Neuester Beitrag
+        </span>
+      )
+    }
   </div>
-  <div class:list={['flex flex-1 flex-col p-6', featured && 'lg:p-8']}>
-    <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500">
-      <span class:list={['rounded-full px-2 py-0.5 font-medium', data.kind === 'regulatory' ? 'bg-amber-50 text-amber-800' : 'bg-brand-50 text-brand-700']}>
-        {cat.label}
-      </span>
-      <time datetime={data.pubDate.toISOString()}>{formatDate(data.pubDate)}</time>
-    </div>
-    <Heading class:list={['mt-3 font-semibold tracking-tight text-ink-900', featured ? 'text-2xl sm:text-3xl' : 'text-lg']}>
-      <a href={postUrl(post)} class="after:absolute after:inset-0 focus-visible:outline-none">{data.title}</a>
+  <div class:list={['flex flex-1 flex-col p-6', featured && 'sm:p-10 lg:col-span-5']}>
+    <p
+      class:list={[
+        'font-mono text-[11px] tracking-[0.12em] uppercase',
+        data.kind === 'regulatory' ? 'text-amber-700' : 'text-brand-700',
+      ]}
+    >
+      {cat.label}
+    </p>
+    <Heading
+      class:list={[
+        'mt-3 font-semibold tracking-tight text-ink-900',
+        featured ? 'text-2xl leading-tight tracking-[-0.03em] sm:text-[2rem]' : 'text-lg leading-snug',
+      ]}
+    >
+      <a href={postUrl(post)} class="after:absolute after:inset-0">{data.title}</a>
     </Heading>
-    <p class:list={['mt-3 leading-relaxed text-slate-600', featured ? 'text-base' : 'line-clamp-3 text-sm']}>{data.excerpt}</p>
-    <span class="mt-auto inline-flex items-center gap-1.5 pt-5 text-sm font-medium text-brand-700">
-      Weiterlesen <ArrowRight size={16} class="transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
-    </span>
+    <p class:list={['mt-3 leading-relaxed text-slate-600', featured ? 'text-[15px]' : 'line-clamp-3 text-sm']}>{data.excerpt}</p>
+    <div class="mt-auto flex items-center justify-between gap-4 pt-6">
+      <p class="font-mono text-[11px] text-slate-500">
+        <time datetime={data.pubDate.toISOString()}>{formatDate(data.pubDate)}</time> · {minutes} Min.
+      </p>
+      <span
+        class="flex size-8 shrink-0 items-center justify-center rounded-full bg-slate-100 text-ink-900 transition duration-300 group-hover:bg-brand-600 group-hover:text-white"
+        aria-hidden="true"
+      >
+        <ArrowUpRight size={16} class="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+      </span>
+    </div>
   </div>
 </article>

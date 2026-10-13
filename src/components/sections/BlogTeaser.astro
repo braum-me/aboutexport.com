@@ -1,29 +1,44 @@
 ---
 import { ArrowRight } from '@lucide/astro';
 import PostCard from '../blog/PostCard.astro';
-import SectionHeader from '../ui/SectionHeader.astro';
 import { getPosts } from '../../lib/blog';
 
 const posts = (await getPosts()).slice(0, 3);
+const [first, ...rest] = posts;
 ---
 
 {
-  posts.length > 0 && (
-    <section id="blog" class="scroll-mt-16 border-t border-slate-200 py-20 sm:py-28" aria-labelledby="blog-title">
+  first && (
+    <section id="blog" class="scroll-mt-16 bg-white py-24 sm:py-32" aria-labelledby="blog-title">
       <div class="container-page">
-        <div class="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-          <SectionHeader id="blog-title" eyebrow="Blog" title="News & Einordnungen." align="left">
-            Produktnews und Hintergründe zu Änderungen in der Exportkontrolle.
-          </SectionHeader>
-          <a href="/blog/" class="inline-flex shrink-0 items-center gap-1.5 text-sm font-medium text-brand-700 hover:underline">
-            Alle Beiträge <ArrowRight size={16} aria-hidden="true" />
+        <div class="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between" data-reveal>
+          <div>
+            <p class="eyebrow">
+              <span class="eyebrow-index">07 /</span> Blog
+            </p>
+            <h2 id="blog-title" class="display-md mt-4">News &amp; Einordnungen.</h2>
+            <p class="lead mt-4 max-w-xl">Produktnews und Hintergründe zu Änderungen in der Exportkontrolle.</p>
+          </div>
+          <a
+            href="/blog/"
+            class="group inline-flex shrink-0 items-center gap-2 text-sm font-medium text-ink-900 transition-colors hover:text-brand-700"
+          >
+            Alle Beiträge
+            <ArrowRight size={16} class="transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
           </a>
         </div>
-        <div class="mt-12 grid gap-6 md:grid-cols-3">
-          {posts.map((p) => (
-            <PostCard post={p} />
-          ))}
+        <div class="mt-12" data-reveal>
+          <PostCard post={first} featured />
         </div>
+        {rest.length > 0 && (
+          <div class="mt-4 grid gap-4 sm:grid-cols-2">
+            {rest.map((p, i) => (
+              <div class="flex" data-reveal data-reveal-delay={i * 80}>
+                <PostCard post={p} />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   )

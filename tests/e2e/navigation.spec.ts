@@ -22,7 +22,7 @@ test.describe('Seitenstruktur', () => {
 
   test('Hero zeigt Kernbotschaft, Launch-Hinweis und Platzhalter-Kennzeichnung', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByRole('heading', { level: 1 })).toContainText('Export Compliance.');
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('Exportkontrolle.');
     await expect(page.getByText('Geplanter Launch 2027').first()).toBeVisible();
     await expect(page.locator('[data-screenshot="placeholder"]').first()).toContainText('Konzeptdarstellung');
   });

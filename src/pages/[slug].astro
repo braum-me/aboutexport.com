@@ -3,7 +3,7 @@
  * Blog-Artikel unter den ursprünglichen WordPress-Permalinks: /<slug>/
  */
 import { render } from 'astro:content';
-import { ArrowRight, CalendarClock, CalendarDays, Clock, Info } from '@lucide/astro';
+import { ArrowLeft, ArrowRight, CalendarClock, Info } from '@lucide/astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/blog/PostCard.astro';
 import Button from '../components/ui/Button.astro';
@@ -80,138 +80,209 @@ const jsonLd = [
   article={{ published: data.pubDate, modified: data.updatedDate, section: category.label }}
 >
   <article data-article={post.id}>
-    <header class="relative isolate overflow-hidden border-b border-slate-200">
-      <div class="bg-grid absolute inset-0 -z-10 [mask-image:radial-gradient(ellipse_70%_80%_at_50%_0%,#000_30%,transparent_100%)]"></div>
-      <div class="container-page max-w-3xl pt-14 pb-10 sm:pt-20">
-        <nav aria-label="Brotkrumen" class="text-sm text-slate-500">
-          <ol class="flex flex-wrap items-center gap-1.5">
-            <li><a href="/" class="hover:text-ink-900">Startseite</a></li>
-            <li aria-hidden="true">/</li>
-            <li><a href="/blog/" class="hover:text-ink-900">Blog</a></li>
-            <li aria-hidden="true">/</li>
-            <li><a href={`/category/${data.category}/`} class="hover:text-ink-900">{category.label}</a></li>
+    <header class="relative overflow-hidden border-b border-slate-200 bg-slate-50">
+      <div class="bg-grid mask-fade-b absolute inset-0 opacity-70" aria-hidden="true"></div>
+      <div class="container-page relative pt-12 pb-14 sm:pt-20 sm:pb-20">
+        <nav aria-label="Brotkrumen" class="font-mono text-[11px] tracking-[0.12em] text-slate-500 uppercase">
+          <ol class="flex flex-wrap items-center gap-2">
+            <li><a href="/" class="transition-colors hover:text-ink-900">Startseite</a></li>
+            <li aria-hidden="true" class="text-slate-300">/</li>
+            <li><a href="/blog/" class="transition-colors hover:text-ink-900">Blog</a></li>
+            <li aria-hidden="true" class="text-slate-300">/</li>
+            <li>
+              <a href={`/category/${data.category}/`} class="text-brand-700 transition-colors hover:text-ink-900">{category.label}</a>
+            </li>
           </ol>
         </nav>
 
-        <h1 class="mt-6 text-3xl leading-tight font-semibold tracking-tight sm:text-5xl sm:leading-[1.1]">{data.title}</h1>
-        <p class="mt-5 text-lg leading-relaxed text-slate-600">{data.excerpt}</p>
+        <h1 class="display-md mt-6 max-w-4xl lg:text-[3.25rem]">{data.title}</h1>
+        <p class="lead mt-6 max-w-3xl">{data.excerpt}</p>
 
-        <dl class="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-slate-600">
-          <div class="flex items-center gap-1.5">
+        <dl class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-[11px] text-slate-500">
+          <div class="flex items-center gap-2">
+            <dt class="sr-only">Autor</dt>
+            <span class="size-1.5 rounded-full bg-brand-600" aria-hidden="true"></span>
+            <dd>{data.author}</dd>
+          </div>
+          <div>
             <dt class="sr-only">Veröffentlicht</dt>
-            <CalendarDays size={16} aria-hidden="true" />
             <dd><time datetime={data.pubDate.toISOString()} data-pubdate>{formatDate(data.pubDate)}</time></dd>
           </div>
-          <div class="flex items-center gap-1.5">
+          <div>
             <dt class="sr-only">Lesezeit</dt>
-            <Clock size={16} aria-hidden="true" />
             <dd>{minutes} Min. Lesezeit</dd>
-          </div>
-          <div class="flex items-center gap-1.5">
-            <dt class="sr-only">Autor</dt>
-            <dd>{data.author}</dd>
           </div>
         </dl>
       </div>
     </header>
 
-    <div class="container-page max-w-3xl">
-      <figure class="-mt-px pt-10">
-        <div class="relative aspect-[16/9] overflow-hidden rounded-2xl bg-slate-100 shadow-elevated">
-          <img
-            src={data.image.src}
-            alt={data.image.alt}
-            width={data.image.width}
-            height={data.image.height}
-            class="absolute inset-0 size-full object-cover"
-            fetchpriority="high"
-            decoding="async"
-          />
+    <div class="bg-white">
+      <div class="container-page">
+        <figure class="pt-10 sm:pt-14">
+          <div class="relative aspect-[16/9] overflow-hidden rounded-2xl bg-ink-900 shadow-float lg:aspect-[16/8]">
+            <img
+              src={data.image.src}
+              alt={data.image.alt}
+              width={data.image.width}
+              height={data.image.height}
+              class="absolute inset-0 size-full object-cover"
+              fetchpriority="high"
+              decoding="async"
+            />
+          </div>
+        </figure>
+
+        <div class="grid gap-12 py-12 sm:py-16 lg:grid-cols-12">
+          <div class="min-w-0 lg:col-span-8 xl:col-span-7 xl:col-start-2">
+            {
+              data.kind === 'regulatory' ? (
+                <aside
+                  class="flex gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950"
+                  data-context-notice="historical"
+                >
+                  <CalendarClock size={18} class="mt-0.5 shrink-0" aria-hidden="true" />
+                  <div>
+                    <p class="font-semibold">Historische Regulierungsmeldung · Stand {formatDate(data.pubDate)}</p>
+                    <p class="mt-1 leading-relaxed">
+                      Dieser Beitrag beschreibt die Rechtslage zum Zeitpunkt der Veröffentlichung. Regelungen, Fristen und
+                      Listen können sich seitdem geändert haben. Der Beitrag ist keine Rechtsberatung – maßgeblich sind die
+                      aktuellen Veröffentlichungen der zuständigen Behörden.
+                    </p>
+                  </div>
+                </aside>
+              ) : (
+                <aside
+                  class="flex gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700"
+                  data-context-notice="archive"
+                >
+                  <Info size={18} class="mt-0.5 shrink-0" aria-hidden="true" />
+                  <div>
+                    <p class="font-semibold text-ink-900">Archivbeitrag · Planungsstand {formatDate(data.pubDate)}</p>
+                    <p class="mt-1 leading-relaxed">
+                      Angaben zu Zeitplan, Preisen und Konditionen können überholt sein. Aktuell gilt: {site.launch}. Den
+                      aktuellen Stand finden Sie in den{' '}
+                      <a href="/#preise" class="font-medium text-brand-700 underline underline-offset-2">
+                        Preisen
+                      </a>{' '}
+                      und den{' '}
+                      <a href="/#faq" class="font-medium text-brand-700 underline underline-offset-2">
+                        FAQ
+                      </a>
+                      .
+                    </p>
+                  </div>
+                </aside>
+              )
+            }
+
+            {
+              data.corrections.length > 0 && (
+                <aside class="mt-4 rounded-xl border border-brand-100 bg-brand-50/50 p-4 text-sm text-slate-700" data-corrections>
+                  <p class="font-semibold text-ink-900">Nachträglich aktualisiert</p>
+                  <ul class="mt-2 space-y-1.5">
+                    {data.corrections.map((c) => (
+                      <li>
+                        <time datetime={c.date.toISOString()} class="font-medium text-ink-900">{formatDate(c.date)}</time>{`: ${c.summary}`}
+                      </li>
+                    ))}
+                  </ul>
+                  <p class="mt-2 text-slate-600">
+                    Ursprünglich veröffentlicht am {formatDate(data.pubDate)}. Der übrige Text ist unverändert.
+                  </p>
+                </aside>
+              )
+            }
+
+            <div class="prose-article mt-10" data-article-body>
+              <Content />
+            </div>
+
+            {
+              modified && (
+                <p class="mt-10 font-mono text-[11px] text-slate-500">
+                  Zuletzt aktualisiert am <time datetime={modified.toISOString()}>{formatDate(modified)}</time>
+                </p>
+              )
+            }
+
+            <div class="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-slate-200 pt-8">
+              <a
+                href="/blog/"
+                class="group inline-flex items-center gap-2 text-sm font-medium text-ink-900 transition-colors hover:text-brand-700"
+              >
+                <ArrowLeft size={16} class="transition-transform group-hover:-translate-x-0.5" aria-hidden="true" />
+                Zur Übersicht
+              </a>
+              <a
+                href={`/category/${data.category}/`}
+                class="rounded-full border border-slate-200 px-3 py-1 font-mono text-[11px] text-slate-600 transition hover:border-slate-300 hover:text-ink-900"
+                >{category.label}</a
+              >
+            </div>
+          </div>
+
+          <aside class="hidden lg:col-span-4 lg:block xl:col-span-3" aria-label="AboutExport">
+            <div class="on-dark sticky top-28 rounded-2xl bg-ink-900 p-6 text-slate-400">
+              <p class="eyebrow">{site.launch}</p>
+              <p class="mt-3 text-lg leading-snug font-semibold tracking-tight text-white">Exportkontrolle automatisch im Blick.</p>
+              <p class="mt-2 text-sm leading-relaxed">Alerts, Newsfeed und KI-Zusammenfassungen für EU, USA und China – auf Deutsch.</p>
+              <Button href="/#features" variant="glass" size="sm" class="mt-5 w-full">Produkt entdecken</Button>
+            </div>
+          </aside>
         </div>
-      </figure>
-
-      {
-        data.kind === 'regulatory' ? (
-          <aside class="mt-10 flex gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950" data-context-notice="historical">
-            <CalendarClock size={18} class="mt-0.5 shrink-0" aria-hidden="true" />
-            <div>
-              <p class="font-semibold">Historische Regulierungsmeldung · Stand {formatDate(data.pubDate)}</p>
-              <p class="mt-1 leading-relaxed">
-                Dieser Beitrag beschreibt die Rechtslage zum Zeitpunkt der Veröffentlichung. Regelungen, Fristen und Listen können
-                sich seitdem geändert haben. Der Beitrag ist keine Rechtsberatung – maßgeblich sind die aktuellen Veröffentlichungen
-                der zuständigen Behörden.
-              </p>
-            </div>
-          </aside>
-        ) : (
-          <aside class="mt-10 flex gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700" data-context-notice="archive">
-            <Info size={18} class="mt-0.5 shrink-0" aria-hidden="true" />
-            <div>
-              <p class="font-semibold text-ink-900">Archivbeitrag · Planungsstand {formatDate(data.pubDate)}</p>
-              <p class="mt-1 leading-relaxed">
-                Angaben zu Zeitplan, Preisen und Konditionen können überholt sein. Aktuell gilt: {site.launch}. Den aktuellen
-                Stand finden Sie in den <a href="/#preise" class="font-medium text-brand-700 underline underline-offset-2">Preisen</a> und den <a
-                  href="/#faq"
-                  class="font-medium text-brand-700 underline underline-offset-2">FAQ</a
-                >.
-              </p>
-            </div>
-          </aside>
-        )
-      }
-
-      {
-        data.corrections.length > 0 && (
-          <aside class="mt-4 rounded-xl border border-brand-100 bg-brand-50/50 p-4 text-sm text-slate-700" data-corrections>
-            <p class="font-semibold text-ink-900">Nachträglich aktualisiert</p>
-            <ul class="mt-2 space-y-1.5">
-              {data.corrections.map((c) => (
-                <li>
-                  <time datetime={c.date.toISOString()} class="font-medium text-ink-900">{formatDate(c.date)}</time>{`: ${c.summary}`}
-                </li>
-              ))}
-            </ul>
-            <p class="mt-2 text-slate-600">Ursprünglich veröffentlicht am {formatDate(data.pubDate)}. Der übrige Text ist unverändert.</p>
-          </aside>
-        )
-      }
-
-      <div class="prose-article mt-10" data-article-body>
-        <Content />
       </div>
+    </div>
 
-      {
-        modified && (
-          <p class="mt-10 text-sm text-slate-500">
-            Zuletzt aktualisiert am <time datetime={modified.toISOString()}>{formatDate(modified)}</time>
-          </p>
-        )
-      }
-
-      <aside class="mt-12 overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 p-6 sm:p-8" data-article-cta>
-        <p class="eyebrow">{site.launch}</p>
-        <p class="mt-2 text-xl font-semibold tracking-tight text-ink-900">Export-Control-Änderungen nicht mehr manuell suchen.</p>
-        <p class="mt-2 text-sm leading-relaxed text-slate-600">
-          AboutExport überwacht Exportkontrollvorschriften für EU, USA und China und fasst relevante Änderungen auf Deutsch
-          zusammen. Tragen Sie sich in die Waitlist ein, um zum Start informiert zu werden.
-        </p>
-        <Button href="/#waitlist" size="sm" class="mt-5">
-          Early Access sichern <ArrowRight size={16} aria-hidden="true" />
-        </Button>
-      </aside>
+    <div class="bg-white pb-16 sm:pb-24">
+      <div class="container-page">
+        <aside
+          class="on-dark relative isolate overflow-hidden rounded-3xl bg-ink-900 px-6 py-12 text-slate-400 sm:px-12 sm:py-14"
+          data-article-cta
+        >
+          <div class="bg-grid-dark mask-radial absolute inset-0 -z-10" aria-hidden="true"></div>
+          <div
+            class="absolute -top-32 -right-20 -z-10 h-96 w-[36rem] rounded-full bg-[radial-gradient(closest-side,rgb(43_89_240/0.4),transparent)] blur-3xl"
+            aria-hidden="true"
+          >
+          </div>
+          <div class="grid gap-8 lg:grid-cols-12 lg:items-end">
+            <div class="lg:col-span-8">
+              <p class="eyebrow">{site.launch}</p>
+              <p class="display-md mt-4 text-white">Export-Control-Änderungen nicht mehr manuell suchen.</p>
+              <p class="lead mt-5 max-w-xl">
+                AboutExport überwacht Exportkontrollvorschriften für EU, USA und China und fasst relevante Änderungen auf
+                Deutsch zusammen. Tragen Sie sich in die Waitlist ein, um zum Start informiert zu werden.
+              </p>
+            </div>
+            <div class="lg:col-span-4 lg:text-right">
+              <Button href="/#waitlist" size="lg">
+                Early Access sichern
+                <ArrowRight size={17} class="transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
+              </Button>
+            </div>
+          </div>
+        </aside>
+      </div>
     </div>
 
     {
       related.length > 0 && (
-        <section class="mt-20 border-t border-slate-200 bg-slate-50/70 py-16" aria-labelledby="related-title">
+        <section class="border-t border-slate-200 bg-slate-50 py-20 sm:py-24" aria-labelledby="related-title">
           <div class="container-page">
             <div class="flex items-end justify-between gap-4">
-              <h2 id="related-title" class="text-2xl font-semibold tracking-tight">Weitere Beiträge</h2>
-              <a href="/blog/" class="text-sm font-medium text-brand-700 hover:underline">Alle Beiträge</a>
+              <div>
+                <p class="eyebrow">Weiterlesen</p>
+                <h2 id="related-title" class="display-md mt-4">Weitere Beiträge</h2>
+              </div>
+              <a href="/blog/" class="text-sm font-medium text-ink-900 transition-colors hover:text-brand-700">
+                Alle Beiträge →
+              </a>
             </div>
-            <div class="mt-8 grid gap-6 md:grid-cols-2">
+            <div class="mt-10 grid gap-4 md:grid-cols-2">
               {related.map((p) => (
-                <PostCard post={p} />
+                <div class="flex">
+                  <PostCard post={p} />
+                </div>
               ))}
             </div>
           </div>

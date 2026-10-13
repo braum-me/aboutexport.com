@@ -1,117 +1,303 @@
 ---
-import { Check } from '@lucide/astro';
+import { Check, Globe, Languages, Newspaper } from '@lucide/astro';
 import { features, roadmap } from '../../config/content';
-import FeatureIcon from '../ui/FeatureIcon.astro';
-import SectionHeader from '../ui/SectionHeader.astro';
 import StatusBadge from '../ui/StatusBadge.astro';
 import Screenshot from '../ui/Screenshot.astro';
+import SourceMonitorMock from '../mocks/SourceMonitorMock.astro';
 import AlertMock from '../mocks/AlertMock.astro';
 import NewsfeedMock from '../mocks/NewsfeedMock.astro';
 import SummaryMock from '../mocks/SummaryMock.astro';
 import TranslationMock from '../mocks/TranslationMock.astro';
 
-const details = [
-  {
-    eyebrow: 'Critical Regulatory Alerts',
-    title: 'Kritische Änderungen erreichen Sie sofort.',
-    text: 'Wird eine relevante Vorschrift geändert, erhalten Sie einen Alert per E-Mail und im Dashboard – mit Einordnung der Dringlichkeit und Link zur Originalquelle.',
-    points: ['Benachrichtigung per E-Mail', 'Konfigurierbar nach Dringlichkeit und Thema', 'Direkter Link zur Originalquelle'],
-    image: '/images/features/alerts.webp',
-    alt: 'AboutExport Alert-Benachrichtigung',
-    mock: AlertMock,
-  },
-  {
-    eyebrow: 'Täglicher Newsfeed',
-    title: 'Jeden Morgen das Wichtigste.',
-    text: 'Statt dutzende Quellen einzeln zu prüfen, erhalten Sie die relevanten Export-Compliance-News kuratiert, gefiltert und nach Relevanz sortiert.',
-    points: ['Gefiltert nach Ihren Regionen', 'Nach Relevanz sortiert', 'Ein Überblick statt dutzender Einzelquellen'],
-    image: '/images/features/newsfeed.webp',
-    alt: 'AboutExport täglicher Compliance-Newsfeed',
-    mock: NewsfeedMock,
-  },
-  {
-    eyebrow: 'KI-Zusammenfassungen',
-    title: 'Regulatorische Texte in Kernaussagen.',
-    text: 'Die KI fasst lange Bekanntmachungen zusammen und zeigt mögliche Auswirkungen. Die Zusammenfassung ersetzt keine rechtliche Prüfung – die Originalquelle bleibt immer verlinkt.',
-    points: ['Kernaussagen auf einen Blick', 'Einordnung möglicher Auswirkungen', 'Originalquelle stets verfügbar'],
-    image: '/images/features/ai-summary.webp',
-    alt: 'AboutExport KI-Zusammenfassung eines regulatorischen Updates',
-    mock: SummaryMock,
-  },
-  {
-    eyebrow: 'Deutsche Übersetzungen',
-    title: 'Chinesisch, Englisch – verstanden auf Deutsch.',
-    text: 'Alle Updates und News werden automatisch ins Deutsche übersetzt. Sie verstehen sofort, was eine Änderung für Ihre Märkte bedeutet.',
-    points: ['Automatische Übersetzung', 'Original und Übersetzung nebeneinander', 'Keine externen Übersetzungstools nötig'],
-    image: '/images/features/translation.webp',
-    alt: 'AboutExport Gegenüberstellung von Original und deutscher Übersetzung',
-    mock: TranslationMock,
-  },
-];
+const f = Object.fromEntries(features.map((x) => [x.id, x])) as Record<(typeof features)[number]['id'], (typeof features)[number]>;
+
+const primary = [
+  { id: 'monitoring', href: '#feature-monitoring', label: 'Monitoring' },
+  { id: 'alerts', href: '#feature-alerts', label: 'Alerts' },
+  { id: 'ai', href: '#feature-ai', label: 'KI-Zusammenfassungen' },
+] as const;
 ---
 
-<section id="features" class="scroll-mt-16 bg-white py-20 sm:py-28" aria-labelledby="features-title">
-  <div class="container-page">
-    <SectionHeader id="features-title" eyebrow="Features" title="Alles, was Ihr Export-Compliance-Monitoring braucht.">
-      Ein Werkzeug für Überwachung, Benachrichtigung und Einordnung – fokussiert auf die Jurisdiktionen, die für Sie
-      zählen.
-    </SectionHeader>
+<section id="features" class="scroll-mt-16" aria-labelledby="features-title">
+  <!-- Intro + Feature 1: Monitoring -->
+  <div class="relative overflow-hidden border-t border-slate-200 bg-slate-50 py-24 sm:py-32">
+    <div class="bg-grid mask-fade-b absolute inset-x-0 top-0 h-[28rem] opacity-60" aria-hidden="true"></div>
+    <div class="container-page relative">
+      <div class="grid gap-10 lg:grid-cols-12 lg:items-end">
+        <div class="lg:col-span-8" data-reveal>
+          <p class="eyebrow"><span class="eyebrow-index">03 /</span> Produkt</p>
+          <h2 id="features-title" class="display-lg mt-4">
+            Überwachen. Alarmieren.<br class="hidden sm:block" />
+            <span class="text-slate-400">Verstehen.</span>
+          </h2>
+        </div>
+        <nav aria-label="Kernfunktionen" class="lg:col-span-4" data-reveal>
+          <ol class="divide-y divide-slate-200 border-y border-slate-200">
+            {
+              primary.map((p, i) => (
+                <li>
+                  <a
+                    href={p.href}
+                    class="group flex items-center gap-4 py-3 text-[15px] font-medium text-ink-900 transition-colors hover:text-brand-700"
+                  >
+                    <span class="font-mono text-[11px] text-slate-500">3.{i + 1}</span>
+                    {p.label}
+                    <span class="ml-auto text-slate-300 transition-transform duration-200 group-hover:translate-x-1 group-hover:text-brand-600">
+                      →
+                    </span>
+                  </a>
+                </li>
+              ))
+            }
+          </ol>
+        </nav>
+      </div>
 
-    <ul class="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {
-        features.map((f) => (
-          <li class="card group relative flex flex-col p-6 transition hover:border-slate-300 hover:shadow-elevated">
-            <div class="flex items-start justify-between gap-3">
-              <span class="flex size-10 items-center justify-center rounded-lg bg-brand-50 text-brand-700 ring-1 ring-brand-100">
-                <FeatureIcon name={f.icon} />
-              </span>
-              <StatusBadge status={f.status} />
-            </div>
-            <h3 class="mt-5 text-base font-semibold">{f.title}</h3>
-            <p class="mt-2 text-sm leading-relaxed text-slate-600">{f.text}</p>
-          </li>
-        ))
-      }
-    </ul>
-
-    <div class="mt-24 space-y-24 sm:mt-32 sm:space-y-32">
-      {
-        details.map((d, i) => (
-          <article class="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
-            <div class:list={[i % 2 === 1 && 'lg:order-2']}>
-              <p class="eyebrow">{d.eyebrow}</p>
-              <h3 class="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">{d.title}</h3>
-              <p class="mt-4 leading-relaxed text-slate-600">{d.text}</p>
-              <ul class="mt-6 space-y-2.5">
-                {d.points.map((pt) => (
-                  <li class="flex items-start gap-2.5 text-sm text-ink-900">
-                    <Check size={18} class="mt-px shrink-0 text-brand-600" aria-hidden="true" />
-                    {pt}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <Screenshot src={d.image} alt={d.alt} aspect="aspect-[4/3]" chrome={false}>
-              <d.mock />
-            </Screenshot>
-          </article>
-        ))
-      }
+      <article
+        id="feature-monitoring"
+        class="mt-20 grid scroll-mt-24 items-center gap-12 sm:mt-28 lg:grid-cols-12 lg:gap-16"
+      >
+        <div class="lg:col-span-5" data-reveal>
+          <div class="flex items-center gap-3">
+            <p class="eyebrow"><span class="eyebrow-index">3.1</span> {f.monitoring.title}</p>
+          </div>
+          <h3 class="display-md mt-4">Alle relevanten Quellen. Laufend im Blick.</h3>
+          <p class="lead mt-5">{f.monitoring.text}</p>
+          <ul class="mt-8 space-y-3">
+            {
+              [
+                'Öffentliche, verlässliche Regulierungsquellen',
+                'Erkennt neue Veröffentlichungen und Änderungen',
+                'Gebündelt für Ihre gebuchten Regionen',
+              ].map((pt) => (
+                <li class="flex items-start gap-3 text-[15px] text-ink-900">
+                  <Check size={18} class="mt-0.5 shrink-0 text-brand-600" aria-hidden="true" />
+                  {pt}
+                </li>
+              ))
+            }
+          </ul>
+          <StatusBadge status={f.monitoring.status} class="mt-8" />
+        </div>
+        <div class="lg:col-span-7" data-reveal>
+          <Screenshot
+            src="/images/features/monitoring.webp"
+            alt="AboutExport Quellen-Monitoring mit Status je Quelle und erkannten Änderungen"
+            aspect="aspect-[4/5] sm:aspect-[4/3]"
+            windowTitle="Quellen · Monitoring"
+          >
+            <SourceMonitorMock />
+          </Screenshot>
+        </div>
+      </article>
     </div>
+  </div>
 
-    <div class="mt-24 rounded-2xl border border-dashed border-slate-300 p-6 sm:p-8">
-      <h3 class="text-base font-semibold">Roadmap nach dem Launch</h3>
-      <p class="mt-1 text-sm text-slate-600">Geplante Erweiterungen – Umfang und Zeitpunkt können sich ändern.</p>
-      <ul class="mt-5 grid gap-3 sm:grid-cols-3">
+  <!-- Feature 2: Alerts (dunkel) -->
+  <div class="on-dark relative isolate overflow-hidden bg-ink-900 py-24 text-slate-400 sm:py-32">
+    <div
+      class="absolute -top-40 right-0 -z-10 h-[36rem] w-[48rem] rounded-full bg-[radial-gradient(closest-side,rgb(239_68_68/0.12),transparent)] blur-3xl"
+      aria-hidden="true"
+    >
+    </div>
+    <div
+      class="absolute bottom-0 -left-40 -z-10 h-[30rem] w-[40rem] rounded-full bg-[radial-gradient(closest-side,rgb(43_89_240/0.25),transparent)] blur-3xl"
+      aria-hidden="true"
+    >
+    </div>
+    <article id="feature-alerts" class="container-page grid scroll-mt-24 items-center gap-12 lg:grid-cols-12 lg:gap-16">
+      <div class="lg:order-2 lg:col-span-5" data-reveal>
+        <p class="eyebrow"><span class="eyebrow-index">3.2</span> {f.alerts.title}</p>
+        <h3 class="display-md mt-4 text-white">Kritische Änderungen erreichen Sie sofort.</h3>
+        <p class="lead mt-5">
+          Wird eine relevante Vorschrift geändert, erhalten Sie einen Alert per E-Mail und im Dashboard – mit Einordnung
+          der Dringlichkeit und Link zur Originalquelle.
+        </p>
+        <dl class="mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-white/[0.08] bg-white/[0.08]">
+          {
+            [
+              ['Dringlichkeit', 'Kritisch · Hinweis · Info'],
+              ['Jurisdiktion', 'EU · USA · China'],
+              ['Zustellung', 'E-Mail & Dashboard'],
+              ['Quelle', 'Direkt verlinkt'],
+            ].map(([dt, dd]) => (
+              <div class="bg-ink-900 p-4">
+                <dt class="font-mono text-[10px] tracking-[0.14em] text-slate-400 uppercase">{dt}</dt>
+                <dd class="mt-1 text-sm font-medium text-white">{dd}</dd>
+              </div>
+            ))
+          }
+        </dl>
+        <p class="mt-5 text-sm text-slate-400">Konfigurierbar nach Dringlichkeit und Thema.</p>
+        <StatusBadge status={f.alerts.status} tone="dark" class="mt-6" />
+      </div>
+      <div class="lg:col-span-7" data-reveal>
+        <Screenshot
+          src="/images/features/alerts.webp"
+          alt="AboutExport Alert mit Dringlichkeit, Jurisdiktion, Regelwerk, Zeitpunkt und Quelle"
+          aspect="aspect-square sm:aspect-[4/3]"
+          chrome={false}
+          tone="dark"
+          captionAlign="left"
+        >
+          <AlertMock />
+        </Screenshot>
+      </div>
+    </article>
+  </div>
+
+  <!-- Feature 3: KI-Zusammenfassungen -->
+  <div class="relative bg-white py-24 sm:py-32">
+    <article id="feature-ai" class="container-page scroll-mt-24">
+      <div class="grid gap-10 lg:grid-cols-12 lg:items-end">
+        <div class="lg:col-span-6" data-reveal>
+          <p class="eyebrow"><span class="eyebrow-index">3.3</span> KI-Zusammenfassungen</p>
+          <h3 class="display-md mt-4">Vom Amtsdeutsch zur Kernaussage.</h3>
+        </div>
+        <div class="lg:col-span-5 lg:col-start-8" data-reveal>
+          <p class="lead">{f.ai.text}</p>
+          <p class="mt-3 text-sm text-slate-500">
+            Die Zusammenfassung ersetzt keine rechtliche Prüfung – die Originalquelle bleibt immer verlinkt.
+          </p>
+        </div>
+      </div>
+
+      <div class="mt-14" data-reveal>
+        <Screenshot
+          src="/images/features/ai-summary.webp"
+          alt="AboutExport KI-Zusammenfassung: Originaltext, Kernaussagen auf Deutsch und mögliche Auswirkungen"
+          aspect="aspect-[1/1.95] sm:aspect-[16/12] lg:aspect-[16/5.6]"
+          windowTitle="Zusammenfassung"
+        >
+          <SummaryMock />
+        </Screenshot>
+      </div>
+
+      <ol class="mt-12 grid gap-6 border-t border-slate-200 pt-8 sm:grid-cols-3">
         {
-          roadmap.map((r) => (
-            <li class="flex flex-col items-start gap-2 rounded-xl bg-slate-50 p-4">
-              <StatusBadge status={r.status} />
-              <span class="text-sm font-medium text-ink-900">{r.title}</span>
+          [
+            ['Originaltext', 'Die Veröffentlichung in der Ausgangssprache – unverändert.'],
+            ['Kernaussagen', 'Was sich ändert, knapp und auf Deutsch zusammengefasst.'],
+            ['Einordnung', 'Mögliche Auswirkungen und der Link zur Originalquelle.'],
+          ].map(([t, d], i) => (
+            <li data-reveal data-reveal-delay={i * 80}>
+              <p class="font-mono text-[11px] text-brand-700">0{i + 1}</p>
+              <p class="mt-2 font-semibold text-ink-900">{t}</p>
+              <p class="mt-1 text-sm leading-relaxed text-slate-500">{d}</p>
             </li>
           ))
         }
-      </ul>
+      </ol>
+      <StatusBadge status={f.ai.status} class="mt-8" />
+    </article>
+  </div>
+
+  <!-- Sekundäre Features: Bento -->
+  <div class="border-t border-slate-200 bg-slate-50 py-24 sm:py-32">
+    <div class="container-page">
+      <div class="max-w-2xl" data-reveal>
+        <p class="eyebrow"><span class="eyebrow-index">3.4</span> Außerdem enthalten</p>
+        <h3 class="display-md mt-4">Für den Compliance-Alltag gebaut.</h3>
+      </div>
+
+      <div class="mt-12 grid gap-4 lg:grid-cols-6 lg:grid-rows-[auto_auto]">
+        <!-- Newsfeed (groß) -->
+        <article
+          class="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-card transition duration-300 hover:-translate-y-0.5 hover:shadow-elevated lg:col-span-4 lg:row-span-2"
+          data-reveal
+        >
+          <div class="flex items-start justify-between gap-4 p-6 sm:p-8">
+            <div>
+              <span class="flex size-9 items-center justify-center rounded-lg bg-brand-50 text-brand-700 ring-1 ring-brand-100">
+                <Newspaper size={18} stroke-width={1.75} aria-hidden="true" />
+              </span>
+              <h4 class="mt-5 text-xl font-semibold tracking-tight">{f.newsfeed.title}</h4>
+              <p class="mt-2 max-w-md text-[15px] leading-relaxed text-slate-600">{f.newsfeed.text}</p>
+            </div>
+            <StatusBadge status={f.newsfeed.status} class="shrink-0" />
+          </div>
+          <div class="mt-auto px-6 pb-6 sm:px-8 sm:pb-8">
+            <Screenshot
+              src="/images/features/newsfeed.webp"
+              alt="AboutExport täglicher Compliance-Newsfeed, nach Relevanz sortiert"
+              aspect="aspect-[4/3.4] sm:aspect-[16/9] lg:aspect-[16/11.6]"
+              chrome={false}
+              frameClass="shadow-none! ring-slate-200!"
+            >
+              <NewsfeedMock />
+            </Screenshot>
+          </div>
+        </article>
+
+        <!-- Multi-Jurisdiktion -->
+        <article
+          class="on-dark relative flex flex-col overflow-hidden rounded-2xl bg-ink-900 p-6 text-slate-400 transition duration-300 hover:-translate-y-0.5 sm:p-8 lg:col-span-2"
+          data-reveal
+          data-reveal-delay="80"
+        >
+          <div class="bg-grid-dark mask-radial absolute inset-0" aria-hidden="true"></div>
+          <div class="relative flex items-start justify-between gap-3">
+            <span class="flex size-9 items-center justify-center rounded-lg bg-white/[0.06] text-brand-300 ring-1 ring-white/10">
+              <Globe size={18} stroke-width={1.75} aria-hidden="true" />
+            </span>
+            <StatusBadge status={f.coverage.status} tone="dark" />
+          </div>
+          <div class="relative mt-6 flex gap-2 font-mono text-2xl font-medium text-white" aria-hidden="true">
+            <span class="rounded-lg border border-white/10 bg-white/[0.05] px-2.5 py-1">EU</span>
+            <span class="rounded-lg border border-white/10 bg-white/[0.05] px-2.5 py-1">US</span>
+            <span class="rounded-lg border border-white/10 bg-white/[0.05] px-2.5 py-1">CN</span>
+          </div>
+          <h4 class="relative mt-6 text-lg font-semibold text-white">{f.coverage.title}</h4>
+          <p class="relative mt-2 text-sm leading-relaxed">{f.coverage.text}</p>
+        </article>
+
+        <!-- Übersetzungen -->
+        <article
+          class="flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-card transition duration-300 hover:-translate-y-0.5 hover:shadow-elevated lg:col-span-2"
+          data-reveal
+          data-reveal-delay="160"
+        >
+          <div class="p-6 pb-0 sm:p-8 sm:pb-0">
+            <div class="flex items-start justify-between gap-3">
+              <span class="flex size-9 items-center justify-center rounded-lg bg-brand-50 text-brand-700 ring-1 ring-brand-100">
+                <Languages size={18} stroke-width={1.75} aria-hidden="true" />
+              </span>
+              <StatusBadge status={f.translation.status} />
+            </div>
+            <h4 class="mt-5 text-lg font-semibold">{f.translation.title}</h4>
+            <p class="mt-2 text-sm leading-relaxed text-slate-600">{f.translation.text}</p>
+          </div>
+          <div class="mt-6 px-6 pb-6 sm:px-8 sm:pb-8">
+            <Screenshot
+              src="/images/features/translation.webp"
+              alt="AboutExport Gegenüberstellung von Original und deutscher Übersetzung"
+              aspect="aspect-[16/11]"
+              chrome={false}
+              frameClass="shadow-none! ring-slate-200!"
+            >
+              <TranslationMock />
+            </Screenshot>
+          </div>
+        </article>
+      </div>
+
+      <!-- Roadmap -->
+      <div class="mt-4 grid gap-6 rounded-2xl border border-dashed border-slate-300 bg-white/60 p-6 sm:p-8 lg:grid-cols-12 lg:items-center" data-reveal>
+        <div class="lg:col-span-4">
+          <h4 class="text-base font-semibold">Roadmap nach dem Launch</h4>
+          <p class="mt-1 text-sm text-slate-500">Geplante Erweiterungen – Umfang und Zeitpunkt können sich ändern.</p>
+        </div>
+        <ul class="grid gap-3 sm:grid-cols-3 lg:col-span-8">
+          {
+            roadmap.map((r) => (
+              <li class="flex flex-col items-start gap-2 rounded-xl bg-slate-50 p-4 ring-1 ring-slate-200/70">
+                <StatusBadge status={r.status} />
+                <span class="text-sm font-medium text-ink-900">{r.title}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
     </div>
   </div>
 </section>
