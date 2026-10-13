@@ -5,7 +5,7 @@ title: 'AboutExport öffnet die Waitlist – sichern Sie sich jetzt Ihren frühe
 seoTitle: 'AboutExport Waitlist ist offen – 20 % Rabatt für frühe Anmeldungen'
 description: 'Export Control Alerts automatisch überwacht, KI-zusammengefasst, direkt ins Postfach. Jetzt auf die Waitlist eintragen und Vorteil sichern.'
 excerpt: 'AboutExport öffnet die Waitlist: Frühen Zugang sichern, 20 % Rabatt auf jeden Plan erhalten und die Produktentwicklung von Anfang an aktiv mitgestalten.'
-pubDate: 2026-04-04T17:02:33Z
+pubDate: 2026-10-07T07:00:00Z
 updatedDate: 2026-10-12T20:55:25Z
 category: news
 kind: product
@@ -19,6 +19,8 @@ image:
 legacy:
   wpId: 2165
   url: https://aboutexport.com/aboutexport-waitlist-early-access/
+  # Ursprüngliches Veröffentlichungsdatum in WordPress; pubDate = Veröffentlichung auf der neuen Website
+  publishedDate: 2026-04-04T17:02:33Z
   # Änderungsdatum in WordPress vor den Korrekturen
   modifiedDate: 2026-04-04T17:06:38Z
 corrections:

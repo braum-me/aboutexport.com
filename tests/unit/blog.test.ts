@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { isExternalHref } from '../../src/lib/external-links-plugin.mjs';
 import inventory from '../fixtures/blog/wordpress-inventory.json';
+import republished from '../fixtures/blog/republished.json';
 
 // readingTime/formatDate liegen in src/lib/blog.ts, das astro:content importiert → hier nachgebildet getestet
 const CONTENT = join(process.cwd(), 'src/content/blog');
@@ -15,17 +16,23 @@ function frontmatter(slug: string): string {
 describe('Blog-Migration', () => {
   it('enthält für jeden WordPress-Beitrag genau eine Markdown-Datei', () => {
     const files = readdirSync(CONTENT).filter((f) => f.endsWith('.md')).map((f) => f.replace(/\.md$/, ''));
-    expect(files.sort()).toEqual(inventory.map((p) => p.slug).sort());
+    const slugs = inventory.map((p) => p.slug);
+    // Alle WordPress-Beiträge sind vorhanden; weitere Beiträge sind neu verfasst (ohne legacy-Block)
+    for (const slug of slugs) expect(files).toContain(slug);
+    for (const extra of files.filter((f) => !slugs.includes(f))) expect(frontmatter(extra)).not.toContain('legacy:');
   });
 
-  it.each(inventory)('$slug: Originaldaten erhalten', (post) => {
+  it.each(inventory)('$slug: Originaldaten erhalten, neues Veröffentlichungsdatum gesetzt', (post) => {
     const fm = frontmatter(post.slug);
-    expect(fm).toContain(`pubDate: ${post.datePublishedUtc}`);
+    expect(fm).toContain(`pubDate: ${(republished as Record<string, string>)[post.slug]}`);
+    expect(fm).toContain(`publishedDate: ${post.datePublishedUtc}`);
     const updated = fm.match(/^updatedDate: (\S+)$/m)?.[1];
     if (fm.includes('corrections:')) {
       // Nach Korrekturen: WordPress-Änderungsdatum bleibt dokumentiert, updatedDate liegt danach
       expect(fm).toContain(`modifiedDate: ${post.dateModifiedUtc}`);
       expect(new Date(updated!).getTime()).toBeGreaterThan(new Date(post.dateModifiedUtc).getTime());
+      // Änderung nie vor der Veröffentlichung
+      expect(new Date(updated!).getTime()).toBeGreaterThanOrEqual(new Date((republished as Record<string, string>)[post.slug]!).getTime());
     } else {
       expect(updated).toBe(post.dateModifiedUtc);
     }

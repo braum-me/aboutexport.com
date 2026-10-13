@@ -2,6 +2,11 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { expect, test } from '@playwright/test';
 import inventory from '../fixtures/blog/wordpress-inventory.json' with { type: 'json' };
+import republished from '../fixtures/blog/republished.json' with { type: 'json' };
+import { allSitePosts, visibleSitePosts } from '../fixtures/blog/site-posts';
+
+/** Veröffentlichungsdatum auf der neuen Website (WordPress-Originaldatum steht in legacy.publishedDate) */
+const pubOf = (slug: string) => new Date((republished as Record<string, string>)[slug]!).toISOString();
 
 const fixtureText = (slug: string) =>
   readFileSync(join(process.cwd(), 'tests/fixtures/blog', `${slug}.txt`), 'utf8').trim();
@@ -44,7 +49,7 @@ test.describe('Blog-Artikel unter Original-URLs', () => {
       await expect(page.locator('meta[property="og:type"]')).toHaveAttribute('content', 'article');
       await expect(page.locator('meta[property="article:published_time"]')).toHaveAttribute(
         'content',
-        new Date(post.datePublishedUtc).toISOString(),
+        pubOf(post.slug),
       );
       const { updated, changes } = meta(post.slug);
       await expect(page.locator('meta[property="article:modified_time"]')).toHaveAttribute('content', updated);
@@ -58,13 +63,13 @@ test.describe('Blog-Artikel unter Original-URLs', () => {
       const article = ld.find((x) => x['@type'] === 'BlogPosting');
       expect(article).toBeTruthy();
       expect(article.headline).toBe(post.title);
-      expect(article.datePublished).toBe(new Date(post.datePublishedUtc).toISOString());
+      expect(article.datePublished).toBe(pubOf(post.slug));
       expect(article.dateModified).toBe(updated);
       expect(article.mainEntityOfPage['@id']).toBe(post.url);
       expect(ld.some((x) => x['@type'] === 'BreadcrumbList')).toBe(true);
 
-      // Originaldatum sichtbar
-      await expect(page.locator('[data-pubdate]')).toHaveAttribute('datetime', new Date(post.datePublishedUtc).toISOString());
+      // Veröffentlichungsdatum sichtbar
+      await expect(page.locator('[data-pubdate]')).toHaveAttribute('datetime', pubOf(post.slug));
 
       // Inhalt = WordPress-Original + ausschließlich dokumentierte Korrekturen
       const body = await page.locator('[data-article-body]').innerText();
@@ -106,12 +111,21 @@ test.describe('Blog-Artikel unter Original-URLs', () => {
     await page.goto('/bafa-exportkontrolle-april-2026/');
     const notice = page.locator('[data-context-notice="historical"]');
     await expect(notice).toContainText('Historische Regulierungsmeldung');
-    await expect(notice).toContainText('4. April 2026');
+    // Inhaltlicher Stand bleibt das Originaldatum, auch wenn der Beitrag neu veröffentlicht wurde
+    await expect(notice).toContainText('Stand 4. April 2026');
   });
 
-  test('Korrigierter Produktbeitrag: Originaldatum + transparente Aktualisierung', async ({ page }) => {
+  test('Beitrag mit zukünftigem pubDate ist erst ab diesem Datum erreichbar', async ({ request }) => {
+    const visible = new Set(visibleSitePosts().map((p) => p.slug));
+    for (const p of allSitePosts().filter((x) => x.native)) {
+      const res = await request.get(`/${p.slug}/`);
+      expect(res.status(), p.slug).toBe(visible.has(p.slug) ? 200 : 404);
+    }
+  });
+
+  test('Korrigierter Produktbeitrag: neues Datum, Originaldatum + transparente Aktualisierung', async ({ page }) => {
     await page.goto('/aboutexport-waitlist-early-access/');
-    await expect(page.locator('[data-pubdate]')).toHaveText('4. April 2026');
+    await expect(page.locator('[data-pubdate]')).toHaveText('7. Oktober 2026');
     const corr = page.locator('[data-corrections]');
     await expect(corr).toContainText('Nachträglich aktualisiert');
     await expect(corr).toContainText('pro Region');
@@ -130,7 +144,7 @@ test.describe('Blog-Artikel unter Original-URLs', () => {
 
   test('Regulierungsmeldung: Produktabsatz ohne Echtzeit-Zusage, Korrektur ausgewiesen', async ({ page }) => {
     await page.goto('/bafa-exportkontrolle-april-2026/');
-    await expect(page.locator('[data-pubdate]')).toHaveText('4. April 2026');
+    await expect(page.locator('[data-pubdate]')).toHaveText('13. Oktober 2026');
     await expect(page.locator('[data-corrections]')).toContainText('regulatorischen Inhalte sind unverändert');
     const body = page.locator('[data-article-body]');
     await expect(body).not.toContainText('Alerts in Echtzeit');
@@ -144,11 +158,11 @@ test.describe('Blog-Übersicht und Kategorien', () => {
     await page.goto('/blog/');
     await expect(page.locator('h1')).toHaveText('Blog');
     const cards = page.locator('[data-post-card]');
-    await expect(cards).toHaveCount(inventory.length);
-    const newestFirst = [...inventory].sort((a, b) => b.datePublishedUtc.localeCompare(a.datePublishedUtc));
-    await expect(cards.first().getByRole('heading')).toHaveText(newestFirst[0]!.title);
-    for (const p of inventory) {
-      await expect(page.getByRole('link', { name: p.title })).toHaveAttribute('href', new URL(p.url).pathname);
+    const visible = visibleSitePosts();
+    await expect(cards).toHaveCount(visible.length);
+    await expect(cards.first().getByRole('heading')).toHaveText(visible[0]!.title);
+    for (const p of visible) {
+      await expect(page.getByRole('link', { name: p.title })).toHaveAttribute('href', `/${p.slug}/`);
     }
   });
 
@@ -160,7 +174,7 @@ test.describe('Blog-Übersicht und Kategorien', () => {
       const res = await page.goto(`/category/${slug}/`);
       expect(res?.status()).toBe(200);
       await expect(page.locator('h1')).toHaveText(label);
-      await expect(page.locator('[data-post-card]')).toHaveCount(inventory.filter((p) => p.category === slug).length);
+      await expect(page.locator('[data-post-card]')).toHaveCount(visibleSitePosts().filter((p) => p.category === slug).length);
       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `https://aboutexport.com/category/${slug}/`);
     });
   }
@@ -168,7 +182,7 @@ test.describe('Blog-Übersicht und Kategorien', () => {
   test('Startseite zeigt Blog-Teaser und Blog in der Navigation', async ({ page, isMobile }) => {
     await page.goto('/');
     const teaser = page.locator('#blog');
-    await expect(teaser.locator('[data-post-card]')).toHaveCount(Math.min(3, inventory.length));
+    await expect(teaser.locator('[data-post-card]')).toHaveCount(Math.min(3, visibleSitePosts().length));
     await expect(teaser.getByRole('link', { name: /Alle Beiträge/ })).toHaveAttribute('href', '/blog/');
     if (!isMobile) {
       await expect(page.getByRole('navigation', { name: 'Hauptnavigation' }).getByRole('link', { name: 'Blog' })).toHaveAttribute(
@@ -196,10 +210,10 @@ test.describe('Redirects, Sitemap und Feed', () => {
     });
   }
 
-  test('Sitemap enthält Blog, Kategorien und Beiträge mit Original-Änderungsdatum', async ({ request }) => {
+  test('Sitemap enthält Blog, Kategorien und sichtbare Beiträge mit Änderungsdatum', async ({ request }) => {
     const xml = await (await request.get('/sitemap.xml')).text();
-    for (const p of inventory) {
-      expect(xml).toContain(`<url><loc>${p.url}</loc><lastmod>${meta(p.slug).updated}</lastmod></url>`);
+    for (const p of visibleSitePosts()) {
+      expect(xml).toContain(`<url><loc>https://aboutexport.com/${p.slug}/</loc><lastmod>${p.updated}</lastmod></url>`);
     }
     for (const path of ['/blog/', '/category/news/', '/category/regulierung/']) {
       expect(xml).toContain(`<loc>https://aboutexport.com${path}</loc>`);
@@ -212,9 +226,9 @@ test.describe('Redirects, Sitemap und Feed', () => {
     expect(res.status()).toBe(200);
     expect(res.headers()['content-type']).toContain('application/rss+xml');
     const xml = await res.text();
-    for (const p of inventory) {
-      expect(xml).toContain(`<link>${p.url}</link>`);
-      expect(xml).toContain(`<pubDate>${new Date(p.datePublishedUtc).toUTCString()}</pubDate>`);
+    for (const p of visibleSitePosts()) {
+      expect(xml).toContain(`<link>https://aboutexport.com/${p.slug}/</link>`);
+      expect(xml).toContain(`<pubDate>${new Date(p.pubDate).toUTCString()}</pubDate>`);
     }
   });
 });

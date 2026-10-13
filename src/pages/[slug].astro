@@ -142,7 +142,7 @@ const jsonLd = [
                 >
                   <CalendarClock size={18} class="mt-0.5 shrink-0" aria-hidden="true" />
                   <div>
-                    <p class="font-semibold">Historische Regulierungsmeldung · Stand {formatDate(data.pubDate)}</p>
+                    <p class="font-semibold">Historische Regulierungsmeldung · Stand {formatDate(data.legacy?.publishedDate ?? data.pubDate)}</p>
                     <p class="mt-1 leading-relaxed">
                       Dieser Beitrag beschreibt die Rechtslage zum Zeitpunkt der Veröffentlichung. Regelungen, Fristen und
                       Listen können sich seitdem geändert haben. Der Beitrag ist keine Rechtsberatung – maßgeblich sind die
@@ -157,7 +157,7 @@ const jsonLd = [
                 >
                   <Info size={18} class="mt-0.5 shrink-0" aria-hidden="true" />
                   <div>
-                    <p class="font-semibold text-ink-900">Archivbeitrag · Planungsstand {formatDate(data.pubDate)}</p>
+                    <p class="font-semibold text-ink-900">Archivbeitrag · Planungsstand {formatDate(data.updatedDate ?? data.pubDate)}</p>
                     <p class="mt-1 leading-relaxed">
                       Angaben zu Zeitplan, Preisen und Konditionen können überholt sein. Aktuell gilt: {site.launch}. Den
                       aktuellen Stand finden Sie in den{' '}
@@ -187,7 +187,7 @@ const jsonLd = [
                     ))}
                   </ul>
                   <p class="mt-2 text-slate-600">
-                    Ursprünglich veröffentlicht am {formatDate(data.pubDate)}. Der übrige Text ist unverändert.
+                    Ursprünglich veröffentlicht am {formatDate(data.legacy?.publishedDate ?? data.pubDate)}. Der übrige Text ist unverändert.
                   </p>
                 </aside>
               )
