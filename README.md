@@ -1,7 +1,10 @@
-# AboutExport – Marketing-Website (Launch 2027)
+# AboutExport – Marketing-Website
 
-Marketing-Website für **AboutExport** (Export Control Monitoring für EU, USA und China).
-Kein SaaS-Produkt – nur die öffentliche Website mit Waitlist und Kontaktformular.
+[![CI](https://github.com/braum-me/aboutexport.com/actions/workflows/ci.yml/badge.svg)](https://github.com/braum-me/aboutexport.com/actions/workflows/ci.yml)
+
+Öffentliche Website von **AboutExport** ([aboutexport.com](https://aboutexport.com)) – Export Control Monitoring
+für EU, USA und China (Launch 2027). Enthält Landingpage, Preis- und ROI-Rechner, Blog, Waitlist und Kontaktformular.
+Kein SaaS-Produkt, die Plattform selbst ist nicht Teil dieses Repositories.
 
 | | |
 |---|---|
@@ -10,7 +13,7 @@ Kein SaaS-Produkt – nur die öffentliche Website mit Waitlist und Kontaktformu
 | Server | Node.js 22, `@astrojs/node` – nur `/api/waitlist` und `/api/contact` laufen serverseitig |
 | E-Mail | Nodemailer via SMTP (Konfiguration über ENV) |
 | Tests | Vitest (Unit), Playwright (E2E inkl. lokalem SMTP-Sink), ESLint, `astro check` |
-| Tracking / Cookies | keine |
+| Tracking / Cookies | keine Cookies; optional selbst gehostetes Umami (Build-Zeit, standardmäßig aus) |
 
 ## Schnellstart
 
@@ -88,10 +91,6 @@ Bildverarbeitungs-Dependency.
 - Rhythmus: dunkle Sektionen (Hero, Jurisdiktionen, Alerts, Preise, Kontakt, Footer) wechseln mit hellen
 - Motion: `data-reveal` (IntersectionObserver, nur unterhalb des Viewports), CSS View Transitions; alles respektiert `prefers-reduced-motion`
 - CSP: keine `style`-Attribute – dynamische Werte über SVG-Attribute bzw. CSSOM aus Skripten
-
-## Blog
-
-Siehe `docs/blog-migration.md` (Migration, URLs, Redirects, Tests). Das Blog nutzt dasselbe Design-System wie die Startseite.
 
 ## Preise & Rabatt
 
@@ -179,15 +178,19 @@ npm run release                         # Go-live-Gate: Pflichtangaben für Impr
 COOP/CORP sowie `frame-ancestors`. Die Content-Security-Policy mit Hashes für Skripte/Styles erzeugt Astro als
 `<meta>`-Tag (`security.csp` in `astro.config.mjs`). Erlaubte Hosts: `security.allowedDomains`.
 
-## Rechtliche Prüfung (vor Go-live)
+## Rechtliches & Go-live
 
-Impressum und Datenschutzerklärung sind **nicht rechtlich geprüft**. Interne Prüfhinweise werden nicht öffentlich
-angezeigt; alle offenen Punkte stehen als **Release-Blocker** in [`docs/release-blockers.md`](docs/release-blockers.md).
+Impressum und Datenschutzerklärung werden aus `src/config/legal.ts` gespeist. Offene Werte (`null`) werden nicht
+angezeigt, sondern von `npm run release:check` gemeldet. Der aktuelle Stand steht in
+[`docs/release-blockers.md`](docs/release-blockers.md); der Ablauf in [`docs/go-live.md`](docs/go-live.md).
 
-- Angaben für Impressum/Datenschutz stehen in `src/config/legal.ts`; offene Werte (`null`) werden nicht angezeigt,
-  sondern von `npm run release:check` gemeldet.
-- OS-Plattform-Hinweis entfernt (Plattform seit Juli 2025 eingestellt)
-- Entfernt (auf der neuen Website nicht mehr im Einsatz): Real Cookie Banner, WP Compress, UpdraftPlus,
-  Google reCAPTCHA, Brevo, Umami, Ally, Google Fonts, Font Awesome, CDN
-- Waitlist-Rechtsgrundlage (Art. 6 Abs. 1 lit. b DSGVO) und Speicherdauer bestätigen
-- AGB/Nutzungsbedingungen der alten Seite wurden nicht übernommen – vor dem kommerziellen Launch erforderlich
+Noch offen: Waitlist-Rechtsgrundlage/Speicherdauer bestätigen, AGB/Nutzungsbedingungen vor dem kommerziellen
+Launch, Branch Protection für `main`.
+
+Eingesetzte Drittdienste: OVH (VPS), Cloudflare (DNS/Proxy), Brevo (SMTP), Microsoft Exchange Online (Postfach),
+optional Umami (selbst betrieben). Nicht mehr im Einsatz: Real Cookie Banner, WP Compress, UpdraftPlus, Google reCAPTCHA,
+Google Fonts, Font Awesome, CDN.
+
+## Lizenz
+
+© Braum Consulting – alle Rechte vorbehalten. Inhalte, Texte und Bilder dürfen ohne Genehmigung nicht weiterverwendet werden.
