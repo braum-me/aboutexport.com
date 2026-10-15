@@ -29,13 +29,6 @@ corrections:
     changes:
       - from: 'Wir befinden uns in der finalen Entwicklungsphase einer ersten Validierungsversion des Produkts.'
         to: 'Wir befinden uns in der Entwicklung einer ersten Validierungsversion des Produkts; der Launch ist für 2027 geplant.'
-review:
-  status: pending
-  notes:
-    - 'Genannte Quellen (UN-Sanktionslisten, BAFA, MOFCOM u. a.) mit dem tatsächlichen Quellenumfang zum Launch abgleichen.'
-    - 'Meta-Beschreibung duzt („du“), der Artikel siezt – Tonalität ggf. vereinheitlichen.'
-  resolved:
-    - '„Finale Entwicklungsphase“ → Launch 2027 ergänzt (korrigiert am 2026-10-12).'
 ---
 
 Export Compliance Monitoring ist eine der komplexesten Daueraufgaben im internationalen Geschäft – und gleichzeitig eine der am stärksten unterschätzten. Wer Güter, Technologien oder Dienstleistungen in internationale Märkte bringt, bewegt sich in einem regulatorischen Umfeld das sich ständig verändert: neue Sanktionspakete, aktualisierte Exportkontrolllisten, geopolitische Entwicklungen die über Nacht neue Compliance-Anforderungen schaffen.

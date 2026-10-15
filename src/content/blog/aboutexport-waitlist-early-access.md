@@ -42,16 +42,6 @@ corrections:
         to: 'Ob und in welcher Form es einen Testzugang geben wird, teilen wir vor dem Launch mit.'
       - from: 'und der 20 % Frühbucher-Rabatt gilt für die ersten Anmeldungen.'
         to: 'für Mitglieder ist ein Early-Access-Rabatt von 20 % vorgesehen; die verbindlichen Konditionen teilen wir vor dem Launch mit.'
-review:
-  status: done
-  notes: []
-  resolved:
-    - 'Preis „pro Monat und Nutzer“ → „pro Monat“ je Region (korrigiert am 2026-10-12).'
-    - 'Kontaktadresse info@aboutexport.de → info@aboutexport.com (korrigiert am 2026-10-12).'
-    - '„Finale Entwicklungsphase“ → Launch 2027 ergänzt (korrigiert am 2026-10-12).'
-    - 'Rabatt „dauerhaft … unabhängig von Region oder Laufzeit“ und „gilt für die ersten Anmeldungen“ neutralisiert – nicht bestätigt (korrigiert am 2026-10-12).'
-    - '„14 Tage kostenlosen Zugang – ohne Kreditkarte“ neutralisiert – nicht bestätigt (korrigiert am 2026-10-12).'
-    - '„in den kommenden Monaten“ (Einleitung) bezieht sich auf den Stand April 2026; durch Archiv-Hinweis abgedeckt.'
 ---
 
 Heute ist es soweit: Die Waitlist für AboutExport ist offiziell geöffnet. Wer sich jetzt einträgt, sichert sich bevorzugten Early Access zur Plattform – und 20 % Rabatt auf jeden verfügbaren Plan.

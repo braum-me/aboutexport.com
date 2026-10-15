@@ -13,12 +13,6 @@ image:
   alt: AboutExport-Logo auf blauem Verlaufshintergrund
   width: 1280
   height: 720
-review:
-  status: pending
-  notes:
-    - 'Beitrag stützt sich auf die GTAI-Meldung vom 08.05.2026 (Sekundärquelle). Den Informationsvermerk selbst (Amtsblatt, Reihe C, 8. Mai 2026) vor der Veröffentlichung im Original prüfen und Fundstelle ergänzen.'
-    - 'Fachliche Prüfung steht aus; keine Rechtsberatung. Die Aussagen sind bewusst allgemein gehalten.'
-    - 'Beitragsbild ist das Logo-Bild des Vision-Beitrags (Wiederverwendung).'
 ---
 
 Die Dual-Use-Verordnung (EU) 2021/821 gilt seit dem 9. September 2021 unmittelbar in allen Mitgliedstaaten. Trotzdem ist die Praxis nicht überall gleich: Die Mitgliedstaaten dürfen zusätzliche oder ergänzende nationale Vorschriften erlassen. Genau dazu hat die EU-Kommission einen aktualisierten Informationsvermerk veröffentlicht. Er ist laut der Meldung von Germany Trade & Invest (GTAI) im Amtsblatt der EU (Reihe C) vom 8. Mai 2026 erschienen.
