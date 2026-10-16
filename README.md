@@ -59,12 +59,9 @@ tests/unit, tests/e2e
 - `pubDate`/`updatedDate` sind feste Werte – nie automatisch setzen. Neue Beiträge: Datei anlegen, Bild unter
   `public/images/blog/<slug>.webp` + `<slug>-og.jpg` (1200×630).
 - `kind: regulatory` zeigt den Hinweis „Historische Regulierungsmeldung“, `kind: product` den Archiv-Hinweis.
-- `review` enthält interne redaktionelle Prüfhinweise (offen/erledigt). Sie bleiben im Repository und werden
-  **nicht** auf der Website angezeigt.
 - Nachträgliche inhaltliche Änderungen: Text ändern, `updatedDate` setzen und einen Eintrag unter `corrections`
   (Datum, Zusammenfassung, `from`/`to`) anlegen. Die Zusammenfassung wird im Artikel als „Nachträglich aktualisiert“
   angezeigt; `pubDate` bleibt unverändert. Regulatorische Aussagen nur nach Quellenprüfung ändern.
-- Migrationsbericht: [`docs/blog-migration.md`](docs/blog-migration.md)
 
 ## Screenshots austauschen
 
@@ -157,9 +154,7 @@ Die E2E-Tests starten automatisch einen lokalen SMTP-Sink (`tests/e2e/smtp-sink.
 
 ## Deployment
 
-Produktion: Coolify (Build Pack „Docker Compose“, `docker-compose.coolify.yml`) auf dem OVH-VPS hinter dem
-vorhandenen Traefik und Cloudflare – Anleitung in [`docs/deployment.md`](docs/deployment.md), Go-live/Rollback in
-[`docs/go-live.md`](docs/go-live.md).
+Produktion: Docker-Image auf eigenem Server (Coolify, `docker-compose.coolify.yml`).
 
 ```bash
 docker compose up -d --build            # lokaler, produktionsnaher Test (127.0.0.1:4321, liest .env)
@@ -178,18 +173,10 @@ npm run release                         # Go-live-Gate: Pflichtangaben für Impr
 COOP/CORP sowie `frame-ancestors`. Die Content-Security-Policy mit Hashes für Skripte/Styles erzeugt Astro als
 `<meta>`-Tag (`security.csp` in `astro.config.mjs`). Erlaubte Hosts: `security.allowedDomains`.
 
-## Rechtliches & Go-live
+## Rechtliches
 
 Impressum und Datenschutzerklärung werden aus `src/config/legal.ts` gespeist. Offene Werte (`null`) werden nicht
-angezeigt, sondern von `npm run release:check` gemeldet. Der aktuelle Stand steht in
-[`docs/release-blockers.md`](docs/release-blockers.md); der Ablauf in [`docs/go-live.md`](docs/go-live.md).
-
-Noch offen: Waitlist-Rechtsgrundlage/Speicherdauer bestätigen, AGB/Nutzungsbedingungen vor dem kommerziellen
-Launch, Branch Protection für `main`.
-
-Eingesetzte Drittdienste: OVH (VPS), Cloudflare (DNS/Proxy), Brevo (SMTP), Microsoft Exchange Online (Postfach),
-optional Umami (selbst betrieben). Nicht mehr im Einsatz: Real Cookie Banner, WP Compress, UpdraftPlus, Google reCAPTCHA,
-Google Fonts, Font Awesome, CDN.
+angezeigt, sondern von `npm run release:check` gemeldet.
 
 ## Lizenz
 

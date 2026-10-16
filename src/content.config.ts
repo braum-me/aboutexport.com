@@ -49,14 +49,6 @@ const blog = defineCollection({
         }),
       )
       .default([]),
-    /** Interne redaktionelle Prüfhinweise – nur im Repository, nicht öffentlich dargestellt */
-    review: z
-      .object({
-        status: z.enum(['pending', 'done']),
-        notes: z.array(z.string()).default([]),
-        resolved: z.array(z.string()).default([]),
-      })
-      .default({ status: 'done', notes: [], resolved: [] }),
     draft: z.boolean().default(false),
   }),
 });

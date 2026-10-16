@@ -1,5 +1,5 @@
 # Lokaler, produktionsnaher Test (gleiche Härtung wie in Coolify). Produktion läuft über Coolify –
-# siehe docs/deployment.md. Start: cp .env.example .env && docker compose up -d --build
+# Start: cp .env.example .env && docker compose up -d --build
 services:
   web:
     build:

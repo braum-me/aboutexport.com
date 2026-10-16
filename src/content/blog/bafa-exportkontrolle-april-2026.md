@@ -34,15 +34,6 @@ corrections:
         to: 'Ab dem geplanten Launch 2027 prüft die Plattform die Quellen der gebuchten Regionen laufend automatisiert und stellt kritische Änderungen als Export Control Alert direkt ins Postfach zu – ohne manuelle Recherche.'
       - from: 'AboutExport stellt sicher, dass Sie informiert sind – bevor es zum Problem wird.'
         to: 'AboutExport soll Ihnen helfen, solche Änderungen frühzeitig zu erkennen.'
-review:
-  status: pending
-  notes:
-    - 'Regulatorische Aussagen (Sanktions-Compliance-Erklärung, Allgemeine Genehmigungen Nr. 12–47, Verlängerung bis 31.03.2027, Indien im privilegierten Länderkreis, Wegfall der Schonfrist, SanktDG) wurden bei der Migration nicht erneut fachlich geprüft.'
-    - 'Zeitgebundene Aussagen: Verlängerung der Allgemeinen Genehmigungen „bis zum 31. März 2027“ und „Die EU arbeitet bereits am 20. Sanktionspaket“ – Stand April 2026, voraussichtlich überholt.'
-    - 'Quellenangabe: Linktexte und Ziele passen nicht zusammen („Sanktionsdurchsetzungsgesetz (SanktDG), EU-Richtlinie 2024/1226“ verlinkt auf Verordnung (EU) 833/2014 bei EUR-Lex).'
-    - 'Beitragsbild ist ein Stockfoto – Lizenz für die weitere Nutzung prüfen.'
-  resolved:
-    - 'Produktaussagen im Schlussabschnitt („Echtzeit“, „keine übersehenen Änderungen“, „stellt sicher“) neutralisiert (korrigiert am 2026-10-12). „20 % Rabatt“ entspricht dem bestätigten Early-Access-Rabatt.'
 ---
 
 Wer im internationalen Handel tätig ist und Allgemeine Genehmigungen des BAFA nutzt, muss jetzt handeln. Das Bundesamt für Wirtschaft und Ausfuhrkontrolle hat zum April 2026 eine Reihe von Änderungen in Kraft gesetzt, die den Compliance-Alltag spürbar verändern – und das in einem Umfeld, in dem die Konsequenzen von Versäumnissen so gravierend sind wie nie zuvor.
